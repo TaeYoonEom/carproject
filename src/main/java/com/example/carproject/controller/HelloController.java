@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HelloController {
 
-    @GetMapping("/")
-    public String home() {
-        return "home"; // templates/home.html로 이동
+    @GetMapping("/main")
+    public String main_page() {
+        return "main_page"; // templates/main_page.html로 이동
     }
 }

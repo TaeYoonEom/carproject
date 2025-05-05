@@ -1,0 +1,73 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+.navbar {
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: column; /* ⭐ 추가: 위아래 세로 방향으로 정렬 */
+    align-items: flex-start; /* ⭐ 추가: 왼쪽 정렬 */
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+.navbar-title b {
+    color: red; /* 빨간색으로 */
+    font-size: 28px; /* (선택) 크기도 키워줄 수 있음 */
+}
+
+.navbar-menu {
+    display: flex;
+    margin-top: 5px;
+    gap: 20px; /* gap이 이제 정상 작동함 */
+}
+
+.big-link {
+    font-size: 18px; /* 원하는 크기로 조정 가능 */
+    font-weight: bold; /* 글자를 더 진하게 */
+}
+
+.main {
+    display: flex;
+    padding: 20px;
+}
+.search-box {
+    flex: 3;
+    padding: 20px;
+    border: 1px solid #ccc;
+    margin-right: 20px;
+}
+.sell-box {
+    flex: 1;
+    padding: 20px;
+    border: 1px solid #ccc;
+}
+h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+select, button {
+    margin: 10px 0;
+    padding: 10px;
+    width: 100%;
+    font-size: 16px;
+}
+.footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 14px;
+    color: #777;
+    padding: 20px;
+    border-top: 1px solid #ccc;
+}
+
+.truck-link {
+    margin-right: 20px; /* 여기만 더 넓게 */
+}
