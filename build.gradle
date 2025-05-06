@@ -21,6 +21,7 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // JPA 사용
 	implementation 'org.mariadb.jdbc:mariadb-java-client:3.3.3' // MariaDB 드라이버

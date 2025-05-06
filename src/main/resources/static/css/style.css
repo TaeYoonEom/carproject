@@ -71,3 +71,20 @@ select, button {
 .truck-link {
     margin-right: 20px; /* 여기만 더 넓게 */
 }
+
+.car-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px;
+}
+.car-card {
+    width: 200px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
+.car-card img {
+    width: 200px;
+    height: 130px;
+}

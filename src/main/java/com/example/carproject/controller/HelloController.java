@@ -6,8 +6,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HelloController {
 
-    @GetMapping("/main")
+    @GetMapping("/")
     public String main_page() {
-        return "main_page"; // templates/main_page.html로 이동
+        return "main_page";
+    }
+
+    @GetMapping("/korean")
+    public String koreanCars_Page(){
+        return "korean_cars";
     }
 }
