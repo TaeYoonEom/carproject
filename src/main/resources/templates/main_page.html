@@ -7,44 +7,50 @@
 </head>
 <body>
 
+<!-- 해당 배발소 복수 -->
 <div class="navbar">
     <div class="navbar-title">
         <a href="/"><b>Encar</b></a>
     </div>
     <div class="navbar-menu">
-        <a href="#" class="big-link">내차사기</a> <!-- ⭐ 클래스 추가 -->
+        <a href="#" class="big-link">내차사기</a>
         <a href="/korean">국산</a>
         <a href="#">수입</a>
         <a href="#">전기/친환경</a>
         <a href="#" class="truck-link">화물/특장</a>
-
         <div class="spacer"></div>
-
-        <a href="#" class="big-link">내차팔기</a> <!-- ⭐ 클래스 추가 -->
+        <a href="#" class="big-link">내차팔기</a>
         <a href="#">비교견적</a>
         <a href="#">직거래</a>
+        <a href="/login" class="login-button">로그인</a>
+        <a href="/register" class="register-button">회원가입</a>
     </div>
 </div>
 
-
-<div class="main">
+<!-- 메인 검색 및 정보 박스 -->
+<div class="main-container">
     <div class="search-box">
         <h1>엔카에서 내 차 찾기</h1>
-        <select>
-            <option>제조사 선택</option>
-            <option>현대</option>
-            <option>제네시스</option>
-            <option>기아</option>
-        </select>
-        <select>
-            <option>모델 선택</option>
-        </select>
-        <select>
-            <option>세부모델 선택</option>
-        </select>
-        <button>검색</button>
+        <div class="search-bar">
+            <select>
+                <option>제조사</option>
+                <option>현대</option>
+                <option>기아</option>
+            </select>
+            <select>
+                <option>모델</option>
+            </select>
+            <select>
+                <option>세부모델</option>
+            </select>
+            <button class="search-btn">검색</button>
+        </div>
+        <div class="sub-info">
+            <p>총 등록차량 <strong>183,740대</strong> | 최근 등록 <strong>7,222대</strong></p>
+        </div>
     </div>
 
+    <!-- 오른쪽 내차팔기 박스 -->
     <div class="sell-box">
         <h2>내 차 팔기</h2>
         <p>최고가로 내 차를 팔아보세요!</p>
@@ -52,8 +58,26 @@
     </div>
 </div>
 
+<!-- 하단 컨텐츠 예시 -->
+<div class="section-row">
+    <h3>엔카의 자동차 리뷰</h3>
+    <div class="car-grid">
+        <div class="car-card">
+            <img src="/img/스포티지_하이브리드.jpg">
+            <p>KIA 스포티지 하이브리드</p>
+            <p>4.5점 | 연비 우수</p>
+        </div>
+        <div class="car-card">
+            <img src="/img/쏘렌토_하이브리드.jpg">
+            <p>KIA 쏘렌토 하이브리드</p>
+            <p>4.7점 | 안정감 우수</p>
+        </div>
+    </div>
+</div>
+
+<!-- 푸터 -->
 <div class="footer">
-    ⓒ 2025 N카. All rights reserved.
+    Ⓒ 2025 N카. All rights reserved.
 </div>
 
 </body>

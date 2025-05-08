@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>회원가입 - 2단계</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #fff;
+    }
+    .encar-title {
+      text-align: center;
+      color: red;
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .step-indicator {
+      text-align: center;
+      color: #333;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .checkbox-group {
+      margin-bottom: 20px;
+    }
+    .checkbox-group label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    .checkbox-group input[type="checkbox"] {
+      margin-right: 8px;
+    }
+    .agree-all {
+      font-weight: bold;
+    }
+    .next-button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: red;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+  <script>
+    function goToStep3() {
+      const allChecked = document.getElementById("agreeAll").checked;
+      if (!allChecked) {
+        alert("모든 약관에 동의하셔야 다음 단계로 진행할 수 있습니다.");
+        return;
+      }
+      window.location.href = "/register/step3.html";
+    }
+  </script>
+</head>
+<body>
+<div class="container">
+  <div class="encar-title">Encar 회원가입</div>
+  <div class="step-indicator">1. 회원선택 → <b>2. 약관동의</b> → 3. 정보입력 → 4. 완료</div>
+
+  <div class="checkbox-group">
+    <label><input type="checkbox" id="agreeAll"> <span class="agree-all">전체 약관에 동의합니다</span></label>
+    <label><input type="checkbox" checked disabled> [필수] 이용약관 동의</label>
+    <label><input type="checkbox" checked disabled> [필수] 개인정보 수집 및 이용 동의</label>
+    <label><input type="checkbox" checked disabled> [필수] 광고성 정보 수신 동의</label>
+  </div>
+
+  <button class="next-button" onclick="goToStep3()">다음</button>
+</div>
+</body>
+</html>
