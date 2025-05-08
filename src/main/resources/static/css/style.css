@@ -10,7 +10,7 @@ body {
     padding: 10px 20px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch; /* 왼쪽 정렬에서 전체 너비로 변경 */
 }
 
 .navbar a {
@@ -26,9 +26,29 @@ body {
 }
 
 .navbar-menu {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+  margin-top: 5px;
+
+  flex-wrap: nowrap;       /* ✅ 줄바꿈 방지 */
+  overflow-x: auto;        /* ✅ 너무 좁을 경우 가로 스크롤 허용 */
+  white-space: nowrap;     /* ✅ 글자가 줄바꿈되지 않도록 */
+}
+
+
+/* 왼쪽 내비게이션 메뉴 */
+.menu-left {
     display: flex;
-    margin-top: 5px;
     gap: 20px;
+}
+
+/* 오른쪽 로그인/회원가입 메뉴 */
+.menu-right {
+    display: flex;
+    gap: 15px;
+    padding-right: 30px; /* 👉 오른쪽 여백 조절 */
 }
 
 .big-link {

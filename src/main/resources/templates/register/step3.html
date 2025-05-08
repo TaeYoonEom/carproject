@@ -28,26 +28,37 @@
       display: flex;
       flex-direction: column;
       gap: 15px;
+      max-width: 400px;
+      margin: 0 auto;
     }
     label {
       font-weight: bold;
     }
-    input, select, button {
-      padding: 10px;
+    input, select {
+      padding: 8px;
       font-size: 14px;
       border: 1px solid #ccc;
       border-radius: 5px;
+      width: 100%;
+      box-sizing: border-box;
     }
     .gender-group, .verify-group {
       display: flex;
       gap: 10px;
       align-items: center;
     }
-    .submit-button {
+    .verify-group input {
+      flex: 1;
+    }
+    .submit-button, .check-button, .verify-button {
+      padding: 8px 12px;
+      font-size: 14px;
       background-color: red;
       color: white;
-      font-weight: bold;
+      border: none;
+      border-radius: 5px;
       cursor: pointer;
+      white-space: nowrap;
     }
   </style>
 </head>
@@ -56,7 +67,7 @@
   <div class="encar-title">Encar 회원가입</div>
   <div class="step-indicator">1. 회원선택 → 2. 약관동의 → <b>3. 정보입력</b> → 4. 완료</div>
 
-  <form action="/register/complete" method="post">
+  <form onsubmit="event.preventDefault(); window.location.href='/register/step4';">
     <div>
       <label>이름</label>
       <input type="text" name="name" required>
@@ -78,7 +89,10 @@
 
     <div>
       <label>아이디</label>
-      <input type="text" name="username" required>
+      <div class="verify-group">
+        <input type="text" name="username" required>
+        <button type="button" class="check-button">중복 확인</button>
+      </div>
     </div>
 
     <div>
@@ -95,7 +109,7 @@
       <label>휴대전화번호</label>
       <div class="verify-group">
         <input type="tel" name="phone" placeholder="010-1234-5678" required>
-        <button type="button">인증요청</button>
+        <button type="button" class="verify-button">인증요청</button>
       </div>
     </div>
 
