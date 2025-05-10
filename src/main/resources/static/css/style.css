@@ -6,6 +6,13 @@ body {
     margin: 0;
     padding: 0;
 }
+/* ✅ 전체 레이아웃 중앙 정렬용 컨테이너 */
+.container {
+    max-width: 1200px;  /* 또는 1100px, 1280px 원하는 너비로 */
+    margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
 
 /* =============================
    ✅ 상단 견적 + 로그인 박스 (분리형)
@@ -21,7 +28,7 @@ body {
 /* 견적 전체 박스 */
 .quote-click-box {
     flex: 3;
-    background-color: #f9f9f9;
+    background-color: #fff;
     border: 1px solid #ccc;
     padding: 30px 40px;
     box-sizing: border-box;
@@ -120,27 +127,33 @@ body {
 /* ✅ 우측 로그인 박스 */
 .login-box-separate {
     flex: 1;
-    background-color: #f9f9f9;
+    background-color: #fff;
     border: 1px solid #ccc;
     padding: 20px;
     box-sizing: border-box;
     text-align: center;
 }
 
-.login-title {
-    color: red;
-    margin-bottom: 10px;
-}
-
 .login-btn {
     display: inline-block;
-    padding: 8px 16px;
-    background-color: red;
-    color: white;
-    border: none;
+    padding: 12px 24px;
+    background-color: white;
+    color: red;
+    border: 1px solid red;
     text-decoration: none;
     font-weight: bold;
+    font-size: 16px;
     margin-bottom: 10px;
+    border-radius: 3px;
+    transition: all 0.2s ease-in-out;
+    width: 100%;               /* ✅ 가로 전체 너비 */
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.login-btn:hover {
+    background-color: red;
+    color: white;
 }
 
 .login-links {
@@ -161,7 +174,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 30px 0;
+    padding: 30px 30px 0;  /* ✅ 위쪽 여백 10px → 30px */
 }
 
 .navbar-title a {
@@ -271,8 +284,8 @@ body {
     justify-content: space-between;
     align-items: stretch;
     padding: 30px;
-    border: 1px solid #ccc;
-    background-color: #f9f9f9;
+    border: 2px solid #000;   /* ✅ 검정 테두리로 변경 */
+    background-color: #fff;
     margin: 30px 20px;
     gap: 30px;
 }
