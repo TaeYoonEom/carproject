@@ -7,39 +7,58 @@
 </head>
 <body>
 
-<div class="navbar">
-    <div class="navbar-title">
-        <a href="/"><b>Encar</b></a>
-    </div>
-    <div class="navbar-menu">
-        <a href="/">내차사기</a>
-        <a href="#" class="active">국산</a>
-        <a href="#">수입</a>
-        <a href="#">전기/친환경</a>
-        <a href="#" class="truck-link">화물/특장</a>
-
-        <div class="spacer"></div>
-
-        <a href="#">내차팔기</a>
-        <a href="#">비교견적</a>
-        <a href="#">직거래</a>
-    </div>
-</div>
-
-<div class="main">
-    <h2>국산차 검색</h2>
-    <div class="car-grid">
-        <div class="car-card">
-            <img src="/img/쏘렌토_하이브리드.jpg" alt="기아차 1">
-            <p>기아 쏘렌토 하이브리드</p>
-            <p>21년 | 3만km | 2,400만원</p>
+<div class="container">
+    <!-- 해당 배발소 복수 -->
+    <!-- 상단: 로고 + 로그인 -->
+    <div class="top-bar">
+        <div class="navbar-title">
+            <a href="/"><b>Encar</b></a>
         </div>
-        <div class="car-card">
-            <img src="/img/스포티지_하이브리드.jpg" alt="기아차 2">
-            <p>기아 스포티지</p>
-            <p>20년 | 4만km | 1,800만원</p>
+        <div class="top-right-menu">
+            <a href="/login">로그인</a>
+            <a href="/register">회원가입</a>
         </div>
-        <!-- ✨ 원하는 만큼 추가 가능 -->
+    </div>
+
+    <!-- 메뉴: 왼쪽 1차, 오른쪽 2차 -->
+    <div class="navbar">
+        <div class="navbar-menu">
+            <div class="menu-left">
+                <a href="/" data-path="/">내차사기</a>
+                <a href="/korean" data-path="/korean">국산</a>
+                <a href="#" data-path="#">수입</a>
+                <a href="#" data-path="#">전기 · 친환경</a>
+                <a href="#" data-path="#" class="truck-link">화물 · 특장</a>
+                <a href="#" data-path="#">엔카믿고 <span class="beta">Beta</span></a>
+                <a href="#" data-path="#" class="big-link">내차팔기</a>
+                <a href="#" data-path="#">비교견적</a>
+                <a href="#" data-path="#">직거래</a>
+            </div>
+
+            <div class="menu-right">
+                <a href="#" data-path="#">이차어때</a>
+                <a href="#" data-path="#">시세</a>
+                <a href="#" data-path="#">미디어</a>
+                <a href="#" data-path="#">이벤트</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main">
+        <h2>국산차 검색</h2>
+        <div class="car-grid">
+            <div class="car-card">
+                <img src="/img/쏘렌토_하이브리드.jpg" alt="기아차 1">
+                <p>기아 쏘렌토 하이브리드</p>
+                <p>21년 | 3만km | 2,400만원</p>
+            </div>
+            <div class="car-card">
+                <img src="/img/스포티지_하이브리드.jpg" alt="기아차 2">
+                <p>기아 스포티지</p>
+                <p>20년 | 4만km | 1,800만원</p>
+            </div>
+            <!-- ✨ 원하는 만큼 추가 가능 -->
+        </div>
     </div>
 </div>
 
@@ -49,3 +68,17 @@
 
 </body>
 </html>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const path = window.location.pathname;
+        const links = document.querySelectorAll('.menu-left a, .menu-right a');
+        links.forEach(link => {
+            const menuPath = link.getAttribute('data-path');
+            if (menuPath && menuPath !== '#' && path === menuPath) {
+                link.classList.add('active');
+            }
+        });
+    });
+</script>
+
