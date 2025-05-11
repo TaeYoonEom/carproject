@@ -585,13 +585,118 @@ h2 {
     max-width: 350px;
 }
 
-.quote-box,
+/* 내차 견적을 안내드립니다 css*/
+/* 전체 영역을 감싸는 링크 스타일 */
+.quote-link {
+  text-decoration: none;
+  display: block;
+  color: inherit;
+}
+
+/* quote-box 시각적 유지 */
+.quote-box {
+  border: none;
+  padding: 30px 20px;
+  background-color: #fff;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* 마우스 호버 시 버튼 느낌 */
+.quote-link:hover .quote-box {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 제목 */
+.quote-title {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* 부제 */
+.quote-subtitle {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 20px;
+}
+
+/* 차량번호 버튼 */
+.plate-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 80%; /* 가로 줄임 */
+  margin: 0 auto 15px auto;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: bold;
+  background-color: #f7f7f7;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* 나사 ● */
+.bolt {
+  font-size: 16px;
+  color: #999;
+}
+
+/* 버튼 모양 */
+.quote-btn {
+  display: inline-block;
+  width: 80%; /* 가로 줄임 */
+  margin: 0 auto;
+  padding: 12px;
+  background-color: #333;
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 6px;
+}
+/* Q&A 와 공지사항 */
+/* 기존 박스 스타일 유지 */
 .qna-box,
 .notice-box {
     margin-bottom: 30px;
     border: 1px solid #ddd;
     padding: 14px;
     background-color: #f9f9f9;
+    border-radius: 6px;
+}
+
+/* 제목을 버튼처럼 보이게 (링크) */
+.section-title {
+    text-decoration: none;
+    color: #111;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* 마우스 올렸을 때 빨간색 */
+.section-title:hover {
+    color: red;
+}
+
+/* 리스트 항목 링크 기본 스타일 */
+.qna-box ul li a,
+.notice-box ul li a {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.2s ease;
+    font-size: 14px;
+}
+
+/* 마우스 올리면 빨간색 */
+.qna-box ul li a:hover,
+.notice-box ul li a:hover {
+    color: red;
 }
 
 .sidebar input {

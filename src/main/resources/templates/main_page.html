@@ -232,28 +232,39 @@
 
         <!-- 오른쪽 사이드바 -->
         <div class="sidebar">
-            <div class="quote-box">
-                <h3>내차 견적을 안내드립니다</h3>
-                <input type="text" placeholder="차량번호 입력란">
-                <button>엔카 비교견적</button>
-            </div>
+            <a href="#" class="quote-link"> <!-- 전체가 버튼처럼 클릭되도록 -->
+                <div class="quote-box">
+                    <h3 class="quote-title">내차 견적을 <br> 안내드립니다</h3>
+                    <p class="quote-subtitle">실시간으로 <b>최고가 견적</b>을 확인하세요</p>
 
+                    <div class="plate-button">
+                        <span class="bolt">●</span>
+                        차량번호 입력란
+                        <span class="bolt">●</span>
+                    </div>
+
+                    <div class="quote-btn">엔카 비교견적</div>
+                </div>
+            </a>
+            <br><br>
+            <!-- Q&A 영역 -->
             <div class="qna-box">
-                <h4>Q&A</h4>
+                <h4><a href="#" class="section-title">Q&A</a></h4>
                 <ul>
-                    <li>좋은 중고차는 어떤 차량인가요?</li>
-                    <li>하이브리드인지 어떻게 구분하나요?</li>
-                    <li>사고차의 기준과 내용을 알려주세요.</li>
-                    <li>시세는 어떻게 결정되나요?</li>
+                    <li><a href="#">좋은 중고차는 어떤 차량인가요?</a></li>
+                    <li><a href="#">하이브리드인지 어떻게 구분하나요?</a></li>
+                    <li><a href="#">사고차의 기준과 내용을 알려주세요.</a></li>
+                    <li><a href="#">시세는 어떻게 결정되나요?</a></li>
                 </ul>
             </div>
 
+            <!-- 공지사항 영역 -->
             <div class="notice-box">
-                <h4>공지사항</h4>
+                <h4><a href="#" class="section-title">공지사항</a></h4>
                 <ul>
-                    <li>전기차 배터리 이상 점검 안내</li>
-                    <li>차량별 피해항목 바로잡고 가기</li>
-                    <li>개인정보처리방침 변경 안내</li>
+                    <li><a href="#">전기차 배터리 이상 점검 안내</a></li>
+                    <li><a href="#">차량별 피해항목 바로잡고 가기</a></li>
+                    <li><a href="#">개인정보처리방침 변경 안내</a></li>
                 </ul>
             </div>
         </div>
@@ -422,6 +433,19 @@
         track.scrollBy({ left: 220, behavior: 'smooth' });
     });
 
+    // [엔카에서 내차 찾기]모든 탭 요소 가져오기
+      const tabs = document.querySelectorAll('.tab');
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          // 모든 탭에서 active 제거
+          tabs.forEach(t => t.classList.remove('active'));
+          // 현재 클릭된 탭에 active 추가
+          tab.classList.add('active');
+        });
+      });
+
+    // 맨 아래 푸터
     document.addEventListener("DOMContentLoaded", function () {
         const path = window.location.pathname;
         const links = document.querySelectorAll('.menu-left a, .menu-right a');
