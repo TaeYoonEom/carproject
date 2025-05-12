@@ -22,9 +22,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // JPA 사용
-	implementation 'org.mariadb.jdbc:mariadb-java-client:3.3.3' // MariaDB 드라이버
+	implementation 'org.mariadb.jdbc:mariadb-java-client:3.1.4' // MariaDB 드라이버
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	runtimeOnly 'com.h2database:h2'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

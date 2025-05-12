@@ -8,24 +8,40 @@
 </head>
 <body>
 
-<div class="navbar">
-    <div class="navbar-title">
-        <a href="/"><b>Encar</b></a>
-    </div>
-    <div class="navbar-menu">
-        <div class="menu-left">
-            <a href="#" class="big-link">내차사기</a>
-            <a href="/korean">국산</a>
-            <a href="#">수입</a>
-            <a href="#">전기/친환경</a>
-            <a href="#" class="truck-link">화물/특장</a>
-            <a href="#" class="big-link">내차팔기</a>
-            <a href="#">비교견적</a>
-            <a href="#">직거래</a>
+<div class="container">
+    <!-- 해당 배발소 복수 -->
+    <!-- 상단: 로고 + 로그인 -->
+    <div class="top-bar">
+        <div class="navbar-title">
+            <a href="/"><b>Encar</b></a>
         </div>
-        <div class="menu-right">
-            <a href="/login" class="login-button">로그인</a>
-            <a href="/register" class="register-button">회원가입</a>
+        <div class="top-right-menu">
+            <a href="/login">로그인</a>
+            <a href="/register">회원가입</a>
+        </div>
+    </div>
+
+    <!-- 메뉴: 왼쪽 1차, 오른쪽 2차 -->
+    <div class="navbar">
+        <div class="navbar-menu">
+            <div class="menu-left">
+                <a href="/" data-path="/">내차사기</a>
+                <a href="/korean" data-path="/korean">국산</a>
+                <a href="#" data-path="#">수입</a>
+                <a href="#" data-path="#">전기 · 친환경</a>
+                <a href="#" data-path="#" class="truck-link">화물 · 특장</a>
+                <a href="#" data-path="#">엔카믿고 <span class="beta">Beta</span></a>
+                <a href="#" data-path="#" class="big-link">내차팔기</a>
+                <a href="#" data-path="#">비교견적</a>
+                <a href="#" data-path="#">직거래</a>
+            </div>
+
+            <div class="menu-right">
+                <a href="#" data-path="#">이차어때</a>
+                <a href="#" data-path="#">시세</a>
+                <a href="#" data-path="#">미디어</a>
+                <a href="#" data-path="#">이벤트</a>
+            </div>
         </div>
     </div>
 </div>

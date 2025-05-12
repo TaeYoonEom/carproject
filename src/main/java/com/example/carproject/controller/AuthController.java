@@ -26,10 +26,10 @@ public class AuthController {
         return "register/step2";
     }
 
-    @GetMapping("/register/step3")
-    public String step3() {
-        return "register/step3";
-    }
+//    @GetMapping("/register/step3")
+//    public String step3() {
+//        return "register/step3";
+//    }
 
     @GetMapping("/register/step4")
     public String step4() {

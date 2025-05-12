@@ -67,8 +67,8 @@
   <div class="encar-title">Encar 회원가입</div>
   <div class="step-indicator">1. 회원선택 → 2. 약관동의 → <b>3. 정보입력</b> → 4. 완료</div>
 
-  <form onsubmit="event.preventDefault(); window.location.href='/register/step4';">
-    <div>
+  <form method="post" action="/register/step3">
+  <div>
       <label>이름</label>
       <input type="text" name="name" required>
     </div>
@@ -78,14 +78,6 @@
       <input type="date" name="birth" required>
     </div>
 
-    <div>
-      <label>성별</label>
-      <div class="gender-group">
-        <label><input type="radio" name="gender" value="male"> 남</label>
-        <label><input type="radio" name="gender" value="female"> 여</label>
-        <label><input type="radio" name="gender" value="none" checked> 선택안함</label>
-      </div>
-    </div>
 
     <div>
       <label>아이디</label>
