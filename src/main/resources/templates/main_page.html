@@ -88,10 +88,11 @@
             <h1>엔카에서 내 차 찾기</h1>
 
             <!-- 기존: search-tabs와 search-stats 분리되어 있던 부분을 하나로 묶음 -->
+            <!-- ✅ 탭 -->
             <div class="search-tabs-wrapper">
                 <div class="search-tabs">
-                    <span class="tab active">국산+수입차</span>
-                    <span class="tab">화물·특장·버스</span>
+                    <span class="tab active" data-type="normal">국산+수입차</span>
+                    <span class="tab" data-type="truck">화물·특장·버스</span>
                 </div>
                 <div class="search-stats-right">
                     <div class="stat-row">
@@ -103,37 +104,107 @@
                 </div>
             </div>
 
-            <!-- 드롭다운 박스 -->
-            <div class="search-form-wrapper">
-                <div class="search-form-box">
-                    <select>
-                        <option>제조사</option>
-                        <option>현대</option>
-                        <option>기아</option>
-                    </select>
-                    <select disabled><option>모델</option></select>
-                    <select disabled><option>세부모델</option></select>
-                </div>
-                <button class="search-btn">검색</button>
-            </div>
+            <!-- ✅ 선택된 타입에 따라 변경되는 박스 -->
+            <!-- 국산+수입차용 -->
+            <div class="search-content search-normal active">
+                <!-- 드롭다운 -->
+                <div class="search-form-wrapper">
+                    <div class="search-form-box">
+                        <!-- 제조사 -->
+                        <select>
+                            <option>제조사</option>
+                            <option>현대</option>
+                            <option>기아</option>
+                        </select>
 
-            <!-- 🔽 추천매물 및 매매지원 -->
-            <div class="recommend-box">
-                <div class="recommend-section">
-                    <strong>추천매물</strong>
-                    <div class="grid-2col">
-                        <span>엔카로그 차량 <span style="color:red;">N</span></span>
-                        <span>엔카진단 차량</span>
-                        <span>엔카종합보증 국산차량</span>
-                        <span>찜한 차량</span>
+                        <!-- 모델 (disabled) -->
+                        <select disabled>
+                            <option>모델</option>
+                            <!-- 현대 -->
+                            <option>아반떼</option>
+                            <option>쏘나타</option>
+                            <!-- 기아 -->
+                            <option>K3</option>
+                            <option>K5</option>
+                        </select>
+
+                        <!-- 세부모델 (disabled) -->
+                        <select disabled>
+                            <option>세부모델</option>
+                            <!-- 아반떼 -->
+                            <option>1.6 스마트</option>
+                            <option>1.6 인스퍼레이션</option>
+                            <!-- K5 -->
+                            <option>2.0 트렌디</option>
+                            <option>2.0 노블레스</option>
+                        </select>
+                    </div>
+                    <button class="search-btn">검색</button>
+                </div>
+
+                <!-- 추천매물 & 매매지원 -->
+                <div class="recommend-box">
+                    <div class="recommend-section">
+                        <strong>추천매물</strong>
+                        <div class="grid-2col">
+                            <a href="#" class="grid-button">엔카로그 차량 <span>N</span></a>
+                            <a href="#" class="grid-button">엔카진단 차량</a>
+                            <a href="#" class="grid-button">엔카종합보증 국산차량</a>
+                            <a href="#" class="grid-button">찜한 차량</a>
+                        </div>
+                    </div>
+                    <div class="recommend-section">
+                        <strong>매매지원</strong>
+                        <div class="grid-2col">
+                            <a href="#" class="grid-button">중고차 시세</a>
+                            <a href="#" class="grid-button">엔카프리미엄진단</a>
+                            <a href="#" class="grid-button">엔카 진단등록예약</a>
+                        </div>
                     </div>
                 </div>
-                <div class="recommend-section">
-                    <strong>매매지원</strong>
-                    <div class="grid-2col">
-                        <span>중고차 시세</span>
-                        <span>엔카프리미엄진단</span>
-                        <span>엔카 진단등록예약</span>
+            </div>
+
+            <!-- 화물·특장·버스용 -->
+            <div class="search-content search-truck">
+                <!-- 드롭다운 -->
+                <div class="search-form-wrapper">
+                    <div class="search-form-box">
+                        <!-- 형식 -->
+                        <select id="truck-type-select">
+                            <option>형식</option>
+                            <option>탑차</option>
+                            <option>윙바디</option>
+                            <option>냉동탑차</option>
+                        </select>
+
+                        <!-- 세부형식 (disabled) -->
+                        <select id="truck-subtype-select" disabled>
+                            <option>세부형식</option>
+                            <option>일반탑차</option>
+                            <option>내장탑차</option>
+                            <option>고하중윙바디</option>
+                            <option>냉장탑차</option>
+                        </select>
+
+                        <!-- 적재용량 (disabled) -->
+                        <select id="truck-capacity-select" disabled>
+                            <option>적재용량</option>
+                            <option>1톤</option>
+                            <option>2.5톤</option>
+                            <option>5톤</option>
+                        </select>
+                    </div>
+                    <button class="search-btn">검색</button>
+                </div>
+
+                <!-- 추천매물 전용 -->
+                <div class="recommend-box">
+                    <div class="recommend-section">
+                        <strong>추천매물</strong>
+                        <div class="grid-2col">
+                            <a href="#" class="grid-button">엔카진단 차량</a>
+                            <a href="#" class="grid-button">1톤 인기 화물차</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -458,6 +529,61 @@
 
     nextBtn.addEventListener('click', () => {
         track.scrollBy({ left: 220, behavior: 'smooth' });
+    });
+
+    // 엔카에서 내 차 찾기 javascript
+    document.querySelectorAll(".search-tabs .tab").forEach(tab => {
+        tab.addEventListener("click", function () {
+            // 탭 활성화
+            document.querySelectorAll(".search-tabs .tab").forEach(t => t.classList.remove("active"));
+            this.classList.add("active");
+
+            // 내용 표시 전환
+            const selected = this.dataset.type;
+            document.querySelectorAll(".search-content").forEach(box => box.classList.remove("active"));
+            document.querySelector(`.search-${selected}`).classList.add("active");
+        });
+    });
+
+    // [엔카에서 내 차 찾기]국산 수입차
+    document.addEventListener("DOMContentLoaded", function () {
+        const manufacturerSelect = document.querySelectorAll('.search-form-box select')[0]; // 제조사
+        const modelSelect = document.querySelectorAll('.search-form-box select')[1]; // 모델
+        const detailModelSelect = document.querySelectorAll('.search-form-box select')[2]; // 세부모델
+
+        // 제조사 선택 시 모델 드롭다운 활성화
+        manufacturerSelect.addEventListener('change', function () {
+            if (this.value !== '제조사') {
+                modelSelect.disabled = false;
+            } else {
+                modelSelect.disabled = true;
+                detailModelSelect.disabled = true;
+            }
+        });
+
+    // [엔카에서 내 차 찾기]화물 특장 버스
+    document.addEventListener("DOMContentLoaded", function () {
+        const typeSelect = document.getElementById('truck-type-select');
+        const subTypeSelect = document.getElementById('truck-subtype-select');
+        const capacitySelect = document.getElementById('truck-capacity-select');
+
+        typeSelect.addEventListener('change', function () {
+            const selected = this.value;
+            const isValid = selected !== '형식';
+
+            subTypeSelect.disabled = !isValid;
+            capacitySelect.disabled = !isValid;
+        });
+    });
+
+        // 모델 선택 시 세부모델 드롭다운 활성화
+        modelSelect.addEventListener('change', function () {
+            if (this.value !== '모델') {
+                detailModelSelect.disabled = false;
+            } else {
+                detailModelSelect.disabled = true;
+            }
+        });
     });
 
     // [엔카에서 내차 찾기]모든 탭 요소 가져오기
