@@ -16,30 +16,23 @@ body {
 
 /* ==== 레이아웃 ==== */
 .page-wrapper {
-    width: 1200px;          /* 데스크톱 기준 콘텐츠 폭 */
+    width: 100%;          /* 데스크톱 기준 콘텐츠 폭 */
     max-width: 100%;        /* 1200px보다 화면이 좁을 때 가로 스크롤 방지 */
     margin: 0 auto;         /* ←→ 동일 여백 → 항상 중앙 */
+    margin-top: 30px;
     display: flex;
     gap: 20px;
     box-sizing: border-box;
 }
 
-/* ✅ 콘텐츠 위 여백 추가 */
-.content {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-    padding: 20px;
-}
-
 /* 좌측 필터 */
 .sidebar-left{
-    flex:0 0 260px;
+    flex:0 0 200px;
     border:1px solid #e1e1e1;
     background:#fafafa;
     overflow-y:auto;
     max-height:calc(100vh - 120px);
-    padding:16px;
+    padding:10px;
 }
 .filter-header{
     position:sticky;
@@ -93,8 +86,7 @@ details summary{ list-style:none; padding-left:0; }
 .content {
     display: flex;
     flex-direction: column;
-    gap: 40px;
-    padding: 20px;
+    padding: 5px;
 }
 
 .section-title {
@@ -108,12 +100,12 @@ details summary{ list-style:none; padding-left:0; }
 .encar-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr); /* ✅ 무조건 4열 */
-    gap: 20px;
+    gap: 10px;
     justify-items: center;
 }
 
 .encar-card {
-    width: 240px;
+    width: 180px;
     border: 1px solid #ddd;
     border-radius: 6px;
     background: #fff;
@@ -123,7 +115,7 @@ details summary{ list-style:none; padding-left:0; }
 
 .encar-img {
     width: 100%;
-    height: 140px;
+    height: 100px;
     object-fit: cover;
 }
 
@@ -181,16 +173,17 @@ details summary{ list-style:none; padding-left:0; }
 }
 /* 우측 배너/모듈 */
 .sidebar-right{
-    flex:0 0 260px;
+    flex:0 0 130px;
     display:flex;
     flex-direction:column;
-    gap:20px;
+    gap:10px;
+    margin-top: 30px;
 }
 .widget,.ad-box{
     border:1px solid #e1e1e1;
     border-radius:4px;
     background:#fff;
-    padding:16px;
+    padding:10px;
 }
 
 /* ==== 반응형 ==== */
