@@ -532,59 +532,67 @@
     });
 
     // 엔카에서 내 차 찾기 javascript
-    document.querySelectorAll(".search-tabs .tab").forEach(tab => {
-        tab.addEventListener("click", function () {
-            // 탭 활성화
-            document.querySelectorAll(".search-tabs .tab").forEach(t => t.classList.remove("active"));
-            this.classList.add("active");
-
-            // 내용 표시 전환
-            const selected = this.dataset.type;
-            document.querySelectorAll(".search-content").forEach(box => box.classList.remove("active"));
-            document.querySelector(`.search-${selected}`).classList.add("active");
-        });
-    });
-
-    // [엔카에서 내 차 찾기]국산 수입차
     document.addEventListener("DOMContentLoaded", function () {
-        const manufacturerSelect = document.querySelectorAll('.search-form-box select')[0]; // 제조사
-        const modelSelect = document.querySelectorAll('.search-form-box select')[1]; // 모델
-        const detailModelSelect = document.querySelectorAll('.search-form-box select')[2]; // 세부모델
+        // ✅ 탭 전환
+        document.querySelectorAll(".search-tabs .tab").forEach(tab => {
+            tab.addEventListener("click", function () {
+                document.querySelectorAll(".search-tabs .tab").forEach(t => t.classList.remove("active"));
+                this.classList.add("active");
 
-        // 제조사 선택 시 모델 드롭다운 활성화
+                const selected = this.dataset.type;
+                document.querySelectorAll(".search-content").forEach(box => box.classList.remove("active"));
+                document.querySelector(`.search-${selected}`).classList.add("active");
+            });
+        });
+
+        // ✅ 국산+수입차
+        const normalForm = document.querySelector(".search-normal");
+        const manufacturerSelect = normalForm.querySelectorAll('select')[0];
+        const modelSelect = normalForm.querySelectorAll('select')[1];
+        const detailModelSelect = normalForm.querySelectorAll('select')[2];
+
         manufacturerSelect.addEventListener('change', function () {
             if (this.value !== '제조사') {
                 modelSelect.disabled = false;
             } else {
+                // 🔄 초기화 및 비활성화
+                modelSelect.value = '모델';
                 modelSelect.disabled = true;
+                detailModelSelect.value = '세부모델';
                 detailModelSelect.disabled = true;
             }
         });
 
-    // [엔카에서 내 차 찾기]화물 특장 버스
-    document.addEventListener("DOMContentLoaded", function () {
-        const typeSelect = document.getElementById('truck-type-select');
-        const subTypeSelect = document.getElementById('truck-subtype-select');
-        const capacitySelect = document.getElementById('truck-capacity-select');
-
-        typeSelect.addEventListener('change', function () {
-            const selected = this.value;
-            const isValid = selected !== '형식';
-
-            subTypeSelect.disabled = !isValid;
-            capacitySelect.disabled = !isValid;
-        });
-    });
-
-        // 모델 선택 시 세부모델 드롭다운 활성화
         modelSelect.addEventListener('change', function () {
             if (this.value !== '모델') {
                 detailModelSelect.disabled = false;
             } else {
+                detailModelSelect.value = '세부모델';
                 detailModelSelect.disabled = true;
             }
         });
+
+        // ✅ 화물 특장 버스
+        const truckForm = document.querySelector(".search-truck");
+        const typeSelect = truckForm.querySelector("#truck-type-select");
+        const subTypeSelect = truckForm.querySelector("#truck-subtype-select");
+        const capacitySelect = truckForm.querySelector("#truck-capacity-select");
+
+        typeSelect.addEventListener('change', function () {
+            const isValid = this.value !== '형식';
+            if (isValid) {
+                subTypeSelect.disabled = false;
+                capacitySelect.disabled = false;
+            } else {
+                // 🔄 초기화 및 비활성화
+                subTypeSelect.value = '세부형식';
+                subTypeSelect.disabled = true;
+                capacitySelect.value = '적재용량';
+                capacitySelect.disabled = true;
+            }
+        });
     });
+
 
     // [엔카에서 내차 찾기]모든 탭 요소 가져오기
       const tabs = document.querySelectorAll('.tab');
