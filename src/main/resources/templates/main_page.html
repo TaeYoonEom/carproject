@@ -84,38 +84,65 @@
     <div class="search-sell-wrapper">
         <!-- 왼쪽: 검색 영역 -->
         <div class="search-left">
+            <!-- 상단 타이틀 -->
             <h1>엔카에서 내 차 찾기</h1>
 
-            <!-- 상단 탭 메뉴 (선택사항) -->
-            <div class="search-tabs">
-                <span class="tab active">국산+수입차</span>
-                <span class="tab">화물·특장·버스</span>
+            <!-- 기존: search-tabs와 search-stats 분리되어 있던 부분을 하나로 묶음 -->
+            <div class="search-tabs-wrapper">
+                <div class="search-tabs">
+                    <span class="tab active">국산+수입차</span>
+                    <span class="tab">화물·특장·버스</span>
+                </div>
+                <div class="search-stats-right">
+                    <div class="stat-row">
+                        <span>전체</span><span><span class="highlight-red">181,712</span>대</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>최근등록 <small>(24시간)</small></span><span><span class="highlight-red">4,074</span>대</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="search-bar">
-                <select>
-                    <option>제조사</option>
-                    <option>현대</option>
-                    <option>기아</option>
-                </select>
-                <select>
-                    <option>모델</option>
-                </select>
-                <select>
-                    <option>세부모델</option>
-                </select>
+            <!-- 드롭다운 박스 -->
+            <div class="search-form-wrapper">
+                <div class="search-form-box">
+                    <select>
+                        <option>제조사</option>
+                        <option>현대</option>
+                        <option>기아</option>
+                    </select>
+                    <select disabled><option>모델</option></select>
+                    <select disabled><option>세부모델</option></select>
+                </div>
                 <button class="search-btn">검색</button>
             </div>
 
-            <div class="sub-info">
-                <p>전체 <strong>183,740대</strong> | 최근 등록 <strong>7,222대</strong></p>
+            <!-- 🔽 추천매물 및 매매지원 -->
+            <div class="recommend-box">
+                <div class="recommend-section">
+                    <strong>추천매물</strong>
+                    <div class="grid-2col">
+                        <span>엔카로그 차량 <span style="color:red;">N</span></span>
+                        <span>엔카진단 차량</span>
+                        <span>엔카종합보증 국산차량</span>
+                        <span>찜한 차량</span>
+                    </div>
+                </div>
+                <div class="recommend-section">
+                    <strong>매매지원</strong>
+                    <div class="grid-2col">
+                        <span>중고차 시세</span>
+                        <span>엔카프리미엄진단</span>
+                        <span>엔카 진단등록예약</span>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- 오른쪽: 내 차 팔기 -->
         <div class="sell-right">
             <h2>내 차 팔기</h2>
-            <p>최고가로 내 차를 팔아보세요!</p>
+            <p>엔카에서 최고가로 내 차를 팔 수 있는 방법을 알아보세요.</p>
             <button class="sell-btn">내 차 팔기 시작</button>
         </div>
     </div>

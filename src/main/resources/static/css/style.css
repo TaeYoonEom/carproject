@@ -306,6 +306,10 @@ body {
 .search-left {
     flex: 3;
 }
+/* h1 아래 여백 줄이기 */
+.search-left h1 {
+    margin-bottom: 6px;
+}
 
 /* 오른쪽: 내 차 팔기 영역 */
 .sell-right {
@@ -317,9 +321,61 @@ body {
     justify-content: center;
 }
 
-/* 탭 메뉴 */
-.search-tabs {
+/* ✅ 탭과 등록 수 한 줄 정렬 */
+.search-tabs-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 10px;
+}
+
+/* ✅ 탭과 등록 수를 양쪽으로 정렬 */
+.search-tabs-wrapper {
+    display: grid; /* ✅ flex → grid */
+    grid-template-columns: 1fr auto;  /* 좌: 탭 / 우: 통계 */
+    grid-template-rows: auto auto;    /* 두 줄 배치 */
+    column-gap: 20px;
+    row-gap: 2px;
+    width: 100%;
+    margin-bottom: 6px;
+}
+
+/* 탭 영역 */
+.search-tabs {
+    grid-column: 1;
+    grid-row: 2; /* ✅ 아래쪽 줄 */
+    display: flex;
+    gap: 15px;
+    flex-shrink: 1;
+    white-space: nowrap;
+}
+
+/* 새로 추가 - 우측 등록 수 */
+/* 등록 수 우측 배치 (2줄 정렬) */
+.search-stats-right {
+    grid-column: 2;
+    grid-row: 1 / span 2; /* ✅ 위+아래 모두 차지 */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* ✅ 오른쪽 정렬 */
+    gap: 2px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 120px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 10px;
+}
+
+.highlight-red {
+    color: #d20000;
 }
 
 .tab {
@@ -334,24 +390,88 @@ body {
     color: red;
 }
 
-/* 검색 드롭다운 + 버튼 */
-.search-bar {
+/* 검색 박스 전체 */
+.search-form-wrapper {
     display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
+    border: 1px solid #d20000;
+    margin-top: 2px;          /* 🔻 여백 완전 제거 */
+    width: 100%;
 }
 
-.search-bar select,
-.search-bar button {
-    padding: 10px;
-    font-size: 16px;
+/* 🔴 드롭다운 컨테이너 */
+.search-form-box {
+    display: flex;
+    flex: 1;
 }
 
+/* 드롭다운 공통 스타일 */
+.search-form-box select {
+    border: none;
+    border-right: 1px solid #d20000;   /* ✅ 오른쪽 구분선 */
+    padding: 12px 40px 12px 16px;       /* ✅ 오른쪽 패딩 여유 (화살표용) */
+    font-size: 14px;
+    min-width: 160px;
+    appearance: none;                  /* ✅ 기본 드롭다운 제거 */
+    background-color: white;
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l5 6 5-6H0z' fill='%23333'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 10px;
+}
+
+/* 마지막 select 오른쪽 선 제거 */
+.search-form-box select:last-child {
+    border-right: none;
+}
+
+/* 드롭다운 focus 시 테두리 없애기 */
+.search-form-box select:focus {
+    outline: none;
+}
+
+
+/* 🔴 검색 버튼 스타일 */
 .search-btn {
-    background-color: red;
+    background-color: #d20000;
     color: white;
     border: none;
+    padding: 12px 65px;
+    font-size: 14px;
+    font-weight: bold;
     cursor: pointer;
+}
+
+/* 🔴 상단 차량 등록 수 정보 */
+.search-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-bottom: 0px; /* 🔽 기존: 10px → 0px 또는 5px */
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+
+/* 🔽 추천매물 및 매매지원 박스 */
+.recommend-box {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    margin-top: 20px;
+    font-size: 13px;
+    color: #444
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+.recommend-section {
+    flex: 1;
+}
+.grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px 15px;
+    margin-top: 5px;
 }
 
 /* 내차팔기 버튼 */
