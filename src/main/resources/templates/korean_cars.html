@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>국산차 검색</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/cate_gory.css">
 </head>
 <body>
 
@@ -12,35 +13,313 @@
         <a href="/"><b>Encar</b></a>
     </div>
     <div class="navbar-menu">
-        <a href="/">내차사기</a>
-        <a href="#" class="active">국산</a>
-        <a href="#">수입</a>
-        <a href="#">전기/친환경</a>
-        <a href="#" class="truck-link">화물/특장</a>
-
-        <div class="spacer"></div>
-
-        <a href="#">내차팔기</a>
-        <a href="#">비교견적</a>
-        <a href="#">직거래</a>
+        <div class="menu-left">
+            <a href="#" class="big-link">내차사기</a>
+            <a href="/korean">국산</a>
+            <a href="#">수입</a>
+            <a href="#">전기/친환경</a>
+            <a href="#" class="truck-link">화물/특장</a>
+            <a href="#" class="big-link">내차팔기</a>
+            <a href="#">비교견적</a>
+            <a href="#">직거래</a>
+        </div>
+        <div class="menu-right">
+            <a href="/login" class="login-button">로그인</a>
+            <a href="/register" class="register-button">회원가입</a>
+        </div>
     </div>
 </div>
 
-<div class="main">
-    <h2>국산차 검색</h2>
-    <div class="car-grid">
-        <div class="car-card">
-            <img src="/img/쏘렌토_하이브리드.jpg" alt="기아차 1">
-            <p>기아 쏘렌토 하이브리드</p>
-            <p>21년 | 3만km | 2,400만원</p>
+<!-- === 기본 HTML 골격 === -->
+<div class="page-wrapper">
+    <!-- 좌측 필터 영역 -->
+    <aside class="sidebar-left">
+        <div class="filter-header">
+            <h4>국산차 검색</h4>
+            <span class="allcount">
+            대
+            </span>
+            선택초기화 최근검색조건
         </div>
-        <div class="car-card">
-            <img src="/img/스포티지_하이브리드.jpg" alt="기아차 2">
-            <p>기아 스포티지</p>
-            <p>20년 | 4만km | 1,800만원</p>
+
+        <!-- 차종 -->
+        <details class="filter-group" open>
+            <summary>차종</summary>
+            <ul class="filter-list">
+                <label><input type="checkbox"> 세단</label>
+                <label><input type="checkbox"> SUV</label>
+                <label><input type="checkbox"> 해치백</label>
+                <label><input type="checkbox"> RV/MPV</label>
+                <label><input type="checkbox"> 기타</label>
+            </ul>
+        </details>
+
+        <!-- 제조사 / 모델 / 등급 -->
+        <details class="filter-group">
+            <summary>제조사 / 모델 / 등급</summary>
+            <ul class="filter-list">
+                <label><input type="checkbox"> 현대</label>
+                <label><input type="checkbox"> 기아</label>
+                <label><input type="checkbox"> 제네시스</label>
+            </ul>
+        </details>
+
+        <!-- 연식 -->
+        <details class="filter-group">
+            <summary>연식</summary>
+            <ul class="filter-list">
+                <input type="number" placeholder="최소 연식"> ~
+                <input type="number" placeholder="최대 연식">
+            </ul>
+        </details>
+
+        <!-- 주행거리 -->
+        <details class="filter-group">
+            <summary>주행거리</summary>
+            <ul class="filter-list">
+                <input type="number" placeholder="최소 km"> ~
+                <input type="number" placeholder="최대 km">
+            </ul>
+        </details>
+
+        <!-- 가격 -->
+        <details class="filter-group">
+            <summary>가격</summary>
+            <ul class="filter-list">
+                <input type="number" placeholder="최소 만원"> ~
+                <input type="number" placeholder="최대 만원">
+            </ul>
+        </details>
+
+        <!-- 지역 -->
+        <details class="filter-group">
+            <summary>지역</summary>
+            <ul class="filter-list">
+                <label><input type="checkbox"> 서울</label>
+                <label><input type="checkbox"> 경기</label>
+                <label><input type="checkbox"> 부산</label>
+            </ul>
+        </details>
+
+        <!-- 인승 -->
+        <details class="filter-group">
+            <summary>인승</summary>
+            <ul class="filter-list">
+                <label><input type="checkbox"> 2인승</label>
+                <label><input type="checkbox"> 5인승</label>
+                <label><input type="checkbox"> 7인승 이상</label>
+            </ul>
+        </details>
+
+        <!-- 성능 / 보험 공개 -->
+        <details class="filter-group">
+            <summary>성능 / 보험 공개</summary>
+            <ul class="filter-list">
+                <label><input type="checkbox"> 성능점검기록부</label>
+                <label><input type="checkbox"> 보험이력</label>
+            </ul>
+        </details>
+
+        <!-- 판매자 구분 -->
+        <details class="filter-group">
+            <summary>판매자 구분</summary>
+            <ul class="filter-list">
+                <label><input type="checkbox"> 일반딜러</label>
+                <label><input type="checkbox"> 인증딜러</label>
+                <label><input type="checkbox"> 개인판매자</label>
+            </ul>
+        </details>
+
+        <!-- 판매 방식 -->
+        <details class="filter-group">
+            <summary>판매 방식</summary>
+            <ul class="filter-list">
+                <label><input type="checkbox"> 즉시결제</label>
+                <label><input type="checkbox"> 위탁판매</label>
+            </ul>
+        </details>
+
+        <!-- 외부 색상 -->
+        <details class="filter-group">
+            <summary>외부 색상</summary>
+            <ul class="filter-list">
+                <label><input type="checkbox"> 블랙</label>
+                <label><input type="checkbox"> 화이트</label>
+                <label><input type="checkbox"> 실버</label>
+                <!-- … -->
+            </ul>
+        </details>
+
+        <!-- 내부 색상 -->
+        <details class="filter-group">
+            <summary>내부 색상</summary>
+            <ul class="filter-list">
+                <label><input type="checkbox"> 블랙</label>
+                <label><input type="checkbox"> 베이지</label>
+                <label><input type="checkbox"> 브라운</label>
+            </ul>
+        </details>
+
+        <!-- 연료 -->
+        <details class="filter-group">
+            <summary>연료</summary>
+            <ul class="filter-list">
+                <label><input type="checkbox"> 가솔린</label>
+                <label><input type="checkbox"> 디젤</label>
+                <label><input type="checkbox"> 하이브리드</label>
+                <label><input type="checkbox"> 전기</label>
+            </ul>
+        </details>
+
+        <!-- 변속기 -->
+        <details class="filter-group">
+            <summary>변속기</summary>
+            <ul class="filter-list">
+                <label><input type="checkbox"> 오토</label>
+                <label><input type="checkbox"> 수동</label>
+            </ul>
+        </details>
+
+        <!-- 옵션 -->
+        <details class="filter-group">
+            <summary>옵션</summary>
+            <ul class="filter-list">
+                <label><input type="checkbox"> 내비게이션</label>
+                <label><input type="checkbox"> 파노라마썬루프</label>
+                <label><input type="checkbox"> 어댑티브크루즈</label>
+                <!-- … -->
+            </ul>
+        </details>
+
+        <!-- 차량번호 / 판매자 이름 -->
+        <details class="filter-group">
+            <summary>차량번호 / 판매자 이름</summary>
+            <ul class="filter-list">
+                <input type="text" placeholder="차량번호 또는 이름 입력">
+            </ul>
+        </details>
+    </aside>
+
+    <!-- 가운데 차량 카드 영역 -->
+    <main class="content">
+        <div class="section-title">사진우대</div>
+        <div class="encar-grid">
+            <article class="encar-card">
+                <img class="encar-img" src="/img/쏘렌토_하이브리드.jpg" alt="">
+                <div class="encar-info">
+                    <span class="badge-hot">인기견적+</span>
+                    <div class="encar-title">기아 쏘렌토 하이브리드</div>
+                    <div class="encar-category">20년 | 40,000km | 가솔린 | 서울</div>
+                    <div class="encar-price">3,580만원</div>
+                </div>
+            </article>
+            <article class="encar-card">
+                <img class="encar-img" src="/img/쏘렌토_하이브리드.jpg" alt="">
+                <div class="encar-info">
+                    <span class="badge-hot">인기견적+</span>
+                    <div class="encar-title">기아 쏘렌토 하이브리드</div>
+                    <div class="encar-category">20년 | 40,000km | 가솔린 | 서울</div>
+                    <div class="encar-price">3,580만원</div>
+                </div>
+            </article>
+            <article class="encar-card">
+                <img class="encar-img" src="/img/쏘렌토_하이브리드.jpg" alt="">
+                <div class="encar-info">
+                    <span class="badge-hot">인기견적+</span>
+                    <div class="encar-title">기아 쏘렌토 하이브리드</div>
+                    <div class="encar-category">20년 | 40,000km | 가솔린 | 서울</div>
+                    <div class="encar-price">3,580만원</div>
+                </div>
+            </article>
+            <article class="encar-card">
+                <img class="encar-img" src="/img/쏘렌토_하이브리드.jpg" alt="">
+                <div class="encar-info">
+                    <span class="badge-hot">인기견적+</span>
+                    <div class="encar-title">기아 쏘렌토 하이브리드</div>
+                    <div class="encar-category">20년 | 40,000km | 가솔린 | 서울</div>
+                    <div class="encar-price">3,580만원</div>
+                </div>
+            </article>
+            <article class="encar-card">
+                <img class="encar-img" src="/img/쏘렌토_하이브리드.jpg" alt="">
+                <div class="encar-info">
+                    <span class="badge-hot">인기견적+</span>
+                    <div class="encar-title">기아 쏘렌토 하이브리드</div>
+                    <div class="encar-category">20년 | 40,000km | 가솔린 | 서울</div>
+                    <div class="encar-price">3,580만원</div>
+                </div>
+            </article>
+            <article class="encar-card">
+                <img class="encar-img" src="/img/쏘렌토_하이브리드.jpg" alt="">
+                <div class="encar-info">
+                    <span class="badge-hot">인기견적+</span>
+                    <div class="encar-title">기아 쏘렌토 하이브리드</div>
+                    <div class="encar-category">20년 | 40,000km | 가솔린 | 서울</div>
+                    <div class="encar-price">3,580만원</div>
+                </div>
+            </article>
         </div>
-        <!-- ✨ 원하는 만큼 추가 가능 -->
-    </div>
+
+    <!-- 우대등록 영역 -->
+    <div class="section-title">우대등록</div>
+    <table class="premium-table">
+        <thead>
+        <tr>
+            <th>사진</th>
+            <th>차량정보</th>
+            <th>가격</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td><img class="thumb" src="/img/그랜저.jpg" alt="그랜저"></td>
+            <td>
+                <div class="encar-title">현대 그랜저 (GN7) 3.5 AWD 캘리그라피</div>
+                <div class="encar-category">23년 | 33,000km | 경남</div>
+                <div class="encar-tag">
+                    <span class="tag">무사고</span>
+                    <span class="tag">1인소유</span>
+                </div>
+            </td>
+            <td class="encar-price">4,045만원</td>
+        </tr>
+        <!-- 우대등록 반복 차량 추가 가능 -->
+        </tbody>
+    </table>
+
+    <!-- 일반등록 영역 -->
+    <div class="section-title">일반등록</div>
+    <table class="premium-table">
+        <thead>
+        <tr>
+            <th>사진</th>
+            <th>차량정보</th>
+            <th>가격</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td><img class="thumb" src="/img/그랜저.jpg" alt="그랜저"></td>
+            <td>
+                <div class="encar-title">현대 그랜저 (GN7) 3.5 AWD 캘리그라피</div>
+                <div class="encar-category">23년 | 33,000km | 경남</div>
+                <div class="encar-tag">
+                    <span class="tag">무사고</span>
+                    <span class="tag">1인소유</span>
+                </div>
+            </td>
+            <td class="encar-price">4,045만원</td>
+        </tr>
+        <!-- 우대등록 반복 차량 추가 가능 -->
+        </tbody>
+    </table>
+    </main>
+
+    <!-- 📦 우측 배너 영역 -->
+    <aside class="sidebar-right">
+        <div class="widget">이차어때? 모카</div>
+        <div class="ad-box">광고배너</div>
+    </aside>
 </div>
 
 <div class="footer">

@@ -1,0 +1,203 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.search_title {
+    flex: 1;
+    padding: 20px;
+    border: 2px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    max-width: 300px;
+    height: fit-content;
+}
+
+/* ==== 레이아웃 ==== */
+.page-wrapper {
+    width: 1200px;          /* 데스크톱 기준 콘텐츠 폭 */
+    max-width: 100%;        /* 1200px보다 화면이 좁을 때 가로 스크롤 방지 */
+    margin: 0 auto;         /* ←→ 동일 여백 → 항상 중앙 */
+    display: flex;
+    gap: 20px;
+    box-sizing: border-box;
+}
+
+/* ✅ 콘텐츠 위 여백 추가 */
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding: 20px;
+}
+
+/* 좌측 필터 */
+.sidebar-left{
+    flex:0 0 260px;
+    border:1px solid #e1e1e1;
+    background:#fafafa;
+    overflow-y:auto;
+    max-height:calc(100vh - 120px);
+    padding:16px;
+}
+.filter-header{
+    position:sticky;
+    top:0;
+    background:#fafafa;
+    padding-bottom:8px;
+    border-bottom:1px solid #ddd;
+    font-weight:bold;
+}
+/* === 필터 공통 스타일 === */
+/* ▼  summary 화살표를 ‘엔카’ 스타일 작은 ▸ / ▾ 아이콘으로  */
+/* 2. summary(토글) */
+.filter-group summary{
+    position:relative;
+    padding:10px 22px 10px 0; /* 우측 아이콘 자리 */
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    user-select:none;
+}
+/* 3-A. 닫힘(▶) ─ 45° */
+.filter-group summary::after{
+    content:'';
+    position:absolute; right:4px; top:50%;
+    width:6px; height:6px;
+    border-right:2px solid #666;   /* ← 꼭 2줄 모두! */
+    border-bottom:2px solid #666;
+    transform:translateY(-50%) rotate(45deg); /* ▶ */
+    transition:.2s;
+}
+
+details[open] > summary::after{
+    transform:translateY(-50%) rotate(135deg);  /* 135° → ▼ */
+}
+
+/* 1) summary 왼쪽 disclosure triangle 숨기기 */
+details summary::-webkit-details-marker { display:none; } /* Chrome/Safari/Edge */
+details summary::marker { content:''; }                   /* Firefox */
+
+/* 2) summary 자체 불릿 여백 제거 */
+details summary{ list-style:none; padding-left:0; }
+
+/* 3) 체크박스 목록 불릿·여백 제거(이미 있다면 생략) */
+.filter-list{
+    list-style:none;
+    padding-left:0;
+    margin:6px 0 12px 0;
+}
+
+/* 가운데 카드 그리드 */
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding: 20px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: bold;
+    border-bottom: 2px solid #000;
+    margin: 30px 0 10px;
+    padding-bottom: 6px;
+}
+
+.encar-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* ✅ 무조건 4열 */
+    gap: 20px;
+    justify-items: center;
+}
+
+.encar-card {
+    width: 240px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.encar-img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+}
+
+.encar-info {
+    padding: 10px;
+    text-align: center;
+}
+
+.encar-title {
+    font-weight: bold;
+    margin: 6px 0;
+    font-size: 14px;
+}
+
+.encar-category {
+    font-size: 12px;
+    color: #666;
+    line-height: 6px;
+}
+
+.badge-hot {
+    display: inline-block;
+    font-size: 12px;
+    background: #d20000;
+    color: white;
+    padding: 3px 6px;
+    font-weight: bold;
+    margin-bottom: 4px;
+    border-radius: 3px;
+}
+
+/* 우대등록 / 일반등록 테이블은 기본 block으로 세로 나열 */
+.premium-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 14px;
+}
+.premium-table th, .premium-table td {
+    padding: 10px;
+    border-bottom: 1px solid #e5e5e5;
+    vertical-align: top;
+}
+.premium-table .thumb {
+    width: 100px;
+    border-radius: 4px;
+}
+.encar-tag .tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 3px 6px;
+    background: #f1f1f1;
+    border-radius: 4px;
+    margin-right: 5px;
+}
+/* 우측 배너/모듈 */
+.sidebar-right{
+    flex:0 0 260px;
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+.widget,.ad-box{
+    border:1px solid #e1e1e1;
+    border-radius:4px;
+    background:#fff;
+    padding:16px;
+}
+
+/* ==== 반응형 ==== */
+@media(max-width:1024px){
+    .sidebar-right{display:none;}
+}
+@media (max-width: 1280px){
+    .page-wrapper{padding: 0 20px;} /* 좌·우 안전패딩 */
+}
+
