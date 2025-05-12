@@ -7,82 +7,613 @@
 </head>
 <body>
 
+<div class="container">
 <!-- 해당 배발소 복수 -->
-<div class="navbar">
-    <div class="navbar-title">
-        <a href="/"><b>Encar</b></a>
-    </div>
-    <div class="navbar-menu">
-        <div class="menu-left">
-            <a href="#" class="big-link">내차사기</a>
-            <a href="/korean">국산</a>
-            <a href="#">수입</a>
-            <a href="#">전기/친환경</a>
-            <a href="#" class="truck-link">화물/특장</a>
-            <a href="#" class="big-link">내차팔기</a>
-            <a href="#">비교견적</a>
-            <a href="#">직거래</a>
+<!-- 상단: 로고 + 로그인 -->
+    <div class="top-bar">
+        <div class="navbar-title">
+            <a href="/"><b>Encar</b></a>
         </div>
-        <div class="menu-right">
-            <a href="/login" class="login-button">로그인</a>
-            <a href="/register" class="register-button">회원가입</a>
+        <div class="top-right-menu">
+            <a href="/login">로그인</a>
+            <a href="/register">회원가입</a>
+        </div>
+    </div>
+
+    <!-- 메뉴: 왼쪽 1차, 오른쪽 2차 -->
+    <div class="navbar">
+        <div class="navbar-menu">
+            <div class="menu-left">
+                <a href="/" data-path="/">내차사기</a>
+                <a href="/korean" data-path="/korean">국산</a>
+                <a href="#" data-path="#">수입</a>
+                <a href="#" data-path="#">전기 · 친환경</a>
+                <a href="#" data-path="#" class="truck-link">화물 · 특장</a>
+                <a href="#" data-path="#">엔카믿고 <span class="beta">Beta</span></a>
+                <a href="#" data-path="#" class="big-link">내차팔기</a>
+                <a href="#" data-path="#">비교견적</a>
+                <a href="#" data-path="#">직거래</a>
+            </div>
+
+            <div class="menu-right">
+                <a href="#" data-path="#">이차어때</a>
+                <a href="#" data-path="#">시세</a>
+                <a href="#" data-path="#">미디어</a>
+                <a href="#" data-path="#">이벤트</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 상단 견적 + 로그인 영역을 개별 박스로 분리 -->
+    <div class="top-banner-wrapper">
+        <!-- 견적 비교 전체 박스를 a 태그로 감싸서 클릭 가능하게 처리 -->
+        <a href="/compare-quote" class="quote-click-box">
+    <!--        compare-quote는 비교견적임-->
+            <div class="quote-inner-content">
+                <div class="quote-text">
+                    <p>내차,<br><strong>팔 때 견적</strong> 얼마?</p>
+                </div>
+                <div class="quote-image">
+                    <div class="plate-mockup">
+                        <span class="screw top-left">✱</span>
+                        <span class="screw top-right">✱</span>
+                        <span class="screw bottom-left">✱</span>
+                        <span class="screw bottom-right">✱</span>
+                        <span class="plate-text">차량번호를 입력하세요</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+
+        <!-- 로그인 박스 -->
+        <div class="login-box-separate">
+            <a href="/login" class="login-btn full-width">엔카 로그인</a>
+            <div class="login-links">
+                <br>
+                <a href="#">아이디</a> |
+                <a href="#">비밀번호찾기</a> |
+                <a href="/register">회원가입</a>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- 메인 검색 및 정보 박스 -->
+    <!-- 전체 검색/내차팔기 감싸는 박스 -->
+    <div class="search-sell-wrapper">
+        <!-- 왼쪽: 검색 영역 -->
+        <div class="search-left">
+            <!-- 상단 타이틀 -->
+            <h1>엔카에서 내 차 찾기</h1>
+
+            <!-- 기존: search-tabs와 search-stats 분리되어 있던 부분을 하나로 묶음 -->
+            <!-- ✅ 탭 -->
+            <div class="search-tabs-wrapper">
+                <div class="search-tabs">
+                    <span class="tab active" data-type="normal">국산+수입차</span>
+                    <span class="tab" data-type="truck">화물·특장·버스</span>
+                </div>
+                <div class="search-stats-right">
+                    <div class="stat-row">
+                        <span>전체</span><span><span class="highlight-red">181,712</span>대</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>최근등록 <small>(24시간)</small></span><span><span class="highlight-red">4,074</span>대</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ✅ 선택된 타입에 따라 변경되는 박스 -->
+            <!-- 국산+수입차용 -->
+            <div class="search-content search-normal active">
+                <!-- 드롭다운 -->
+                <div class="search-form-wrapper">
+                    <div class="search-form-box">
+                        <!-- 제조사 -->
+                        <select>
+                            <option>제조사</option>
+                            <option>현대</option>
+                            <option>기아</option>
+                        </select>
+
+                        <!-- 모델 (disabled) -->
+                        <select disabled>
+                            <option>모델</option>
+                            <!-- 현대 -->
+                            <option>아반떼</option>
+                            <option>쏘나타</option>
+                            <!-- 기아 -->
+                            <option>K3</option>
+                            <option>K5</option>
+                        </select>
+
+                        <!-- 세부모델 (disabled) -->
+                        <select disabled>
+                            <option>세부모델</option>
+                            <!-- 아반떼 -->
+                            <option>1.6 스마트</option>
+                            <option>1.6 인스퍼레이션</option>
+                            <!-- K5 -->
+                            <option>2.0 트렌디</option>
+                            <option>2.0 노블레스</option>
+                        </select>
+                    </div>
+                    <button class="search-btn">검색</button>
+                </div>
+
+                <!-- 추천매물 & 매매지원 -->
+                <div class="recommend-box">
+                    <div class="recommend-section">
+                        <strong>추천매물</strong>
+                        <div class="grid-2col">
+                            <a href="#" class="grid-button">엔카로그 차량 <span>N</span></a>
+                            <a href="#" class="grid-button">엔카진단 차량</a>
+                            <a href="#" class="grid-button">엔카종합보증 국산차량</a>
+                            <a href="#" class="grid-button">찜한 차량</a>
+                        </div>
+                    </div>
+                    <div class="recommend-section">
+                        <strong>매매지원</strong>
+                        <div class="grid-2col">
+                            <a href="#" class="grid-button">중고차 시세</a>
+                            <a href="#" class="grid-button">엔카프리미엄진단</a>
+                            <a href="#" class="grid-button">엔카 진단등록예약</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 화물·특장·버스용 -->
+            <div class="search-content search-truck">
+                <!-- 드롭다운 -->
+                <div class="search-form-wrapper">
+                    <div class="search-form-box">
+                        <!-- 형식 -->
+                        <select id="truck-type-select">
+                            <option>형식</option>
+                            <option>탑차</option>
+                            <option>윙바디</option>
+                            <option>냉동탑차</option>
+                        </select>
+
+                        <!-- 세부형식 (disabled) -->
+                        <select id="truck-subtype-select" disabled>
+                            <option>세부형식</option>
+                            <option>일반탑차</option>
+                            <option>내장탑차</option>
+                            <option>고하중윙바디</option>
+                            <option>냉장탑차</option>
+                        </select>
+
+                        <!-- 적재용량 (disabled) -->
+                        <select id="truck-capacity-select" disabled>
+                            <option>적재용량</option>
+                            <option>1톤</option>
+                            <option>2.5톤</option>
+                            <option>5톤</option>
+                        </select>
+                    </div>
+                    <button class="search-btn">검색</button>
+                </div>
+
+                <!-- 추천매물 전용 -->
+                <div class="recommend-box">
+                    <div class="recommend-section">
+                        <strong>추천매물</strong>
+                        <div class="grid-2col">
+                            <a href="#" class="grid-button">엔카진단 차량</a>
+                            <a href="#" class="grid-button">1톤 인기 화물차</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 오른쪽: 내 차 팔기 -->
+        <div class="sell-right">
+            <h2>내 차 팔기</h2>
+            <p>엔카에서 최고가로 내 차를 팔 수 있는 방법을 알아보세요.</p>
+            <button class="sell-btn">내 차 팔기 시작</button>
+        </div>
+    </div>
+
+
+    <!-- 하단 콘텐츠 전체를 감싸는 래퍼 -->
+    <div class="section-wrapper">
+        <!-- 왼쪽 콘텐츠 (리뷰, 프로모션, 미디어) -->
+        <div class="content-left">
+            <!-- 자동차 리뷰 -->
+            <!-- 슬라이더 박스 전체 -->
+            <div class="section-row review-slider-box">
+                <div class="review-header">
+                    <h3>엔카의 자동차 리뷰, 이 차 어때?</h3>
+                    <div class="slide-buttons">
+                        <button class="slide-btn prev-btn">&lt;</button>
+                        <button class="slide-btn next-btn">&gt;</button>
+                    </div>
+                </div>
+
+                <div class="review-slider-container">
+                    <div class="review-slider-track">
+                        <div class="car-card">
+                            <img src="/img/스포티지_하이브리드.jpg">
+                            <p>KIA 스포티지 하이브리드</p>
+                            <p>4.5점 | 연비 우수</p>
+                        </div>
+                        <div class="car-card">
+                            <img src="/img/쏘렌토_하이브리드.jpg">
+                            <p>KIA 쏘렌토 하이브리드</p>
+                            <p>4.7점 | 안정감 우수</p>
+                        </div>
+                        <div class="car-card">
+                            <img src="/img/포드_머스탱.jpg">
+                            <p>FORD 머스탱 5.0</p>
+                            <p>4.0점 | 엄청난 속도감</p>
+                        </div>
+                        <!-- 슬라이드 카드 더 추가 가능 -->
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- 광고 영역 -->
+            <div class="promo-wrapper">
+                <div class="promo-section">
+                    <a href="#" class="promo-box">
+                        <img src="/img/pic1.jpg" alt="금리">
+                        <p>최저금리 4.9%부터 - 참고 빠르게!</p>
+                    </a>
+                    <a href="#" class="promo-box">
+                        <img src="/img/pic2.jpg" alt="가격비교">
+                        <p>내차가격은 낫고 쌈! 이차가격은 넘나 비쌈 것!</p>
+                    </a>
+                    <a href="#" class="promo-box">
+                        <img src="/img/pic3.jpg" alt="전기차">
+                        <p>전기차 알아볼까? 오너의 솔직한 이야기</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 미디어 영역 -->
+            <div class="section-row media-wrapper">
+                <div class="media-header">
+                    <h3>미디어</h3>
+                    <a href="/media" class="media-more-btn">&gt;</a>
+                </div>
+                    <div class="media-section">
+                        <div class="media-card">
+                            <img src="/img/media1.jpg" alt="차1">
+                            <p>[신차] 지프 루비콘 출시!</p>
+                            <button>영상보기</button>
+                        </div>
+                        <div class="media-card">
+                            <img src="/img/media2.jpg" alt="차2">
+                            <p>[로드테스트] 폭스바겐 신형 TDI</p>
+                            <button>영상보기</button>
+                        </div>
+                        <div class="media-card">
+                            <img src="/img/media2.jpg" alt="차3">
+                            <p>[신차] 이거 진짜예요?</p>
+                            <button>영상보기</button>
+                        </div>
+                        <div class="media-card">
+                            <img src="/img/media2.jpg" alt="차4">
+                            <p>[로드테스트] BMW X3 20 M스포츠</p>
+                            <button>영상보기</button>
+                        </div>
+                        <div class="media-card">
+                            <img src="/img/media2.jpg" alt="차5">
+                            <p>[리뷰&카] 올 뉴 레인지로버 스포츠</p>
+                            <button>영상보기</button>
+                        </div>
+                        <div class="media-card">
+                            <img src="/img/media2.jpg" alt="차6">
+                            <p>[리뷰&카] 전기차 대중화 BYD 아토3</p>
+                            <button>영상보기</button>
+                        </div>
+                        <div class="media-card">
+                            <img src="/img/media2.jpg" alt="차7">
+                            <p>[팁&카] EV4 등장</p>
+                            <button>영상보기</button>
+                        </div>
+                        <div class="media-card">
+                            <img src="/img/media2.jpg" alt="차8">
+                            <p>[리뷰&카] 가성비 끝판왕 2000만원대 구매 가능</p>
+                            <button>영상보기</button>
+                        </div>
+                        <!-- 더 추가 가능 -->
+                    </div>
+                </div>
+            </div>
+    <!--    </div>-->
+
+        <!-- 오른쪽 사이드바 -->
+        <div class="sidebar">
+            <a href="#" class="quote-link"> <!-- 전체가 버튼처럼 클릭되도록 -->
+                <div class="quote-box">
+                    <h3 class="quote-title">내차 견적을 <br> 안내드립니다</h3>
+                    <p class="quote-subtitle">실시간으로 <b>최고가 견적</b>을 확인하세요</p>
+
+                    <div class="plate-button">
+                        <span class="bolt">●</span>
+                        차량번호 입력란
+                        <span class="bolt">●</span>
+                    </div>
+
+                    <div class="quote-btn">엔카 비교견적</div>
+                </div>
+            </a>
+            <br><br>
+            <!-- Q&A 영역 -->
+            <div class="qna-box">
+                <h4><a href="#" class="section-title">Q&A</a></h4>
+                <ul>
+                    <li><a href="#">좋은 중고차는 어떤 차량인가요?</a></li>
+                    <li><a href="#">하이브리드인지 어떻게 구분하나요?</a></li>
+                    <li><a href="#">사고차의 기준과 내용을 알려주세요.</a></li>
+                    <li><a href="#">시세는 어떻게 결정되나요?</a></li>
+                </ul>
+            </div>
+
+            <!-- 공지사항 영역 -->
+            <div class="notice-box">
+                <h4><a href="#" class="section-title">공지사항</a></h4>
+                <ul>
+                    <li><a href="#">전기차 배터리 이상 점검 안내</a></li>
+                    <li><a href="#">차량별 피해항목 바로잡고 가기</a></li>
+                    <li><a href="#">개인정보처리방침 변경 안내</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
 
 
-<!-- 메인 검색 및 정보 박스 -->
-<div class="main-container">
-    <div class="search-box">
-        <h1>엔카에서 내 차 찾기</h1>
-        <div class="search-bar">
-            <select>
-                <option>제조사</option>
-                <option>현대</option>
-                <option>기아</option>
-            </select>
-            <select>
-                <option>모델</option>
-            </select>
-            <select>
-                <option>세부모델</option>
-            </select>
-            <button class="search-btn">검색</button>
+<!-- 푸터 시작 -->
+<footer class="footer">
+    <div class="footer-wrapper">
+        <div class="footer-car-section">
+            <a href="/" class="footer-car-title">
+                내차사기
+            </a>
+
+
+            <div class="footer-car-content">
+                <div class="car-row">
+                    <a href="/korean" class="car-category">국산</a>
+                    <div class="car-links">
+                        <a href="#">국산차 검색</a>
+                        <a href="#">엔카진단 차량</a>
+                        <a href="#">헛걸음보상 차량</a>
+                        <a href="#">리스 · 렌트 차량</a>
+                        <a href="#">리스 · 렌트 제휴몰</a>
+                        <a href="#">엔카종합보증</a>
+                        <a href="#">엔카중고차론</a>
+                        <a href="#">엔카프리미엄 진단</a>
+                    </div>
+                </div>
+
+                <div class="car-row">
+                    <a href="#" class="car-category">수입</a>
+                    <div class="car-links">
+                        <a href="#">수입차 검색</a>
+                        <a href="#">엔카진단 차량</a>
+                        <a href="#">헛걸음보상 차량</a>
+                        <a href="#">리스 · 렌트 차량</a>
+                        <a href="#">브랜드인증몰</a>
+                        <a href="#">엔카중고차론</a>
+                        <a href="#">엔카프리미엄 진단</a>
+                    </div>
+                </div>
+
+                <div class="car-row">
+                    <a href="#" class="car-category">전기 · 친환경</a>
+                    <div class="car-links">
+                        <a href="#">전기 · 친환경차 검색</a>
+                        <a href="#">엔카진단 차량</a>
+                        <a href="#">헛걸음보상 차량</a>
+                        <a href="#">엔카중고차론</a>
+                    </div>
+                </div>
+
+                <div class="car-row">
+                    <a href="#" class="car-category">화물 · 특장 · 버스</a>
+                    <div class="car-links">
+                        <a href="#">화물 · 특장 · 버스 검색</a>
+                        <a href="#">엔카중고차론</a>
+                    </div>
+                </div>
+
+                <div class="car-row">
+                    <a href="#" class="car-category">엔카믿고 <span class="beta">Beta</span></a>
+                    <div class="car-links">
+                        <a href="#">엔카믿고 차량 검색</a>
+                        <a href="#">엔카믿고 배송 안내</a>
+                        <a href="#">엔카믿고 방문 안내</a>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="sub-info">
-            <p>총 등록차량 <strong>183,740대</strong> | 최근 등록 <strong>7,222대</strong></p>
+
+        <!-- 2층: 내차팔기 -->
+        <div class="footer-sell-section">
+            <a href="#" class="footer-sell-title">
+                내차팔기
+            </a>
+            <div class="footer-sell-links">
+                <a href="#">비교견적</a><br>
+                <a href="#">직거래</a>
+            </div>
+        </div>
+
+
+        <!-- 3층: 기타 메뉴 -->
+        <div class="footer-third-layer">
+            <div class="footer-column">
+                <a href="#" class="footer-heading">딜러 셀프등록</a>
+                <a href="#">진단등록 예약</a>
+                <a href="#">딜러 셀프등록</a>
+                <a href="#">법인차 매각</a>
+            </div>
+            <div class="footer-column">
+                <a href="#" class="footer-heading">서비스 · 이용권 안내</a>
+                <a href="#">매매회원 안내</a>
+                <a href="#">이용권 요금 안내</a>
+                <a href="#">차량진단</a>
+                <a href="#">지점 안내</a>
+                <a href="#">엔카 직영 성능점검장 안내</a>
+            </div>
+            <div class="footer-column">
+                <a href="#" class="footer-heading">클린엔카</a>
+                <a href="#">클린엔카 홈</a>
+                <a href="#">허위매물 유형</a>
+                <a href="#">허위매물 신고</a>
+                <a href="#">클린엔카 규정</a>
+                <a href="#">피해사례</a>
+            </div>
+            <div class="footer-column">
+                <a href="#" class="footer-heading">고객센터</a>
+                <a href="#">고객센터 홈</a>
+                <a href="#">서비스 FAQ</a>
+                <a href="#">1:1 문의</a>
+                <a href="#">공지사항</a>
+            </div>
+            <div class="footer-column">
+                <a href="#" class="footer-heading">매매지원</a>
+                <a href="#">매매지원 홈</a>
+                <a href="#">대출/할부 안내</a>
+                <a href="#">보험 안내</a>
+            </div>
+            <div class="footer-column">
+                <a href="#" class="footer-heading">매매가이드</a>
+                <a href="#">구매가이드</a>
+                <a href="#">판매가이드</a>
+            </div>
+            <div class="footer-column">
+                <a href="#" class="footer-heading">미디어</a>
+                <a href="#">미디어 홈</a>
+                <a href="#">핫딜</a>
+                <a href="#">영상</a>
+                <a href="#">뉴스</a>
+                <a href="#">리뷰</a>
+                <a href="#">특집</a>
+            </div>
+            <div class="footer-column">
+                <a href="#" class="footer-heading">이차어때</a>
+                <a href="#">시세</a>
+                <a href="#">이벤트</a>
+            </div>
+            <div class="footer-column">
+                <a href="#" class="footer-heading">이용후기</a>
+                <a href="#">디스플레이 광고</a>
+            </div>
         </div>
     </div>
 
-    <!-- 오른쪽 내차팔기 박스 -->
-    <div class="sell-box">
-        <h2>내 차 팔기</h2>
-        <p>최고가로 내 차를 팔아보세요!</p>
-        <button>내 차 팔기 시작</button>
-    </div>
-</div>
+    <div class="footer-bottom">Ⓒ 2025 N카. All rights reserved.</div>
+</footer>
 
-<!-- 하단 컨텐츠 예시 -->
-<div class="section-row">
-    <h3>엔카의 자동차 리뷰</h3>
-    <div class="car-grid">
-        <div class="car-card">
-            <img src="/img/스포티지_하이브리드.jpg">
-            <p>KIA 스포티지 하이브리드</p>
-            <p>4.5점 | 연비 우수</p>
-        </div>
-        <div class="car-card">
-            <img src="/img/쏘렌토_하이브리드.jpg">
-            <p>KIA 쏘렌토 하이브리드</p>
-            <p>4.7점 | 안정감 우수</p>
-        </div>
-    </div>
-</div>
-
-<!-- 푸터 -->
-<div class="footer">
-    Ⓒ 2025 N카. All rights reserved.
-</div>
 
 </body>
 </html>
+
+<script>
+    const track = document.querySelector('.review-slider-container');
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+
+    prevBtn.addEventListener('click', () => {
+        track.scrollBy({ left: -220, behavior: 'smooth' });
+    });
+
+    nextBtn.addEventListener('click', () => {
+        track.scrollBy({ left: 220, behavior: 'smooth' });
+    });
+
+    // 엔카에서 내 차 찾기 javascript
+    document.addEventListener("DOMContentLoaded", function () {
+        // ✅ 탭 전환
+        document.querySelectorAll(".search-tabs .tab").forEach(tab => {
+            tab.addEventListener("click", function () {
+                document.querySelectorAll(".search-tabs .tab").forEach(t => t.classList.remove("active"));
+                this.classList.add("active");
+
+                const selected = this.dataset.type;
+                document.querySelectorAll(".search-content").forEach(box => box.classList.remove("active"));
+                document.querySelector(`.search-${selected}`).classList.add("active");
+            });
+        });
+
+        // ✅ 국산+수입차
+        const normalForm = document.querySelector(".search-normal");
+        const manufacturerSelect = normalForm.querySelectorAll('select')[0];
+        const modelSelect = normalForm.querySelectorAll('select')[1];
+        const detailModelSelect = normalForm.querySelectorAll('select')[2];
+
+        manufacturerSelect.addEventListener('change', function () {
+            if (this.value !== '제조사') {
+                modelSelect.disabled = false;
+            } else {
+                // 🔄 초기화 및 비활성화
+                modelSelect.value = '모델';
+                modelSelect.disabled = true;
+                detailModelSelect.value = '세부모델';
+                detailModelSelect.disabled = true;
+            }
+        });
+
+        modelSelect.addEventListener('change', function () {
+            if (this.value !== '모델') {
+                detailModelSelect.disabled = false;
+            } else {
+                detailModelSelect.value = '세부모델';
+                detailModelSelect.disabled = true;
+            }
+        });
+
+        // ✅ 화물 특장 버스
+        const truckForm = document.querySelector(".search-truck");
+        const typeSelect = truckForm.querySelector("#truck-type-select");
+        const subTypeSelect = truckForm.querySelector("#truck-subtype-select");
+        const capacitySelect = truckForm.querySelector("#truck-capacity-select");
+
+        typeSelect.addEventListener('change', function () {
+            const isValid = this.value !== '형식';
+            if (isValid) {
+                subTypeSelect.disabled = false;
+                capacitySelect.disabled = false;
+            } else {
+                // 🔄 초기화 및 비활성화
+                subTypeSelect.value = '세부형식';
+                subTypeSelect.disabled = true;
+                capacitySelect.value = '적재용량';
+                capacitySelect.disabled = true;
+            }
+        });
+    });
+
+
+    // [엔카에서 내차 찾기]모든 탭 요소 가져오기
+      const tabs = document.querySelectorAll('.tab');
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          // 모든 탭에서 active 제거
+          tabs.forEach(t => t.classList.remove('active'));
+          // 현재 클릭된 탭에 active 추가
+          tab.classList.add('active');
+        });
+      });
+
+    // 맨 아래 푸터
+    document.addEventListener("DOMContentLoaded", function () {
+        const path = window.location.pathname;
+        const links = document.querySelectorAll('.menu-left a, .menu-right a');
+        links.forEach(link => {
+            if (link.getAttribute('data-path') === path) {
+                link.classList.add('active');
+            }
+        });
+    });
+</script>
