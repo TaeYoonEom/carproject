@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title layout:title-pattern="$CONTENT_TITLE">Encar</title>
+
+  <!-- ✅ 공통 스타일 -->
+  <link rel="stylesheet" href="/css/style.css">
+
+  <!-- ✅ 자식 페이지에서 개별 CSS 삽입할 수 있는 슬롯 -->
+  <th:block layout:fragment="style"></th:block>
+</head>
+<body>
+
+<!-- ✅ 전체 중앙정렬 컨테이너 -->
+<div class="container">
+
+  <!-- ✅ 상단 로고/로그인 공통 바 -->
+  <div class="top-bar">
+    <div class="navbar-title">
+      <a href="/"><b>Encar</b></a>
+    </div>
+    <div class="top-right-menu">
+      <div th:if="${#authorization.expression('isAnonymous()')}">
+        <a href="/login">로그인</a>
+        <a href="/register">회원가입</a>
+      </div>
+      <div th:if="${#authorization.expression('isAuthenticated()')}">
+        <a href="/logout" th:text="${#authentication.principal.name + '님 로그아웃'}"></a>
+        <a href="/mypage">마이페이지</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ 메뉴 바 -->
+  <div class="navbar">
+    <div class="navbar-menu">
+      <div class="menu-left">
+        <a href="/" data-path="/">내차사기</a>
+        <a href="/korean" data-path="/korean">국산</a>
+        <a href="#">수입</a>
+        <a href="#">전기 · 친환경</a>
+        <a href="#" class="truck-link">화물 · 특장</a>
+        <a href="#">엔카믿고 <span class="beta">Beta</span></a>
+        <a href="#" class="big-link">내차팔기</a>
+        <a href="#">비교견적</a>
+        <a href="#">직거래</a>
+      </div>
+      <div class="menu-right">
+        <a href="#">이차어때</a>
+        <a href="#">시세</a>
+        <a href="#">미디어</a>
+        <a href="#">이벤트</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ 각 페이지 본문 출력 영역 -->
+  <div layout:fragment="content">
+    <!-- 자식 페이지에서 채워질 영역 -->
+  </div>
+
+</div> <!-- .container 끝 -->
+
+</body>
+</html>

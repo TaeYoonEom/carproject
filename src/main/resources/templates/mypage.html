@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="ko"
+      layout:decorate="~{base}">
+
+<head>
+    <title>마이페이지</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="mypage-content">
+        <h2>마이페이지</h2>
+
+        <!-- ✅ 회원 요약 정보 출력 -->
+        <div class="user-summary">
+            <p>
+                <strong th:text="${member.name}">회원이름</strong>
+                (<span th:text="${member.loginId}">아이디</span>) 님은
+                <span style="color: red;">개인회원</span>입니다.
+            </p>
+            <p style="color: gray;">
+                개인회원은 최대 1년에 <strong style="color:red;">4</strong>회까지 등록 가능
+            </p>
+        </div>
+
+        <!-- ✅ 회원 상세 정보 -->
+        <div class="user-info">
+            <p><strong>회원정보</strong></p>
+            <p>아이디: <span th:text="${member.loginId}">user_id</span></p>
+            <p>이름: <span th:text="${member.name}">홍길동</span></p>
+            <p>이메일: <span th:text="${member.email}">user_email</span></p>
+            <p>전화번호: <span th:text="${member.phone}">user_phone</span></p>
+        </div>
+
+        <!-- 차량 정보 -->
+        <div class="car-info">
+            <div class="mycar-buy">
+                <h3>내차 구매</h3>
+                <p>찜한 차량이 없습니다.</p>
+            </div>
+
+            <div class="mycar-sell">
+                <h3>내차 판매</h3>
+                <p>판매중 차량이 없습니다.</p>
+            </div>
+        </div>
+
+        <!-- 공지사항 -->
+        <div class="notice-section">
+            <h3>공지사항</h3>
+            <ul>
+                <li><a href="#">전기차 배터리 이상 점검 안내</a></li>
+                <li><a href="#">차량별 피해항목 바로잡고 가기</a></li>
+                <li><a href="#">개인정보처리방침 변경 안내</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>
