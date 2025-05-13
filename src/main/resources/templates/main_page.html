@@ -33,13 +33,52 @@
         </a>
 
         <!-- 로그인 박스 -->
+        <!-- 🔽 로그인 상태 여부에 따라 다른 UI 출력 -->
         <div class="login-box-separate">
-            <a href="/login" class="login-btn full-width">엔카 로그인</a>
-            <div class="login-links">
-                <br>
-                <a href="#">아이디</a> |
-                <a href="#">비밀번호찾기</a> |
-                <a href="/register">회원가입</a>
+
+            <!-- ✅ 비로그인 상태 -->
+            <div th:if="${member == null}">
+                <a href="/login" class="login-btn full-width">엔카 로그인</a>
+                <div class="login-links">
+                    <br>
+                    <a href="#">아이디</a> |
+                    <a href="#">비밀번호찾기</a> |
+                    <a href="/register">회원가입</a>
+                </div>
+            </div>
+
+            <!-- ✅ 로그인 상태 -->
+            <div th:if="${member != null}">
+                <div class="login-summary-box">
+                    <div class="login-summary-header">
+                        <span class="badge">개인</span>
+                        <span class="username" th:text="${member.name}">엄태윤</span>님
+                        <a href="/sell" class="sell-link">내차팔기</a>
+                        <a href="/logout" class="logout-btn">로그아웃</a>
+                    </div>
+                    <div class="login-summary-info">
+                        <table>
+                            <tr>
+                                <td>판매중</td>
+                                <td style="color:red;">0대</td>
+                                <td>구매문의</td>
+                                <td>0건</td>
+                            </tr>
+                            <tr>
+                                <td>등록대기</td>
+                                <td style="color:red;">0대</td>
+                                <td>관심차량</td>
+                                <td>0대</td>
+                            </tr>
+                            <tr>
+                                <td>홈서비스</td>
+                                <td>보기</td>
+                                <td>포인트</td>
+                                <td>0P</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

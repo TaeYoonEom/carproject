@@ -166,6 +166,65 @@ body {
     margin: 0 5px;
 }
 
+/* ✅ 로그인된 상태 요약 박스 */
+.login-summary-box {
+    text-align: left;
+    font-size: 13px;
+}
+
+.login-summary-header {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.login-summary-header .badge {
+    background-color: black;
+    color: white;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    margin-right: 4px;
+}
+
+.login-summary-header .username {
+    font-weight: bold;
+    margin-right: 4px;
+}
+
+.login-summary-header .sell-link,
+.login-summary-header .logout-btn {
+    font-size: 12px;
+    color: #333;
+    text-decoration: none;
+    margin-left: 6px;
+    border: 1px solid #ccc;
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+.login-summary-header .sell-link:hover,
+.login-summary-header .logout-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.login-summary-info table {
+    width: 100%;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.login-summary-info td {
+    padding: 2px 6px;
+}
+
+.login-summary-info td:nth-child(even) {
+    font-weight: bold;
+}
+
+.login-summary-info td[style*="color:red"] {
+    color: red;
+}
+
 
 /* ============================
    ✅ 최상단 로그인/회원가입 메뉴
@@ -301,6 +360,217 @@ body {
     font-style: italic;
     color: gray;
 }
+/* ------------------------------
+   마이페이지
+------------------------------ */
+
+.mypage-wrapper {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* ✅ 마이페이지 상단 버튼 스타일 */
+.mypage-menu-buttons {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 20px 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;         /* 혹시 길어질 경우 스크롤 허용 */
+    margin-bottom: 20px;
+}
+
+.mypage-btn {
+    padding: 10px 18px;
+    border: 1px solid #ccc;
+    background-color: #f7f7f7;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: 14px;
+    white-space: nowrap;
+    transition: background-color 0.2s;
+}
+
+.mypage-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.mypage-btn.active {
+    background-color: #d20000;
+    color: white;
+    border-color: #d20000;
+}
+
+.mypage-sidebar {
+    width: 220px;
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.sidebar-section {
+    margin-bottom: 18px;
+}
+
+.sidebar-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: red;
+    margin-bottom: 8px;
+}
+
+a.sidebar-category {
+    display: inline-block;
+    font-weight: bold;
+    font-size: 13px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 4px;
+    margin-bottom: 6px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+a.sidebar-category:hover {
+    color: red;
+    background-color: #f9f9f9;
+}
+
+
+.sidebar-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.sidebar-list li {
+    margin: 4px 0;
+}
+
+.sidebar-list a {
+    font-size: 12.5px;
+    color: #333;
+    text-decoration: none;
+}
+
+.sidebar-list a:hover {
+    text-decoration: underline;
+}
+
+.label-up {
+    font-size: 10px;
+    color: red;
+    font-weight: bold;
+}
+
+.label-new {
+    font-size: 10px;
+    background: orange;
+    color: white;
+    padding: 1px 4px;
+    border-radius: 4px;
+    margin-left: 2px;
+}
+
+.btn-inquiry {
+    display: block;
+    padding: 8px;
+    background: #f9f9f9;
+    border: 1px solid #ccc;
+    text-align: center;
+    color: #333;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.btn-inquiry:hover {
+    background: #eee;
+}
+
+.mypage-main {
+    flex: 1;
+    padding: 10px;
+}
+
+.member-header {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+
+.member-header .badge {
+    background: black;
+    color: white;
+    padding: 2px 6px;
+    font-size: 12px;
+    margin-left: 5px;
+}
+
+.info-gray {
+    color: gray;
+    font-size: 13px;
+}
+
+.text-red {
+    color: red;
+}
+
+.member-meta {
+    margin-top: 10px;
+    font-size: 13px;
+}
+
+.member-meta .btn-edit {
+    margin-left: 10px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    padding: 2px 6px;
+    text-decoration: none;
+    color: #333;
+}
+
+.car-status {
+    display: flex;
+    gap: 30px;
+}
+
+.car-box {
+    flex: 1;
+    border: 1px solid #eee;
+    padding: 15px;
+    background: #fff;
+}
+
+.car-box h4 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.no-data {
+    color: red;
+}
+
+.notice-section h4 {
+    margin-top: 30px;
+    font-size: 16px;
+}
+
+.notice-section ul {
+    list-style: disc;
+    margin-left: 20px;
+    font-size: 14px;
+}
+
+.notice-section ul li a {
+    text-decoration: none;
+    color: #333;
+}
+
 
 /* ------------------------------
    메인 검색 + 내차팔기 통합 박스

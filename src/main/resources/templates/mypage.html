@@ -10,53 +10,138 @@
 
 <body>
 <div layout:fragment="content">
-    <div class="mypage-content">
-        <h2>마이페이지</h2>
+    <!-- ✅ 마이페이지 상단 버튼 영역 -->
+    <div class="mypage-menu-buttons">
+        <a href="#" class="mypage-btn active">내차 구매</a>
+        <a href="#" class="mypage-btn">내차 판매</a>
+        <a href="#" class="mypage-btn">결제 관리</a>
+        <a href="#" class="mypage-btn">쿠폰/포인트</a>
+        <a href="#" class="mypage-btn">수출시세</a>
+        <a href="#" class="mypage-btn">회원정보관리</a>
+    </div>
+    <div class="mypage-wrapper">
 
-        <!-- ✅ 회원 요약 정보 출력 -->
-        <div class="user-summary">
-            <p>
-                <strong th:text="${member.name}">회원이름</strong>
-                (<span th:text="${member.loginId}">아이디</span>) 님은
-                <span style="color: red;">개인회원</span>입니다.
-            </p>
-            <p style="color: gray;">
-                개인회원은 최대 1년에 <strong style="color:red;">4</strong>회까지 등록 가능
-            </p>
-        </div>
-
-        <!-- ✅ 회원 상세 정보 -->
-        <div class="user-info">
-            <p><strong>회원정보</strong></p>
-            <p>아이디: <span th:text="${member.loginId}">user_id</span></p>
-            <p>이름: <span th:text="${member.name}">홍길동</span></p>
-            <p>이메일: <span th:text="${member.email}">user_email</span></p>
-            <p>전화번호: <span th:text="${member.phone}">user_phone</span></p>
-        </div>
-
-        <!-- 차량 정보 -->
-        <div class="car-info">
-            <div class="mycar-buy">
-                <h3>내차 구매</h3>
-                <p>찜한 차량이 없습니다.</p>
+        <!-- 좌측 메뉴 -->
+        <aside class="mypage-sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">마이페이지</div>
             </div>
 
-            <div class="mycar-sell">
-                <h3>내차 판매</h3>
-                <p>판매중 차량이 없습니다.</p>
+            <div class="sidebar-section">
+                <a href="#" class="sidebar-category">내차 구매</a>
+                <ul class="sidebar-list">
+                    <li><a href="#">관심 차량</a></li>
+                    <li><a href="#">사고이력 조회</a></li>
+                    <li><a href="#">엔카종합보증 등록/관리</a></li>
+                    <li><a href="#">엔카진단 방문</a></li>
+                    <li><a href="#">엔카진단 배송</a></li>
+                </ul>
             </div>
-        </div>
 
-        <!-- 공지사항 -->
-        <div class="notice-section">
-            <h3>공지사항</h3>
-            <ul>
-                <li><a href="#">전기차 배터리 이상 점검 안내</a></li>
-                <li><a href="#">차량별 피해항목 바로잡고 가기</a></li>
-                <li><a href="#">개인정보처리방침 변경 안내</a></li>
-            </ul>
-        </div>
+            <div class="sidebar-section">
+                <a href="#" class="sidebar-category">내차 판매</a>
+                <ul class="sidebar-list">
+                    <li><a href="#">판매차량 관리 <span class="label-up">up</span></a></li>
+                    <li><a href="#">나의 상담글 관리</a></li>
+                    <li><a href="#">차량 등록하기</a></li>
+                    <li><a href="#">구매문의 내역</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <a href="#" class="sidebar-category">결제 관리</a>
+                <ul class="sidebar-list">
+                    <li><a href="#">결제/입금대기 내역</a></li>
+                    <li><a href="#">취소 및 환불 안내</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <a href="#" class="sidebar-category">쿠폰 / 포인트</a>
+                <ul class="sidebar-list">
+                    <li><a href="#">쿠폰 내역</a></li>
+                    <li><a href="#">포인트 내역</a></li>
+                    <li><a href="#">이용안내</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <a href="#" class="sidebar-category">수출시세</a> <span class="label-new">N</span>
+                <ul class="sidebar-list">
+                    <li><a href="#">수출시세검색</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <a href="#" class="sidebar-category">회원정보 관리</a>
+                <ul class="sidebar-list">
+                    <li><a href="#">회원정보 수정</a></li>
+                    <li><a href="#">회원탈퇴</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <a href="#" class="btn-inquiry">내 문의내역 &gt;</a>
+            </div>
+        </aside>
+
+        <!-- 메인 콘텐츠 -->
+        <main class="mypage-main">
+            <div class="member-header">
+                <p>
+                    <strong th:text="${member.name}">홍길동</strong>
+                    (<span th:text="${member.loginId}">아이디</span>) 님은
+                    <span class="badge">개인회원</span>입니다.
+                </p>
+                <p class="info-gray">개인회원은 최대 1년에 <strong class="text-red">4</strong>회까지 등록 가능</p>
+                <div class="member-meta">
+                    <span>휴대폰 : <span th:text="${member.phone}">010-0000-0000</span></span> |
+                    <span>이메일 : <span th:text="${member.email}">email</span></span>
+                    <a href="#" class="btn-edit">회원정보수정</a>
+                </div>
+            </div>
+
+            <!-- 구매/판매 영역 -->
+            <section class="car-status">
+                <div class="car-box">
+                    <h4>내차 구매</h4>
+                    <p class="no-data">찜한 차량이 없습니다.</p>
+                </div>
+                <div class="car-box">
+                    <h4>내차 판매</h4>
+                    <p class="no-data">판매중 차량이 없습니다.</p>
+                </div>
+            </section>
+
+            <!-- 공지사항 -->
+            <section class="notice-section">
+                <h4>공지사항</h4>
+                <ul>
+                    <li><a href="#">전기차 배터리 이상 점검 안내</a></li>
+                    <li><a href="#">차량별 피해항목 바로잡고 가기</a></li>
+                    <li><a href="#">개인정보처리방침 변경 안내</a></li>
+                </ul>
+            </section>
+        </main>
     </div>
 </div>
 </body>
 </html>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const buttons = document.querySelectorAll(".mypage-btn");
+
+      buttons.forEach(btn => {
+        btn.addEventListener("click", function (e) {
+          e.preventDefault(); // 페이지 이동 방지
+
+          // 모든 버튼에서 active 제거
+          buttons.forEach(b => b.classList.remove("active"));
+
+          // 현재 클릭된 버튼에 active 추가
+          this.classList.add("active");
+        });
+      });
+    });
+</script>
