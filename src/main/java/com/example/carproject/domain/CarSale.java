@@ -13,7 +13,7 @@ public class CarSale {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long carId;
+    private int carId;
 
     private int memberId;
     private String carName;
