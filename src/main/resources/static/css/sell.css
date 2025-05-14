@@ -1,0 +1,174 @@
+/* 전체 내차팔기 페이지의 메인 컨테이너 스타일 */
+.sell-container {
+    max-width: 1000px;
+    margin: 80px auto;
+    padding: 20px;
+    font-family: 'Noto Sans KR', sans-serif;
+    text-align: center;
+}
+
+/* 상단 "엔카 내차팔기" */
+.subtitle-top {
+    font-size: 16px;
+    color: #888;
+    margin-bottom: 8px;
+}
+
+/* 메인 질문 제목 */
+.sell-container h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+/* 부가 설명 문장 */
+.sell-container .subtitle {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 40px;
+}
+
+/* 상단 오른쪽 이미지 (손 + 키) */
+.header-image {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header-image img {
+    height: auto;
+    max-width: 360px;
+    width: 100%;
+    object-fit: contain;
+}
+
+/* 비교견적 / 직거래를 가로 정렬 */
+.option-box {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+/* 판매 방식 카드 공통 스타일 */
+.option {
+    width: 400px;
+    height: auto;
+    border-radius: 14px;
+    padding: 30px 25px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    position: relative;
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+/* hover 시 부드럽게 뜨는 효과 */
+.option:hover {
+    transform: translateY(-5px);
+}
+
+/* 비교견적 카드 색상 */
+.option.quick-sale {
+    background-color: #ff5a45;
+    color: white;
+}
+
+/* 직거래 카드 색상 */
+.option.direct-sale {
+    background-color: #ffa726;
+    color: white;
+}
+
+/* 카드 내부 제목 */
+.option h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+/* 카드 내부 설명 */
+.option p {
+    font-size: 15px;
+    color: white;
+}
+
+/* 카드 내부 하단 링크 */
+.option a {
+    display: inline-block;
+    margin-top: 15px;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-bottom: 1px solid white;
+}
+
+.option a:hover {
+    opacity: 0.8;
+}
+
+/* 카드 안에 들어갈 이미지 박스 */
+.img-box {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.img-box img {
+    height: 60px;
+}
+
+/* 하단 딜러회원 링크 */
+.for-dealer {
+    margin-top: 30px;
+    text-align: right;
+}
+
+.for-dealer a {
+    font-size: 14px;
+    color: #555;
+    text-decoration: none;
+    border-bottom: 1px solid #aaa;
+}
+
+.for-dealer a:hover {
+    opacity: 0.8;
+}
+
+/* 반응형 대응: 화면이 768px 이하일 경우 세로 정렬 */
+@media (max-width: 768px) {
+    .option-box {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .option {
+        width: 90%;
+    }
+
+    .header-image img {
+        height: 500px;
+    }
+
+    .sell-container h2 {
+        font-size: 24px;
+    }
+}
+/* 텍스트(왼쪽) + 이미지(오른쪽) 정렬을 위한 상단 박스 */
+.sell-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 50px;
+}
+
+/* 텍스트 왼쪽 정렬을 위한 헤더 */
+.sell-header {
+    text-align: left;
+    flex: 1;
+}
+
+/* 오른쪽 차량 이미지 (손+키) */
+.header-image img {
+    height: 130px;
+    max-width: 220px;
+}

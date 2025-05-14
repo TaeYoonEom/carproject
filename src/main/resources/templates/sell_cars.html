@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{base}"
+        lang="ko"
+>
+<head>
+    <link rel="stylesheet" th:href="@{/css/sell.css}">
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="sell-container">
+
+        <!-- 🅰️ 상단 제목 + 이미지 섹션 (양쪽 정렬) -->
+        <div class="sell-top">
+            <div class="sell-header">
+                <p class="subtitle-top">엔카 내차팔기</p>
+                <h2 class="title">어떤 방법으로 차량을 판매하고 싶으신가요?</h2>
+                <p class="subtitle">최고가 판매 엔카에서 시작하세요.</p>
+            </div>
+            <div class="header-image">
+                <img src="/img/key_hand.png" alt="차량 이미지" />
+            </div>
+        </div>
+
+        <!-- 🅾️ 판매 방식 선택 박스 -->
+        <div class="option-box">
+            <div class="option quick-sale">
+                <h3>비교견적, 실시간 최고가 경매</h3>
+                <p>경쟁하면 가격이 올라갑니다. 최고가 내차 팔기</p>
+                <div class="img-box">
+                    <img src="/img/sell_car_auction.png" alt="비교견적 이미지" />
+                </div>
+                <a th:href="@{/sell/quick}">→ 빠른 판매 시작</a>
+            </div>
+
+            <div class="option direct-sale">
+                <h3>직거래 간편등록</h3>
+                <p>원하는 가격에 직접 등록해서 팔기</p>
+                <div class="img-box">
+                    <img src="/img/sell_car_direct.png" alt="직거래 이미지" />
+                </div>
+                <a th:href="@{/sell/direct}">→ 직접 등록 시작</a>
+            </div>
+        </div>
+
+        <!-- 🔻 하단 딜러 회원 링크 -->
+        <div class="for-dealer">
+            <a href="#">혹시 딜러회원이신가요? ></a>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

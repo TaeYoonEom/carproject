@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{base}" lang="ko">
+<head>
+    <link rel="stylesheet" th:href="@{/css/sell_quick.css}">
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="quick-container">
+
+        <!-- 비교견적 상단 안내 -->
+        <h2 class="title">내 차의 최고가 견적을 확인하세요.</h2>
+
+        <!-- 차량번호 입력창 -->
+        <div class="input-box">
+            <input type="text" placeholder="123가4567" />
+            <button>조회</button>
+        </div>
+
+        <!-- 보조 링크 -->
+        <div class="helper-links">
+            <a href="#">내 차량 전체보기</a>
+            <a href="#">이용안내 가이드</a>
+        </div>
+        <hr>
+        <!-- 하단 설명 섹션 -->
+        <section class="info-section">
+            <h3>엔카 비교견적은?</h3>
+            <div class="info-boxes">
+                <div class="info-box">
+                    <p><strong>비교견적 신청까지 단 1분!</strong><br>이용안내 가이드</p>
+                </div>
+                <div class="info-box">
+                    <p><strong>최고가 견적 확인 후 판매는 선택의 자유!</strong><br>내차 정보 입력하면 딜러가 경쟁해 실시간 최고가 선택</p>
+                </div>
+                <div class="info-box red">
+                    <p><strong>엔카가 모든 거래내역을 모니터링 합니다.</strong><br>고객안심 센터 운영</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</div>
+</body>
+</html>
