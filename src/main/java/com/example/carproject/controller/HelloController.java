@@ -28,9 +28,4 @@ public class HelloController {
         }
         return "main_page";
     }
-
-    @GetMapping("/korean")
-    public String koreanCars_Page(){
-        return "korean_cars";
-    }
 }
