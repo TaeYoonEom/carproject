@@ -498,9 +498,18 @@ a.sidebar-category:hover {
 }
 
 .member-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
     border-bottom: 1px solid #ddd;
     margin-bottom: 20px;
     padding-bottom: 10px;
+    gap: 20px;
+}
+
+/* 왼쪽 정보 */
+.member-info-left {
+    flex: 1;
 }
 
 .member-header .badge {
@@ -514,6 +523,7 @@ a.sidebar-category:hover {
 .info-gray {
     color: gray;
     font-size: 13px;
+    margin-top: 4px;
 }
 
 .text-red {
@@ -523,7 +533,170 @@ a.sidebar-category:hover {
 .member-meta {
     margin-top: 10px;
     font-size: 13px;
+    color: #333;
 }
+
+.member-meta .meta-label {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.member-meta .btn-edit {
+    margin-left: 10px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    padding: 2px 6px;
+    text-decoration: none;
+    color: #333;
+    background-color: #f9f9f9;
+    border-radius: 3px;
+}
+
+/* 오른쪽 버튼 그룹 */
+.member-buttons-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+/* ✅ 네모 상자 추가 */
+.button-box {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  padding: 9px 11px;
+  display: inline-block;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+}
+
+.tab-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.tab-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.btn-tab {
+  font-size: 14px;
+  text-decoration: none;
+  font-weight: bold;
+  color: #888;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.btn-tab.active {
+  color: #d20000;
+  background-color: #fff;
+}
+
+.tab-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: auto;
+}
+
+.tab-right {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: center;
+  min-width: auto;   /* ✅ 칸 확보 */
+}
+
+.btn-red {
+  background-color: #d20000;
+  color: white;
+  padding: 10px 15px;
+  font-weight: bold;
+  font-size: 13px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.tab-right a {
+  font-size: 13px;
+  color: #666;
+  text-decoration: none;
+}
+
+.tab-right a:hover {
+  text-decoration: underline;
+}
+
+/* 공통 tab-content 적용 - 모든 위치에서 작동하도록 */
+.tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* 숨김 처리 */
+.hidden {
+  display: none !important;
+}
+
+/* 이용중인 서비스 */
+.service-section {
+  margin-top: 30px;
+  font-size: 14px;
+}
+
+.service-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+
+.dot.red {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background-color: red;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.service-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 8px;
+}
+
+.service-table th,
+.service-table td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.service-table th {
+  background-color: #f9f9f9;
+  font-weight: bold;
+}
+
+.btn-detail {
+  font-size: 13px;
+  color: #333;
+  text-decoration: underline;
+}
+
+.service-note {
+  font-size: 12px;
+  color: #888;
+  margin-top: 4px;
+}
+
 
 .member-meta .btn-edit {
     margin-left: 10px;
@@ -534,43 +707,151 @@ a.sidebar-category:hover {
     color: #333;
 }
 
+/* 차량 탭 영역 */
+.vehicle-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid #d20000; /* 얇은 레드 라인 */
+  margin-bottom: 20px;
+}
+
+/* 기본 탭 버튼 스타일 */
+.tab-btn {
+  padding: 6px 16px;
+  font-weight: bold;
+  font-size: 13px;
+  color: #666;
+  background-color: #f6f6f6;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  cursor: pointer;
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  top: 1px; /* 약간 올려서 선과 맞춤 */
+}
+
+/* 활성화된 탭 버튼 */
+.tab-btn.active {
+  background-color: #fff;
+  color: #d20000;
+  border: 1px solid #d20000;
+  border-bottom: 1px solid white;
+  z-index: 2;
+}
+
+/* 탭 콘텐츠 */
+.vehicle-tab-content {
+  padding: 15px 0;
+  border-top: none;
+}
+
+/* 차량 정보 박스 스타일 강화 */
+.car-box {
+  flex: 1;
+  border: 1px solid #ccc; /* 더 진하게 */
+  padding: 15px;
+  background: #fff;
+  min-height: 300px; /* 박스 세로 길이 살짝 증가 */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* 약간의 그림자 */
+}
+
+.car-box h4 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.no-data {
+  color: orange; /* 오렌지 강조 */
+  font-size: 14px;
+  font-weight: bold;
+}
+
 .car-status {
     display: flex;
     gap: 30px;
 }
 
-.car-box {
+.hidden {
+    display: none;
+}
+
+/* 맨아래 구매가이드 */
+.guide-wrapper {
+    display: flex;
+    border: 1px solid #ddd;
+    margin-top: 16px;
+    padding: 12px;
+    gap: 16px;                    /* 🔽 칸 사이 여백 줄이기 */
+    background-color: #fff;
+    max-width: 750px;             /* ✅ 전체 너비 줄이기 */
+    margin-left: 0;            /* ✅ 가운데 정렬 */
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+
+.guide-box {
     flex: 1;
-    border: 1px solid #eee;
-    padding: 15px;
-    background: #fff;
+    border-right: 1px solid #eee;
+    padding-right: 10px;        /* 🔽 padding 살짝 축소 */
+    font-size: 11.5px;          /* 🔽 전체 폰트 약간 축소 */
+    max-width: 250px;           /* ✅ 칸 폭 제한 */
+    box-sizing: border-box;
 }
 
-.car-box h4 {
-    font-size: 16px;
-    margin-bottom: 10px;
+.guide-box:last-child {
+    border-right: none;
+    padding-right: 0;
 }
 
-.no-data {
-    color: red;
+.guide-box h4 {
+    font-size: 12.5px;           /* 🔽 타이틀 약간 축소 */
+    font-weight: bold;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.notice-section h4 {
-    margin-top: 30px;
-    font-size: 16px;
+.guide-box ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
 }
 
-.notice-section ul {
-    list-style: disc;
-    margin-left: 20px;
-    font-size: 14px;
-}
-
-.notice-section ul li a {
-    text-decoration: none;
+.guide-box ul li {
+    line-height: 1.4;
     color: #333;
+    font-size: 11.5px;          /* 🔽 항목 글씨 축소 */
 }
 
+.guide-info-text {
+    font-size: 11px;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.warning-list li {
+    font-size: 11.5px;
+    color: #333;
+    line-height: 1.4;
+}
+
+.btn-gray-small {
+    background: #f4f4f4;
+    border: 1px solid #ccc;
+    font-size: 10px;
+    padding: 2px 5px;
+    cursor: pointer;
+    margin-left: 6px;
+}
+
+.more {
+    font-size: 10.5px;
+    color: #888;
+    font-weight: normal;
+}
 
 /* ------------------------------
    메인 검색 + 내차팔기 통합 박스
