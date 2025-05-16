@@ -12,7 +12,8 @@
 <div layout:fragment="content">
     <!-- ✅ 마이페이지 상단 버튼 영역 -->
     <div class="mypage-menu-buttons">
-        <a href="#" class="mypage-btn active">내차 구매</a>
+        <a href="/mypage" class="mypage-btn active">마이페이지 홈</a>
+        <a href="#" class="mypage-btn">내차 구매</a>
         <a href="#" class="mypage-btn">내차 판매</a>
         <a href="#" class="mypage-btn">결제 관리</a>
         <a href="#" class="mypage-btn">쿠폰/포인트</a>
@@ -28,10 +29,12 @@
             </div>
 
             <div class="sidebar-section">
-                <a href="#" class="sidebar-category">내차 구매</a>
+                <a href="#" class="sidebar-category" data-target="interested-cars-section">내차 구매</a>
                 <ul class="sidebar-list">
-                    <li><a href="#">관심 차량</a></li>
-                    <li><a href="#">사고이력 조회</a></li>
+                    <li><a href="#" class="sidebar-link"
+                           data-target="interested-cars-section">관심 차량</a></li>
+                    <li><a href="#" class="sidebar-link"
+                           data-target="accident-history-section">사고이력 조회</a></li>
                     <li><a href="#">엔카종합보증 등록/관리</a></li>
                     <li><a href="#">엔카진단 방문</a></li>
                     <li><a href="#">엔카진단 배송</a></li>
@@ -165,6 +168,77 @@
                     * 판매 완료된 차량이 광고되는 것을 방지하기 위해 2개월마다 광고기간 연장이 필요합니다.
                 </div>
                 <br>
+            </div>
+
+            <!-- 찜한 차량 콘텐츠 (초기에 숨김) -->
+            <div id="interested-cars-section" class="hidden">
+                <h3>찜한 차량</h3>
+                <p class="info-gray">판매완료된 차량과 삭제된 차량, 3개월 이전의 찜한 차량은 자동 삭제 처리됩니다.</p>
+
+                <!-- 탭 버튼 -->
+                <div class="vehicle-tabs" style="margin-bottom: 10px;">
+                    <button class="tab-btn active" data-tab="liked">찜한 차량</button>
+                    <button class="tab-btn" data-tab="recent">최근 본 차량</button>
+                </div>
+
+                <!-- 테이블 -->
+                <div class="car-table">
+                    <div class="car-table-header">
+                        <span>찜한 차량 수 : <span style="color: red;">총 0대</span></span>
+                        <div style="float: right;">
+                            <a href="#" style="font-size: 13px; color: #666;">비교하기</a> |
+                            <a href="#" style="font-size: 13px; color: #666;">최근 찜한순</a>
+                        </div>
+                    </div>
+                    <table class="car-list-table">
+                        <thead>
+                        <tr>
+                            <th><input type="checkbox"></th>
+                            <th>차량정보</th>
+                            <th>가격</th>
+                            <th>관리</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: #888;">찜한 차량이 없습니다.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- 하단 버튼 -->
+                    <div style="margin-top: 10px;">
+                        <input type="checkbox" checked> 선택 차량을
+                        <button class="btn-gray-small">비교하기</button>
+                        <button class="btn-gray-small">차량삭제</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 사고이력 조회 콘텐츠 (초기 숨김) -->
+            <div id="accident-history-section" class="hidden">
+                <h3>사고이력 조회</h3>
+                <p class="info-gray">고객님이 구입하신 <span style="color: red;">사고이력 조회권의 이용기간</span>, <span style="color: red;">잔여일</span> 등의 정보를 확인하실 수 있습니다.</p>
+
+                <div style="margin-top: 20px;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: center;">
+                        <thead style="background: #f9f9f9; border: 1px solid #ccc;">
+                        <tr>
+                            <th style="padding: 10px; border: 1px solid #ccc;">구입일시</th>
+                            <th style="border: 1px solid #ccc;">이용기간</th>
+                            <th style="border: 1px solid #ccc;">남은건수</th>
+                            <th style="border: 1px solid #ccc;">잔여일</th>
+                            <th style="border: 1px solid #ccc;">조회내역</th>
+                            <th style="border: 1px solid #ccc;">상태</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td colspan="6" style="padding: 20px; color: #888;">구입내역이 없습니다.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
 
@@ -342,13 +416,22 @@
     document.addEventListener("DOMContentLoaded", function () {
       // 마이페이지 상단 버튼
       const mypageButtons = document.querySelectorAll(".mypage-btn");
-      mypageButtons.forEach(btn => {
-        btn.addEventListener("click", function (e) {
-          e.preventDefault();
-          mypageButtons.forEach(b => b.classList.remove("active"));
-          this.classList.add("active");
+        mypageButtons.forEach(btn => {
+          btn.addEventListener("click", function (e) {
+            const isHome = this.getAttribute("href") === "/mypage";
+
+            // 🔹 마이페이지 홈은 기본 동작 허용 (페이지 이동)
+            if (isHome) return;
+
+            // 🔸 그 외 버튼은 기본 동작 막고 스타일만 적용
+            e.preventDefault();
+            mypageButtons.forEach(b => b.classList.remove("active"));
+            this.classList.add("active");
+
+            // 여기에 탭 콘텐츠 전환 로직이 있으면 추가해도 됩니다
+          });
         });
-      });
+
 
       // 내차팔기 / 내차사기 탭
       const tabToggles = document.querySelectorAll(".btn-tab");
@@ -400,4 +483,25 @@
       });
     });
 
+    // 사이드바 메뉴 클릭 이벤트(내차 구매,)
+    const sidebarLinks = document.querySelectorAll('.sidebar-link, .sidebar-category[data-target]');
+    const contentSections = document.querySelectorAll('.mypage-main > div');
+
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            // 모든 콘텐츠 숨기기 (회원 정보/서비스 제외)
+            contentSections.forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            // 클릭한 메뉴에 해당하는 콘텐츠 표시
+            const targetId = this.dataset.target;
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+            }
+        });
+    });
 </script>
