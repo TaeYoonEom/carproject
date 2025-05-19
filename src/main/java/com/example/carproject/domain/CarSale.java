@@ -35,4 +35,7 @@ public class CarSale {
     private int mileage;
     private int year;
     private LocalDateTime createdAt;
+    @Column(name = "car_type", columnDefinition = "ENUM('국산', '수입', '전기/친환경', '화물/특장')")
+    private String carType;
+
 }

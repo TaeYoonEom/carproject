@@ -18,4 +18,8 @@ public class CarSaleService {
     public List<CarSale> getAllCars() {
         return carSaleRepository.findAll();
     }
+
+    public List<CarSale> findByCarType(String carType) {
+        return carSaleRepository.findByCarType(carType);
+    }
 }

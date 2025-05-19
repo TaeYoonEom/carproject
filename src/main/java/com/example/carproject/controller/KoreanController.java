@@ -7,7 +7,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class KoreanController {
@@ -23,11 +22,10 @@ public class KoreanController {
     @GetMapping("/korean")
     public String showKoreanCars(Model model) {
         // 전체 차량 목록 가져오기
-        List<CarSale> carList = carSaleService.getAllCars();
+        List<CarSale> carList = carSaleService.findByCarType("국산");
 
-        // 모델에 모두 전달
         model.addAttribute("carList", carList);
 
-        return "korean_cars";  // ✅ HTML 템플릿 파일명 (korean_page.html)
+        return "korean_page";
     }
 }
