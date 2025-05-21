@@ -271,19 +271,21 @@
                 </div>
             </div>
 
-            <!-- ✅ 엔카믿고 방문 -->
+            <!-- 엔카믿고 방문 -->
             <div id="trust-visit-section" class="hidden">
                 <h3>엔카믿고 방문</h3>
-                <p style="font-size: 13px; color: #444;">엔카믿고 방문 예약을 신청하신 경우 진행 상황을 한눈에 확인하실 수 있습니다</p>
+                <p style="font-size: 13px; color: #444;">
+                    엔카믿고 방문 예약을 신청하신 경우 진행 상황을 한눈에 확인하실 수 있습니다.
+                </p>
 
-                <!-- 탭 -->
+                <!-- 탭 버튼 -->
                 <div class="tab-buttons" style="margin-top: 20px;">
-                    <button class="visit-tab-btn active" data-target="visit-purchase">예약/구매</button>
-                    <button class="visit-tab-btn" data-target="visit-cancel">취소/환불</button>
+                    <button class="visit-tab-btn active" data-target="visit-purchase-box">예약/구매</button>
+                    <button class="visit-tab-btn" data-target="visit-cancel-box">취소/환불</button>
                 </div>
 
-                <!-- 콘텐츠 -->
-                <div id="visit-purchase" class="visit-tab-content">
+                <!-- ✅ 예약/구매 콘텐츠 -->
+                <div id="visit-purchase-box" class="visit-tab-content">
                     <p style="margin-top: 10px;">차량 수 : 총 0대</p>
                     <table class="simple-table">
                         <thead>
@@ -300,8 +302,8 @@
                     </table>
                 </div>
 
-                <div id="visit-cancel" class="visit-tab-content hidden">
-                    <!-- 위와 동일하게 구성 -->
+                <!-- ✅ 취소/환불 콘텐츠 -->
+                <div id="visit-cancel-box" class="visit-tab-content hidden">
                     <p style="margin-top: 10px;">차량 수 : 총 0대</p>
                     <table class="simple-table">
                         <thead>
@@ -313,7 +315,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr><td colspan="4" style="text-align:center;">신청 차량이 없습니다.</td></tr>
+                        <tr><td colspan="4" style="text-align:center;">취소/환불 차량이 없습니다.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -322,16 +324,18 @@
             <!-- ✅ 엔카믿고 배송 -->
             <div id="trust-delivery-section" class="hidden">
                 <h3>엔카믿고 배송</h3>
-                <p style="font-size: 13px; color: #444;">엔카믿고 배송을 신청하신 경우, 진행 상황을 한눈에 확인하실 수 있습니다</p>
+                <p style="font-size: 13px; color: #444;">
+                    엔카믿고 배송을 신청하신 경우, <span style="color: red;">진행 상황</span>을 한눈에 확인하실 수 있습니다.
+                </p>
 
-                <!-- 탭 -->
+                <!-- 탭 버튼 -->
                 <div class="tab-buttons" style="margin-top: 20px;">
-                    <button class="delivery-tab-btn active" data-target="delivery-main">엔카믿고 배송</button>
-                    <button class="delivery-tab-btn" data-target="delivery-pickup">홈서비스 방문 픽업</button>
+                    <button class="delivery-tab-btn active" data-target="delivery-main-box">엔카믿고 배송</button>
+                    <button class="delivery-tab-btn" data-target="delivery-pickup-box">홈서비스 방문 픽업</button>
                 </div>
 
-                <!-- 콘텐츠 -->
-                <div id="delivery-main" class="delivery-tab-content">
+                <!-- ✅ 엔카믿고 배송 콘텐츠 -->
+                <div id="delivery-main-box" class="delivery-tab-content">
                     <p style="margin-top: 10px;">차량 수 : 총 0대</p>
                     <table class="simple-table">
                         <thead>
@@ -349,8 +353,8 @@
                     </table>
                 </div>
 
-                <div id="delivery-pickup" class="delivery-tab-content hidden">
-                    <!-- 동일 테이블 -->
+                <!-- ✅ 홈서비스 방문 픽업 콘텐츠 -->
+                <div id="delivery-pickup-box" class="delivery-tab-content hidden">
                     <p style="margin-top: 10px;">차량 수 : 총 0대</p>
                     <table class="simple-table">
                         <thead>
@@ -368,7 +372,6 @@
                     </table>
                 </div>
             </div>
-
 
 
             <!-- 구매/판매 영역 -->

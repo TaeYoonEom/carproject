@@ -1463,11 +1463,35 @@ h2 {
   padding-left: 6px;
 }
 
+/* 🔴 공통 버튼 스타일 */
+.tab-buttons button {
+  padding: 6px 14px;
+  font-size: 13px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  color: #333;
+  cursor: pointer;
+  margin-right: 4px;
+  border-radius: 4px 4px 0 0;
+  transition: all 0.2s ease;
+}
+
+/* 🔴 선택된 버튼 스타일 (공통 적용) */
 .tab-buttons button.active {
   color: #d32f2f;
-  border-bottom: 2px solid #d32f2f;
+  background-color: white;
+  border: 1px solid #d32f2f;
+  border-bottom: none;
   font-weight: bold;
 }
+
+/* 🔴 테이블과 연결된 탭 콘텐츠 아래 경계선 유지용 */
+.tab-buttons {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 8px;
+}
+
 .simple-table {
   width: 100%;
   border-collapse: collapse;
