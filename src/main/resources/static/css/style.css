@@ -1456,6 +1456,7 @@ h2 {
     margin: 10px 0;
 }
 
+/* ################ 마이페이지  ########### */
 .sidebar-link.active {
   color: #d32f2f;
   font-weight: bold;
@@ -1463,33 +1464,63 @@ h2 {
   padding-left: 6px;
 }
 
-/* 🔴 공통 버튼 스타일 */
+/* ✅ 테두리 통합 박스 */
+.tab-buttons-wrapper {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-top: 10px;
+  background-color: #fff;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* ✅ 상단 탭 (상단에 붙게) */
+.tab-buttons.top-tab-buttons {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  background-color: #f9f9f9;
+}
+
+/* ✅ 하위 탭 (테두리 아래쪽 정렬) */
+.tab-buttons.sub-tab-buttons {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  gap: 6px;
+  background-color: #fdfdfd;
+}
+
+/* ✅ 공통 버튼 스타일 */
 .tab-buttons button {
   padding: 6px 14px;
   font-size: 13px;
-  background-color: #f9f9f9;
-  border: 1px solid #ccc;
-  border-bottom: none;
+  background-color: white;
+  border: 1px solid transparent;
   color: #333;
   cursor: pointer;
-  margin-right: 4px;
-  border-radius: 4px 4px 0 0;
+  border-radius: 0;
   transition: all 0.2s ease;
 }
 
-/* 🔴 선택된 버튼 스타일 (공통 적용) */
+/* ✅ 선택된 버튼 스타일 */
 .tab-buttons button.active {
   color: #d32f2f;
-  background-color: white;
-  border: 1px solid #d32f2f;
-  border-bottom: none;
   font-weight: bold;
+  border: 1px solid #d32f2f;
+  border-bottom: 2px solid #fff;
+  background-color: white;
 }
 
-/* 🔴 테이블과 연결된 탭 콘텐츠 아래 경계선 유지용 */
-.tab-buttons {
-  border-bottom: 1px solid #ccc;
-  margin-bottom: 8px;
+/* ✅ 오른쪽 float 버튼 */
+.tab-buttons .float-right {
+  margin-left: auto;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 4px;
 }
 
 .simple-table {
@@ -1504,6 +1535,41 @@ h2 {
 }
 .hidden {
   display: none;
+}
+.description-wrapper {
+  border: 1px solid #ccc;
+  padding: 20px;
+  background-color: #fff;
+}
+
+.description-controls select,
+.description-controls input[type="text"] {
+  padding: 5px;
+  font-size: 13px;
+}
+
+.btn-gray-small {
+  padding: 6px 10px;
+  font-size: 12px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+.info-gray {
+  color: #666;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.description-mode label {
+  font-size: 13px;
+}
+
+.description-area textarea {
+  font-family: inherit;
+  line-height: 1.6;
+  resize: vertical;
 }
 
 

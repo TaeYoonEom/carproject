@@ -42,10 +42,11 @@
             </div>
 
             <div class="sidebar-section">
-                <a href="#" class="sidebar-category">내차 판매</a>
+                <a href="#" class="sidebar-category" data-target="sell-car-section">내차 판매</a>
                 <ul class="sidebar-list">
-                    <li><a href="#">판매차량 관리 <span class="label-up">up</span></a></li>
-                    <li><a href="#">나의 상담글 관리</a></li>
+                    <li><a href="#" class="sidebar-link" data-target="sell-car-section">
+                        판매차량 관리 <span class="label-up">up</span></a></li>
+                    <li><a href="#" class="sidebar-link" data-target="description-wrapper">나의 상담글 관리</a></li>
                     <li><a href="#">차량 등록하기</a></li>
                     <li><a href="#">구매문의 내역</a></li>
                 </ul>
@@ -170,6 +171,8 @@
                 <br>
             </div>
 
+            <!-- #### 사이드바 #### -->
+            <!-- ############# 내차 구매 ################ -->
             <!-- 관심 차량 콘텐츠 (초기에 숨김) -->
             <div id="interested-cars-section" class="hidden">
                 <h3>찜한 차량</h3>
@@ -372,6 +375,145 @@
                     </table>
                 </div>
             </div>
+            <!-- ########## 내차 판매 ################## -->
+            <!-- 판매차량 관리 콘텐츠 -->
+            <div id="sell-car-section" class="hidden">
+                <h3>판매차량 관리</h3>
+                <p class="info-gray">차량의 광고 상태(판매중, 판매대기, 판매완료, 삭제 등)에 따라 차량을 <strong style="color: red;">편리하게</strong> 관리할 수 있습니다.</p>
+
+                <!-- 이용중인 서비스 -->
+                <div class="service-section">
+                    <div class="service-title">
+                        <span class="dot red"></span> 이용중인 서비스
+                    </div>
+                    <table class="service-table">
+                        <thead>
+                        <tr>
+                            <th>서비스명</th>
+                            <th>기간</th>
+                            <th>관리</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>오마이콜</td>
+                            <td>무료이용중</td>
+                            <td><a href="#" class="btn-detail">자세히보기</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="service-note">
+                        * 판매 완료된 차량이 광고되는 것을 방지하기 위해 2개월마다 광고기간 연장이 필요합니다.
+                    </div>
+                    <br>
+                    <br>
+                </div>
+
+                <!-- ✅ 테두리 통합된 탭 영역 -->
+                <div class="tab-buttons-wrapper">
+                    <!-- 상위 탭 (국산/수입차 vs 화물/버스) -->
+                    <div class="tab-buttons top-tab-buttons">
+                        <button class="tab-btn active" data-tab="car-tab">국산/수입차 (총 0대)</button>
+                        <button class="tab-btn" data-tab="truck-tab">화물•특장•버스 (총 0대)</button>
+                        <button class="btn-gray-small float-right">업데이트시간 보관함</button>
+                    </div>
+
+                    <!-- 하위 탭 (판매중, 대기 등) -->
+                    <div class="tab-buttons sub-tab-buttons">
+                        <button class="tab-btn active">판매중 (0대)</button>
+                        <button class="tab-btn">판매대기 (0대)</button>
+                        <button class="tab-btn">판매완료 (0대)</button>
+                        <button class="tab-btn">삭제 (0대)</button>
+                        <button class="tab-btn">허위매물신고 (0대)</button>
+                    </div>
+                </div>
+
+                <!-- 테이블 -->
+                <table class="simple-table">
+                    <thead>
+                    <tr>
+                        <th>차량정보</th>
+                        <th>상태</th>
+                        <th>가격</th>
+                        <th>관리</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td colspan="4" style="text-align: center;">판매중 차량이 없습니다.</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <!-- 안내문구 -->
+                <div class="service-note" style="margin-top: 15px;">
+                    * 직거래 간편등록을 통해 판매하실 차량을 등록해 주세요.
+                    <button class="btn-gray-small">직거래간편등록</button>
+                </div>
+
+                <div class="service-note" style="margin-top: 8px; background-color: #f9f9f9; padding: 10px; border: 1px solid #ddd;">
+                    <strong>※ 꼭 알아두세요!</strong><br>
+                    - 판매완료된 차량이 광고되는 것을 방지하기 위해 2개월마다 판매기간 연장이 필요하며, 연장되지 않은 차량은 자동으로 종료됩니다.<br>
+                    - 판매대기 차량은 승인일 기준 5일 전부터 타매입이 가능<br>
+                    - 입력횟수: 전화 10회, 사고이력/등록증 6회, 파워팩 15회<br>
+                    - 자동업데이트 항목은 제외됩니다.
+                </div>
+            </div>
+
+            <!-- 🚗 나의 설명글 관리 -->
+            <div class="description-wrapper hidden" id="description-wrapper">
+            <h3>나의 설명글 관리</h3>
+                <p class="info-gray">
+                    판매차량의 상태, 용도, 판매 이유 등과 같은 <span style="color: #d32f2f;">차량 설명글</span>을 미리 저장하고 관리하실 수 있습니다.
+                </p>
+
+                <!-- 설명글 상단 메뉴 -->
+                <div class="description-controls">
+                    <label>나의 설명글 수 :</label> <span style="color: #d32f2f;">총 0개</span>
+                    <div style="margin-top: 8px;">
+                        <select>
+                            <option>나의 설명글 선택▼</option>
+                        </select>
+                        <input type="text" maxlength="24" placeholder="최대 12자까지 입력 가능" style="margin-left: 4px; width: 180px;">
+                        <button class="btn-gray-small" style="margin-left: 8px;">설명글삭제</button>
+                    </div>
+                </div>
+
+                <!-- 가이드 선택 -->
+                <div class="description-mode" style="margin-top: 10px;">
+                    <label><input type="radio" name="desc_mode" checked> 설명글 가이드</label>
+                    <label style="margin-left: 10px;"><input type="radio" name="desc_mode"> 직접입력</label>
+                    <button class="btn-gray-small" style="float:right;">내용 초기화</button>
+                </div>
+
+                <!-- 설명글 입력 textarea -->
+                <div class="description-area">
+        <textarea rows="20" style="width: 100%; padding: 10px; font-size: 13px; border: 1px solid #ccc;">
+▶ 차주 정보 및 차량 운행 용도
+-
+
+▶ 차량 구입 시 추가로 장착한 옵션
+-
+
+▶ 소모품 점검 및 교환 내역, 시기 (예: 타이밍 벨트, 브레이크 패드, 타이어, 오일 류 등)
+-
+
+▶ 사고나 수리 내역
+-
+
+▶ 기타 강조하고 싶은 점
+-
+
+▶ 차량 확인이 가능한 지역
+-
+        </textarea>
+                </div>
+
+                <!-- 저장 버튼 -->
+                <div style="margin-top: 10px; text-align: right;">
+                    <button class="btn-gray-small">다른이름으로 저장하기</button>
+                </div>
+            </div>
 
 
             <!-- 구매/판매 영역 -->
@@ -552,7 +694,7 @@
 
         // ✅ 상단 버튼 클릭 이벤트
         mypageButtons.forEach(btn => {
-            btn.addEventListener("click", function (e) {
+          btn.addEventListener("click", function (e) {
             const isHome = this.getAttribute("href") === "/mypage";
             if (isHome) return;
 
@@ -564,39 +706,59 @@
 
             const text = this.textContent.trim();
 
-            // "내차 구매" 클릭 시 → 관심 차량 콘텐츠 표시 + 사이드바 강조
-            if (text === "내차 구매") {
-                contentSections.forEach(section => section.classList.add("hidden"));
-                const targetSection = document.getElementById("interested-cars-section");
-                if (targetSection) targetSection.classList.remove("hidden");
+            // 클릭된 상단 탭에 따라 콘텐츠 전환
+            const tabToContentMap = {
+              "내차 구매": "interested-cars-section",
+              "내차 판매": "sell-car-section"
+            };
 
-                // 사이드바 active 클래스 정리 후 관심 차량에 부여
-                sidebarLinks.forEach(link => link.classList.remove("active"));
-                const interestLink = document.querySelector('.sidebar-link[data-target="interested-cars-section"]');
-                if (interestLink) interestLink.classList.add("active");
+            const targetId = tabToContentMap[text];
+            if (targetId) {
+              // 모든 콘텐츠 숨기고 타겟만 보이기
+              contentSections.forEach(section => section.classList.add("hidden"));
+              const targetSection = document.getElementById(targetId);
+              if (targetSection) targetSection.classList.remove("hidden");
+
+              // 사이드바 링크 초기화 및 해당 항목에 active 부여
+              sidebarLinks.forEach(link => link.classList.remove("active"));
+              const sidebarLink = document.querySelector(`.sidebar-link[data-target="${targetId}"]`);
+              if (sidebarLink) sidebarLink.classList.add("active");
             }
-            });
+          });
         });
 
-        // ✅ 사이드바 클릭 시 콘텐츠 전환 + 상단 탭 연동
+
+        // ✅ 사이드바 클릭 이벤트
         sidebarLinks.forEach(link => {
             link.addEventListener("click", function (e) {
-            e.preventDefault();
+                e.preventDefault();
 
-            // 콘텐츠 전환
-            const targetId = this.dataset.target;
-            contentSections.forEach(section => section.classList.add("hidden"));
-            const targetSection = document.getElementById(targetId);
-            if (targetSection) targetSection.classList.remove("hidden");
+                const targetId = this.dataset.target;
 
-            // 사이드바 스타일
-            sidebarLinks.forEach(link => link.classList.remove("active"));
-            this.classList.add("active");
+                // 콘텐츠 전환
+                contentSections.forEach(section => section.classList.add("hidden"));
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) targetSection.classList.remove("hidden");
 
-            // 상단 탭 "내차 구매" 활성화
-            mypageButtons.forEach(btn => btn.classList.remove("active"));
-            const topBuyBtn = Array.from(mypageButtons).find(btn => btn.textContent.includes("내차 구매"));
-            if (topBuyBtn) topBuyBtn.classList.add("active");
+                // 사이드바 스타일
+                sidebarLinks.forEach(link => link.classList.remove("active"));
+                this.classList.add("active");
+
+                // 상단 탭 연동
+                const sidebarToTabMap = {
+                    "interested-cars-section": "내차 구매",
+                    "sell-car-section": "내차 판매"
+                };
+
+                const topTabText = sidebarToTabMap[targetId];
+                if (topTabText) {
+                    mypageButtons.forEach(btn => {
+                        btn.classList.remove("active");
+                        if (btn.textContent.includes(topTabText)) {
+                            btn.classList.add("active");
+                        }
+                    });
+                }
             });
         });
 
@@ -673,7 +835,69 @@
             document.getElementById(target).classList.remove("hidden");
           });
         });
-
     });
+</script>
+
+<script>
+    // 내용 초기화 기능(마이페이지/내차판매/나의 상담글 관리)
+    // ✅ 요소 선택
+    const textarea = document.querySelector(".description-area textarea");
+    const titleInput = document.querySelector(".description-controls input");
+    const clearBtn = document.querySelector(".description-mode .btn-gray-small");
+    const saveBtn = document.querySelector(".description-wrapper > div:last-of-type button");
+    const modeRadios = document.querySelectorAll('input[name="desc_mode"]');
+
+    // ✅ 기본 설명글 템플릿
+    const defaultContent = `▶ 차주 정보 및 차량 운행 용도
+    -
+
+    ▶ 차량 구입 시 추가로 장착한 옵션
+    -
+
+    ▶ 소모품 점검 및 교환 내역, 시기 (예: 타이밍 벨트, 브레이크 패드, 타이어, 오일 류 등)
+    -
+
+    ▶ 사고나 수리 내역
+    -
+
+    ▶ 기타 강조하고 싶은 점
+    -
+
+    ▶ 차량 확인이 가능한 지역
+    -`;
+
+    // ✅ "내용 초기화" 버튼 클릭 시 기본 내용 삽입
+    clearBtn.addEventListener("click", function () {
+        textarea.value = defaultContent;
+    });
+
+    // ✅ 저장 버튼 클릭 시 처리
+    saveBtn.addEventListener("click", function () {
+        const content = textarea.value.trim();
+        const title = titleInput.value.trim();
+
+        if (!title) {
+            alert("설명글 이름을 입력해주세요.");
+            return;
+        }
+
+        // 임시 저장 처리 예시
+        console.log("📂 저장한 설명글 제목:", title);
+        console.log("📝 설명글 내용:\n" + content);
+        alert(`'${title}' 이름으로 설명글이 저장되었습니다.`);
+    });
+
+    // ✅ 라디오 버튼에 따라 textarea 내용 변경
+    modeRadios.forEach(radio => {
+        radio.addEventListener("change", function () {
+            const labelText = this.parentElement.textContent.trim();
+            if (labelText.includes("직접입력")) {
+                textarea.value = "";
+            } else if (labelText.includes("설명글 가이드")) {
+                textarea.value = defaultContent;
+            }
+        });
+    });
+
 </script>
 
