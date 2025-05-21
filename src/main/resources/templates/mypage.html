@@ -35,9 +35,9 @@
                            data-target="interested-cars-section">관심 차량</a></li>
                     <li><a href="#" class="sidebar-link"
                            data-target="accident-history-section">사고이력 조회</a></li>
-                    <li><a href="#">엔카종합보증 등록/관리</a></li>
-                    <li><a href="#">엔카진단 방문</a></li>
-                    <li><a href="#">엔카진단 배송</a></li>
+                    <li><a href="#" class="sidebar-link" data-target="warranty-section">엔카종합보증 등록/관리</a></li>
+                    <li><a href="#" class="sidebar-link" data-target="trust-visit-section">엔카진단 방문</a></li>
+                    <li><a href="#" class="sidebar-link" data-target="trust-delivery-section">엔카진단 배송</a></li>
                 </ul>
             </div>
 
@@ -170,7 +170,7 @@
                 <br>
             </div>
 
-            <!-- 찜한 차량 콘텐츠 (초기에 숨김) -->
+            <!-- 관심 차량 콘텐츠 (초기에 숨김) -->
             <div id="interested-cars-section" class="hidden">
                 <h3>찜한 차량</h3>
                 <p class="info-gray">판매완료된 차량과 삭제된 차량, 3개월 이전의 찜한 차량은 자동 삭제 처리됩니다.</p>
@@ -240,6 +240,135 @@
                     </table>
                 </div>
             </div>
+
+            <!-- 엔카종합보증 등록/관리 콘텐츠 -->
+            <div id="warranty-section" class="hidden">
+                <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">엔카종합보증 등록/관리</h3>
+                <p style="font-size: 13px; color: #444;">
+                    엔카종합보증 가능한 차량을 구매하신 경우,
+                    <span style="color: #d32f2f; font-weight: bold;">보증 코드를 등록</span>하고
+                    <span style="color: #d32f2f; font-weight: bold;">보증 내용을 관리</span>할 수 있습니다.
+                </p>
+
+                <!-- ✅ 보증 코드 등록 박스 -->
+                <div style="margin-top: 20px; border: 1px solid #ccc; background-color: #f6f6f6; padding: 20px; border-radius: 4px;">
+                    <h4 style="font-size: 14px; color: #d32f2f; margin-bottom: 10px;">● 보증 코드 등록</h4>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="text" placeholder="예) EW18-03-0000-0001"
+                               style="flex: 1; padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 3px; background-color: #f0f0f0;">
+                        <button style="padding: 8px 18px; background-color: #d32f2f; color: white; border: none; border-radius: 4px; font-size: 14px;">
+                            확인
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ✅ 보증 내역 -->
+                <div style="margin-top: 30px;">
+                    <h4 style="font-size: 14px; color: #222; margin-bottom: 8px;">🔽 내 차 엔카종합보증 내역</h4>
+                    <p style="font-size: 13px; color: #666; border-top: 1px solid #ccc; padding-top: 10px;">
+                        현재 구매하신 엔카종합보증 차량이 없거나 등록 전입니다.
+                    </p>
+                </div>
+            </div>
+
+            <!-- ✅ 엔카믿고 방문 -->
+            <div id="trust-visit-section" class="hidden">
+                <h3>엔카믿고 방문</h3>
+                <p style="font-size: 13px; color: #444;">엔카믿고 방문 예약을 신청하신 경우 진행 상황을 한눈에 확인하실 수 있습니다</p>
+
+                <!-- 탭 -->
+                <div class="tab-buttons" style="margin-top: 20px;">
+                    <button class="visit-tab-btn active" data-target="visit-purchase">예약/구매</button>
+                    <button class="visit-tab-btn" data-target="visit-cancel">취소/환불</button>
+                </div>
+
+                <!-- 콘텐츠 -->
+                <div id="visit-purchase" class="visit-tab-content">
+                    <p style="margin-top: 10px;">차량 수 : 총 0대</p>
+                    <table class="simple-table">
+                        <thead>
+                        <tr>
+                            <th>차량정보</th>
+                            <th>차량가격</th>
+                            <th>신청일자</th>
+                            <th>진행상태</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr><td colspan="4" style="text-align:center;">신청 차량이 없습니다.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="visit-cancel" class="visit-tab-content hidden">
+                    <!-- 위와 동일하게 구성 -->
+                    <p style="margin-top: 10px;">차량 수 : 총 0대</p>
+                    <table class="simple-table">
+                        <thead>
+                        <tr>
+                            <th>차량정보</th>
+                            <th>차량가격</th>
+                            <th>신청일자</th>
+                            <th>진행상태</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr><td colspan="4" style="text-align:center;">신청 차량이 없습니다.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ✅ 엔카믿고 배송 -->
+            <div id="trust-delivery-section" class="hidden">
+                <h3>엔카믿고 배송</h3>
+                <p style="font-size: 13px; color: #444;">엔카믿고 배송을 신청하신 경우, 진행 상황을 한눈에 확인하실 수 있습니다</p>
+
+                <!-- 탭 -->
+                <div class="tab-buttons" style="margin-top: 20px;">
+                    <button class="delivery-tab-btn active" data-target="delivery-main">엔카믿고 배송</button>
+                    <button class="delivery-tab-btn" data-target="delivery-pickup">홈서비스 방문 픽업</button>
+                </div>
+
+                <!-- 콘텐츠 -->
+                <div id="delivery-main" class="delivery-tab-content">
+                    <p style="margin-top: 10px;">차량 수 : 총 0대</p>
+                    <table class="simple-table">
+                        <thead>
+                        <tr>
+                            <th>차량정보</th>
+                            <th>계약금액</th>
+                            <th>신청날짜</th>
+                            <th>진행</th>
+                            <th>영수증/종합</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr><td colspan="5" style="text-align:center;">신청 차량이 없습니다.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="delivery-pickup" class="delivery-tab-content hidden">
+                    <!-- 동일 테이블 -->
+                    <p style="margin-top: 10px;">차량 수 : 총 0대</p>
+                    <table class="simple-table">
+                        <thead>
+                        <tr>
+                            <th>차량정보</th>
+                            <th>계약금액</th>
+                            <th>신청날짜</th>
+                            <th>진행</th>
+                            <th>영수증/종합</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr><td colspan="5" style="text-align:center;">신청 차량이 없습니다.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
 
 
             <!-- 구매/판매 영역 -->
@@ -414,94 +543,134 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-      // 마이페이지 상단 버튼
-      const mypageButtons = document.querySelectorAll(".mypage-btn");
-        mypageButtons.forEach(btn => {
-          btn.addEventListener("click", function (e) {
-            const isHome = this.getAttribute("href") === "/mypage";
+        const mypageButtons = document.querySelectorAll(".mypage-btn");
+        const sidebarLinks = document.querySelectorAll('.sidebar-link, .sidebar-category[data-target]');
+        const contentSections = document.querySelectorAll('.mypage-main > div');
 
-            // 🔹 마이페이지 홈은 기본 동작 허용 (페이지 이동)
+        // ✅ 상단 버튼 클릭 이벤트
+        mypageButtons.forEach(btn => {
+            btn.addEventListener("click", function (e) {
+            const isHome = this.getAttribute("href") === "/mypage";
             if (isHome) return;
 
-            // 🔸 그 외 버튼은 기본 동작 막고 스타일만 적용
             e.preventDefault();
+
+            // 상단 버튼 스타일 초기화
             mypageButtons.forEach(b => b.classList.remove("active"));
             this.classList.add("active");
 
-            // 여기에 탭 콘텐츠 전환 로직이 있으면 추가해도 됩니다
+            const text = this.textContent.trim();
+
+            // "내차 구매" 클릭 시 → 관심 차량 콘텐츠 표시 + 사이드바 강조
+            if (text === "내차 구매") {
+                contentSections.forEach(section => section.classList.add("hidden"));
+                const targetSection = document.getElementById("interested-cars-section");
+                if (targetSection) targetSection.classList.remove("hidden");
+
+                // 사이드바 active 클래스 정리 후 관심 차량에 부여
+                sidebarLinks.forEach(link => link.classList.remove("active"));
+                const interestLink = document.querySelector('.sidebar-link[data-target="interested-cars-section"]');
+                if (interestLink) interestLink.classList.add("active");
+            }
+            });
+        });
+
+        // ✅ 사이드바 클릭 시 콘텐츠 전환 + 상단 탭 연동
+        sidebarLinks.forEach(link => {
+            link.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            // 콘텐츠 전환
+            const targetId = this.dataset.target;
+            contentSections.forEach(section => section.classList.add("hidden"));
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) targetSection.classList.remove("hidden");
+
+            // 사이드바 스타일
+            sidebarLinks.forEach(link => link.classList.remove("active"));
+            this.classList.add("active");
+
+            // 상단 탭 "내차 구매" 활성화
+            mypageButtons.forEach(btn => btn.classList.remove("active"));
+            const topBuyBtn = Array.from(mypageButtons).find(btn => btn.textContent.includes("내차 구매"));
+            if (topBuyBtn) topBuyBtn.classList.add("active");
+            });
+        });
+
+        // ✅ 내차팔기 / 내차사기 탭
+        const tabToggles = document.querySelectorAll(".btn-tab");
+        const tabSell = document.getElementById("tab-sell");
+        const tabBuy = document.getElementById("tab-buy");
+        const btnSell = document.getElementById("btn-sell");
+        const btnBuy = document.getElementById("btn-buy");
+
+        tabToggles.forEach(btn => {
+            btn.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            tabToggles.forEach(b => b.classList.remove("active"));
+            this.classList.add("active");
+
+            const target = this.dataset.target;
+            if (target === "sell") {
+                tabSell.classList.remove("hidden");
+                tabBuy.classList.add("hidden");
+                btnSell.classList.remove("hidden");
+                btnBuy.classList.add("hidden");
+            } else if (target === "buy") {
+                tabSell.classList.add("hidden");
+                tabBuy.classList.remove("hidden");
+                btnSell.classList.add("hidden");
+                btnBuy.classList.remove("hidden");
+            }
+            });
+        });
+
+        // ✅ 국산/수입차 탭 전환
+        const tabButtons = document.querySelectorAll(".tab-btn");
+        const tabContents = document.querySelectorAll(".vehicle-tab-content");
+
+        tabButtons.forEach(button => {
+            button.addEventListener("click", function () {
+            tabButtons.forEach(btn => btn.classList.remove("active"));
+            this.classList.add("active");
+
+            const targetId = this.getAttribute("data-target");
+            tabContents.forEach(content => content.classList.add("hidden"));
+            document.getElementById(targetId).classList.remove("hidden");
+            });
+        });
+
+        // 🚗 엔카믿고 방문 탭 전환
+        const visitTabs = document.querySelectorAll(".visit-tab-btn");
+        const visitContents = document.querySelectorAll(".visit-tab-content");
+
+        visitTabs.forEach(btn => {
+          btn.addEventListener("click", function () {
+            visitTabs.forEach(b => b.classList.remove("active"));
+            this.classList.add("active");
+
+            const target = this.dataset.target;
+            visitContents.forEach(c => c.classList.add("hidden"));
+            document.getElementById(target).classList.remove("hidden");
           });
         });
 
+        // 🚚 엔카믿고 배송 탭 전환
+        const deliveryTabs = document.querySelectorAll(".delivery-tab-btn");
+        const deliveryContents = document.querySelectorAll(".delivery-tab-content");
 
-      // 내차팔기 / 내차사기 탭
-      const tabToggles = document.querySelectorAll(".btn-tab");
-      const tabSell = document.getElementById("tab-sell");
-      const tabBuy = document.getElementById("tab-buy");
-      const btnSell = document.getElementById("btn-sell");
-      const btnBuy = document.getElementById("btn-buy");
+        deliveryTabs.forEach(btn => {
+          btn.addEventListener("click", function () {
+            deliveryTabs.forEach(b => b.classList.remove("active"));
+            this.classList.add("active");
 
-      tabToggles.forEach(btn => {
-        btn.addEventListener("click", function (e) {
-          e.preventDefault();
-
-          // 탭 버튼 스타일 토글
-          tabToggles.forEach(b => b.classList.remove("active"));
-          this.classList.add("active");
-
-          // 탭 콘텐츠 토글
-          const target = this.dataset.target;
-          if (target === "sell") {
-            tabSell.classList.remove("hidden");
-            tabBuy.classList.add("hidden");
-            btnSell.classList.remove("hidden");
-            btnBuy.classList.add("hidden");
-          } else if (target === "buy") {
-            tabSell.classList.add("hidden");
-            tabBuy.classList.remove("hidden");
-            btnSell.classList.add("hidden");
-            btnBuy.classList.remove("hidden");
-          }
+            const target = this.dataset.target;
+            deliveryContents.forEach(c => c.classList.add("hidden"));
+            document.getElementById(target).classList.remove("hidden");
+          });
         });
-      });
-    });
 
-    const tabButtons = document.querySelectorAll(".tab-btn");
-    const tabContents = document.querySelectorAll(".vehicle-tab-content");
-
-    tabButtons.forEach(button => {
-      button.addEventListener("click", function () {
-        // 버튼 상태 초기화
-        tabButtons.forEach(btn => btn.classList.remove("active"));
-        this.classList.add("active");
-
-        // 탭 콘텐츠 숨기기/보이기
-        const targetId = this.getAttribute("data-target");
-        tabContents.forEach(content => {
-          content.classList.add("hidden");
-        });
-        document.getElementById(targetId).classList.remove("hidden");
-      });
-    });
-
-    // 사이드바 메뉴 클릭 이벤트(내차 구매,)
-    const sidebarLinks = document.querySelectorAll('.sidebar-link, .sidebar-category[data-target]');
-    const contentSections = document.querySelectorAll('.mypage-main > div');
-
-    sidebarLinks.forEach(link => {
-        link.addEventListener('click', function (e) {
-            e.preventDefault();
-
-            // 모든 콘텐츠 숨기기 (회원 정보/서비스 제외)
-            contentSections.forEach(section => {
-                section.classList.add('hidden');
-            });
-
-            // 클릭한 메뉴에 해당하는 콘텐츠 표시
-            const targetId = this.dataset.target;
-            const targetSection = document.getElementById(targetId);
-            if (targetSection) {
-                targetSection.classList.remove('hidden');
-            }
-        });
     });
 </script>
+

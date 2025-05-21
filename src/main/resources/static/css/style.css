@@ -1456,6 +1456,34 @@ h2 {
     margin: 10px 0;
 }
 
+.sidebar-link.active {
+  color: #d32f2f;
+  font-weight: bold;
+  border-left: 3px solid #d32f2f;
+  padding-left: 6px;
+}
+
+.tab-buttons button.active {
+  color: #d32f2f;
+  border-bottom: 2px solid #d32f2f;
+  font-weight: bold;
+}
+.simple-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+.simple-table th, .simple-table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+}
+.hidden {
+  display: none;
+}
+
+
+
 /* ------------------------------
    하단 푸터
 ------------------------------ */
