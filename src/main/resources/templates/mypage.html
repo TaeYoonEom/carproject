@@ -47,32 +47,35 @@
                     <li><a href="#" class="sidebar-link" data-target="sell-car-section">
                         판매차량 관리 <span class="label-up">up</span></a></li>
                     <li><a href="#" class="sidebar-link" data-target="description-wrapper">나의 상담글 관리</a></li>
-                    <li><a href="#">차량 등록하기</a></li>
-                    <li><a href="#">구매문의 내역</a></li>
+                    <li><a href="/sell/direct" target="_blank">차량 등록하기</a></li>
+                    <li><a href="#" class="sidebar-link" data-target="purchase-inquiry-section">구매문의 내역</a></li>
                 </ul>
             </div>
 
             <div class="sidebar-section">
-                <a href="#" class="sidebar-category">결제 관리</a>
+                <a href="#" class="sidebar-category" data-target="payment-history-section">결제 관리</a>
                 <ul class="sidebar-list">
-                    <li><a href="#">결제/입금대기 내역</a></li>
-                    <li><a href="#">취소 및 환불 안내</a></li>
+                    <li><a href="#" class="sidebar-link" data-target="payment-history-section">결제/입금대기 내역</a></li>
+                    <li><a href="#" class="sidebar-link" data-target="refund-info-section">취소 및 환불 안내</a></li>
                 </ul>
             </div>
 
             <div class="sidebar-section">
-                <a href="#" class="sidebar-category">쿠폰 / 포인트</a>
+                <a href="#" class="sidebar-category" data-target="coupon-history-section">쿠폰 / 포인트</a>
                 <ul class="sidebar-list">
-                    <li><a href="#">쿠폰 내역</a></li>
-                    <li><a href="#">포인트 내역</a></li>
-                    <li><a href="#">이용안내</a></li>
+                    <li><a href="#" class="sidebar-link" data-target="coupon-history-section">쿠폰 내역</a></li>
+                    <li><a href="#" class="sidebar-link" data-target="point-history-section">포인트 내역</a></li>
+                    <li><a href="#" class="sidebar-link" data-target="coupon-guide-section">이용안내</a></li>
                 </ul>
             </div>
 
             <div class="sidebar-section">
-                <a href="#" class="sidebar-category">수출시세</a> <span class="label-new">N</span>
+                <a href="#" class="sidebar-category" data-target="export-price-section">수출시세</a>
+                <span class="label-new">N</span>
                 <ul class="sidebar-list">
-                    <li><a href="#">수출시세검색</a></li>
+                    <li>
+                        <a href="#" class="sidebar-link" data-target="export-price-section">수출시세검색</a>
+                    </li>
                 </ul>
             </div>
 
@@ -516,7 +519,498 @@
             </div>
 
 
-            <!-- 구매/판매 영역 -->
+            <!-- 구매문의 내역 -->
+            <div id="purchase-inquiry-section" class="hidden">
+                <h3>구매문의 내역</h3>
+
+                <!-- 탭 버튼 -->
+                <div class="tab-buttons" style="margin-top: 10px; border-bottom: 2px solid #ccc;">
+                    <button class="tab-btn active" data-target="inquiry-normal-box">국산/수입차(총 0건)</button>
+                    <button class="tab-btn" data-target="inquiry-truck-box">화물•특장•버스(총 0건)</button>
+                </div>
+
+                <!-- ✅ 국산/수입차 박스 -->
+                <div id="inquiry-normal-box" class="inquiry-box">
+                    <div style="margin-top: 10px;">
+                        차량구분:
+                        <label><input type="radio" name="inquiry_filter_normal" checked> 전체</label>
+                        <label style="margin-left: 10px;"><input type="radio" name="inquiry_filter_normal"> 판매중</label>
+                        <label style="margin-left: 10px;"><input type="radio" name="inquiry_filter_normal"> 대기차량</label>
+                        <span style="margin-left: 20px;">총 0건 문의</span>
+                    </div>
+
+                    <table class="simple-table" style="margin-top: 16px;">
+                        <thead>
+                        <tr>
+                            <th>상세보기</th>
+                            <th>차량정보</th>
+                            <th>구매문의</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr><td colspan="3" style="text-align:center;">구매문의 내역이 없습니다.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ✅ 화물·특장·버스 박스 -->
+                <div id="inquiry-truck-box" class="inquiry-box hidden">
+                    <div style="margin-top: 10px;">
+                        차량구분:
+                        <label><input type="radio" name="inquiry_filter_truck" checked> 전체</label>
+                        <label style="margin-left: 10px;"><input type="radio" name="inquiry_filter_truck"> 판매중</label>
+                        <label style="margin-left: 10px;"><input type="radio" name="inquiry_filter_truck"> 대기차량</label>
+                        <span style="margin-left: 20px;">총 0건 문의</span>
+                    </div>
+
+                    <table class="simple-table" style="margin-top: 16px;">
+                        <thead>
+                        <tr>
+                            <th>상세보기</th>
+                            <th>차량정보</th>
+                            <th>구매문의</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr><td colspan="3" style="text-align:center;">구매문의 내역이 없습니다.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 하단 안내 -->
+                <div class="service-note" style="margin-top: 20px; font-size: 13px;">
+                    <strong>꼭 알아두세요!</strong><br>
+                    - 구매문의 내역은 문의시점 이후 1년까지 제공됩니다.<br>
+                    - 채팅은 앱을 설치하신 후, 이후 도착하는 구매문의 확인 및 답변은 앱(마이페이지>구매문의)을 통해 편리하게 확인하실 수 있습니다.
+                </div>
+            </div>
+
+            <!-- ######################결제 관리################## -->
+            <!-- ✅ 결제/입금대기 내역 전체 Wrapper -->
+            <div id="payment-history-section" class="hidden">
+                <h3>결제/입금대기 내역</h3>
+                <p class="info-gray">
+                    고객님이 엔카의 다양한 서비스 이용 시 <span style="color: red;">결제 또는 입금대기하신 내역</span>을 확인하실 수 있습니다.
+                </p>
+
+                <!-- ✅ 탭 버튼 -->
+                <div class="tab-buttons" style="border-bottom: 2px solid #ccc;">
+                    <button class="tab-btn active" data-target="payment-list-box">결제 내역</button>
+                    <button class="tab-btn" data-target="deposit-list-box">입금대기 내역</button>
+                </div>
+
+                <!-- ✅ 결제 내역 박스 -->
+                <div id="payment-list-box" class="payment-box">
+                    <!-- ✅ 결제 내역 필터 박스 -->
+                    <div class="payment-filter-box" style="border: 1px solid #ccc; padding: 10px; margin-top: 20px; font-size: 13px;">
+                        <div style="margin-bottom: 6px;">
+                            <strong>결제 수단별</strong> &nbsp;
+                            <label><input type="checkbox"> 신용카드</label>
+                            <label><input type="checkbox"> 휴대전화</label>
+                            <label><input type="checkbox"> 무통장입금</label>
+                            <label><input type="checkbox"> 서비스</label>
+                            <label><input type="checkbox"> 쿠폰/포인트</label>
+                        </div>
+
+                        <div style="margin-bottom: 6px;">
+                            <strong>서비스 이용</strong> &nbsp;
+                            <label><input type="checkbox"> 차량등록(자유이용권)</label>
+                            <label><input type="checkbox"> 차량등록(대량이용권)</label>
+                            <label><input type="checkbox"> 오토체인지</label>
+                            <label><input type="checkbox"> 프리미엄광고</label>
+                            <label><input type="checkbox"> 사고이력조회</label>
+                            <label><input type="checkbox"> 비교견적</label>
+                            <label><input type="checkbox"> 기타</label>
+                        </div>
+
+                        <div style="margin-bottom: 6px;">
+                            <strong>결제 날짜별</strong> &nbsp;
+                            <input type="date" value="2025-02-25"> 부터
+                            <input type="date" value="2025-05-24"> 까지 &nbsp;
+
+                            <button class="btn-gray-small">오늘</button>
+                            <button class="btn-gray-small">1주일</button>
+                            <button class="btn-gray-small">15일</button>
+                            <button class="btn-gray-small">1개월</button>
+                            <button class="btn-gray-small">3개월</button>
+
+                            <button class="btn-dark-small" style="margin-left: 10px;">조회</button>
+                        </div>
+                    </div>
+
+
+                    <!-- ✅ 결제 건수 및 테이블 -->
+                    <div style="margin-top: 20px;">
+                        <div style="font-size: 14px; margin-bottom: 8px;">
+                            결제건 수 : <span style="color: #d32f2f;">총 0건</span>
+                        </div>
+
+                        <table class="simple-table" style="width: 100%; border-top: 1px solid #ccc;">
+                            <thead>
+                            <tr style="background-color: #f8f8f8;">
+                                <th style="padding: 8px;">결제일</th>
+                                <th style="padding: 8px;">결제번호</th>
+                                <th style="padding: 8px;">결제내용</th>
+                                <th style="padding: 8px;">결제금액</th>
+                                <th style="padding: 8px;">결제수단</th>
+                                <th style="padding: 8px;">영수증/증빙</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td colspan="6" style="text-align:center; padding: 30px 0;">결제내역이 없습니다.</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- 꼭 알아두세요! 박스 -->
+                    <!-- 꼭 알아두세요! 박스 (결제 내역용) -->
+                    <div style="border: 1px solid #ddd; background-color: #f9f9f9; padding: 16px; margin-top: 40px;">
+                        <p style="font-weight: bold; margin-bottom: 8px;">꼭 알아두세요!</p>
+                        <ul style="line-height: 1.6; font-size: 13px; color: #444; padding-left: 16px;">
+                            <li>신용카드로 결제 시 카드매출전표가 발급되며, 세금계산서 대용으로 매입세액공제를 받으실 수 있습니다.</li>
+                            <li>휴대전화로 결제 후 다음 달, 휴대전화 요금을 납부하던 명의자 주민등록 번호로 현금영수증이 자동발행됩니다.<br>
+                                단, 휴대전화 결제건을 신용카드로 납부 시에는 발행되지 않습니다.</li>
+                            <li>무통장입금 완료 후 현금영수증 또는 세금계산서 중 1개만 중복자료로 신청하실 수 있습니다.
+                                <span style="color: #d32f2f;">(결제 후 다음 달 5일까지)</span></li>
+                            <li>현금영수증 신청 시 세금계산서 대용으로 매입세액공제를 받으시려면 지출증빙용으로 신청해 주세요.</li>
+                            <li>세금계산서 신청 시 기본에서는 <span style="color: #d32f2f;">이메일로 전자 세금계산서를 발송</span>해 드립니다. (우편 발송은 불가)</li>
+                            <li>세금계산서 문의 : 고객센터 (1599-5455)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- ✅ 입금대기 내역 박스 -->
+                <div id="deposit-list-box" class="payment-box hidden">
+                    <!-- ✅ 입금대기 건수 및 테이블 -->
+                    <div style="margin-top: 20px;">
+                        <div style="font-size: 14px; margin-bottom: 8px;">
+                            입금대기건 수 : <span style="color: #d32f2f;">총 0건 (입금액 0원)</span>
+                        </div>
+
+                        <table class="simple-table" style="width: 100%; border-top: 1px solid #ccc;">
+                            <thead>
+                            <tr style="background-color: #f8f8f8;">
+                                <th style="padding: 8px;">결제일</th>
+                                <th style="padding: 8px;">입금액</th>
+                                <th style="padding: 8px;">은행명</th>
+                                <th style="padding: 8px;">계좌번호</th>
+                                <th style="padding: 8px;">품목</th>
+                                <th style="padding: 8px;">상태</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td colspan="6" style="text-align:center; padding: 30px 0;">입금대기 내역이 없습니다.</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- 꼭 알아두세요! 박스 -->
+                    <div style="border: 1px solid #ddd; background-color: #f9f9f9; padding: 16px; margin-top: 40px;">
+                        <p style="font-weight: bold; margin-bottom: 8px;">꼭 알아두세요!</p>
+                        <ul style="line-height: 1.6; font-size: 13px; color: #444; padding-left: 16px;">
+                            <li>입금대기 내역은 <span style="color: #d32f2f;">무통장 결제 시 입금확인이 되지 않은 내역</span>입니다.</li>
+                            <li>입금확인이 되면 바로 결제내역으로 자동 이동되며, 입금예정일이 지난 내역은 자동 삭제됩니다.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ✅ 취소 및 환불 안내 섹션 -->
+            <div id="refund-info-section" class="hidden" style="margin-top: 20px;">
+                <h3>취소 및 환불 안내</h3>
+
+                <h4 style="margin-top: 20px;">📌 대상이용권 <span style="font-weight: normal;">(차량등록, 부가서비스, 프리미엄 광고, 헛걸음 보상)</span></h4>
+                <p>결제 후 즉시 반영되므로 환불 불가능<br>
+                    단, 광고 후 폐차로 인한 광고 효율 상실의 경우 폐차 증명서 확인 이후 일할 광고비용 공제 후 환불 가능</p>
+
+                <h4 style="margin-top: 20px;">📌 사고이력 조회권</h4>
+                <ul style="line-height: 1.8;">
+                    <li>구입 후 사용기간 내에 고객센터 유선(1599-5455) 문의를 통해 환불을 요청할 수 있습니다. 이 때, 회원 본인임을 확인하는 절차가 있습니다.</li>
+                    <li>환불 시 구매가의 10%는 환불 수수료로 적용됩니다. (단, 구매일로부터 7일 이내 환불 요청 시 환불수수료는 면제됩니다.)</li>
+                    <li>잔여 조회권 기준 조회 횟수를 기준으로 산정됩니다. 예: 1세트 5천원 기준 5회 = 회당 770원, 6회 이상 조회 시 대수당 2,200원으로 적용되며,
+                        사용 금액이 구매액보다 넘는 경우 환불되지 않습니다.<br>
+                        (5, 50회 조회권은 16회 이상 조회 시, 100대 조회권은 24회 이상 조회 시 환불 불가)</li>
+                    <li>회원의 귀책사유로 인한 서비스 계정 이용제한의 경우에는 서비스 이용권이 남아있더라도 환불되지 않습니다.</li>
+                </ul>
+
+                <!-- ✅ 회색 박스 안내 -->
+                <div style="border: 1px solid #ddd; background-color: #f9f9f9; padding: 16px; margin-top: 30px;">
+                    <p style="font-weight: bold; margin-bottom: 8px;">꼭 알아두세요!</p>
+                    <ul style="line-height: 1.6; font-size: 13px; color: #444; padding-left: 16px;">
+                        <li>일부에서 제공하는 서비스는 단건에만 환불이 불가능합니다.</li>
+                        <li>정확한 환불금액은 반드시 결제사 고객센터를 통해 확인하실 수 있습니다. (<span style="color: #d32f2f;">고객센터 1599-5455</span>)</li>
+                        <li>부당한 광고(허위 매물 광고), 부적절한 이용 등으로 자의/타의로 광고 효율이 없는 경우에는 환불이 아닌 광고정지 됩니다.</li>
+                        <li>광고 등록 후 사용 이력이 없는 경우에만 환불 신청이 가능하며, 사용 이력이 있는 경우 환불이 제한됩니다.</li>
+                        <li>결제 시 사용한 포인트 또는 사은품으로 처리되며, 일부 보상된 포인트 있는 경우 기준 보장액 및 유효기간과 동일하게 재지급됩니다.</li>
+                        <li>무통장입금 건의 경우 반드시 환불요청 시 본인명의의 통장으로만 환불 가능합니다.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ###################### 쿠폰 / 포인트 ################## -->
+            <!-- ✅ 쿠폰 내역 전체 Wrapper -->
+            <div id="coupon-history-section" class="hidden">
+                <h3 style="font-size: 18px; font-weight: bold;">쿠폰 내역</h3>
+                <p class="info-gray" style="margin-bottom: 10px;">
+                    고객님의 사용가능한 쿠폰, 사용완료한 쿠폰, 유효기간이 만료된 쿠폰내역을 확인하실 수 있습니다.
+                </p>
+                <br>
+                <!-- ✅ 보유 쿠폰 상태 요약 -->
+                <div class="coupon-status-summary" style="
+                    background-color: #f8f8f8;
+                    border: 1px dotted #ccc;
+                    padding: 10px 15px;
+                    font-size: 13px;
+                    margin-top: 12px;
+                ">
+                    보유 쿠폰 : <span style="color:#d32f2f;">0장</span> /
+                    사용 가능 쿠폰 : <span style="color:#d32f2f;">0장</span>
+                    <span style="margin-left: 10px;">(7일 내 만료 예정 쿠폰 : <span style="color:#d32f2f;">0장</span>)</span>
+                </div>
+
+
+                <!-- ✅ 탭 버튼 -->
+                <div class="tab-buttons" style="border-bottom: 2px solid #ccc; margin-top: 10px;">
+                    <br>
+                    <button class="tab-btn active" data-target="coupon-valid-box">보유/사용가능 쿠폰</button>
+                    <button class="tab-btn" data-target="coupon-expired-box">사용완료/만료 쿠폰</button>
+                </div>
+
+                <!-- ✅ 쿠폰 박스들 -->
+                <div id="coupon-valid-box" class="coupon-box">
+                    <table class="simple-table" style="width:100%; margin-top: 10px;">
+                        <thead>
+                        <tr>
+                            <th>쿠폰번호</th>
+                            <th>쿠폰명</th>
+                            <th>할인액/율</th>
+                            <th>발행일</th>
+                            <th>유효기간</th>
+                            <th>남은 기간</th>
+                            <th>사용가능</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr><td colspan="7" style="text-align:center; padding: 20px;">사용가능한 쿠폰이 없습니다.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="coupon-expired-box" class="coupon-box hidden">
+                    <table class="simple-table" style="width:100%; margin-top: 10px;">
+                        <thead>
+                        <tr>
+                            <th>쿠폰번호</th>
+                            <th>쿠폰명</th>
+                            <th>할인액/율</th>
+                            <th>발행일</th>
+                            <th>사용/만료일</th>
+                            <th>구분</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr><td colspan="6" style="text-align:center; padding: 20px;">사용완료/만료된 쿠폰이 없습니다.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ✅ 하단 유의사항 -->
+                <div class="notice-box" style="border: 1px solid #ddd; background: #fafafa; margin-top: 20px; padding: 12px;">
+                    <strong style="font-size: 14px;">꼭 알아두세요!</strong>
+                    <ul style="font-size: 13px; margin-top: 8px; line-height: 1.7;">
+                        <li>엔카 쿠폰은 <span style="color:#d32f2f;">발행일 다음날부터</span> 사용이 가능합니다.</li>
+                        <li>쿠폰은 한 상품에 대해 <span style="color:#d32f2f;">1개만 적용</span>됩니다.</li>
+                        <li>타인에게 양도하거나 현금으로 전환 불가합니다.</li>
+                        <li>발행 원인 취소 시 쿠폰은 회수됩니다.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ✅ 포인트 내역 -->
+            <div id="point-history-section" class="hidden">
+                <h3>포인트 내역</h3>
+                <p class="info-gray">고객님의 포인트 적립, 사용 내역을 확인하실 수 있습니다.</p>
+                <br>
+                <div class="section-box">
+                    보유 포인트 : <span style="color:#d32f2f;">0 P</span> /
+                    사용가능 포인트 : <span style="color:#d32f2f;">0 P</span>
+                    <span style="margin-left: 10px;">(7일 내 만료 예정 포인트 : <span style="color:#d32f2f;">0 P</span>)</span>
+                </div>
+
+                <table class="gray-table">
+                    <thead>
+                    <tr>
+                        <th>구분</th>
+                        <th>날짜</th>
+                        <th>적립/사용내역</th>
+                        <th>유효기간</th>
+                        <th>적립포인트</th>
+                        <th>사용포인트</th>
+                        <th>잔여포인트</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td colspan="7" class="empty-message">엔카 포인트 상세 내역이 없습니다.</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div class="info-box">
+                    <b>꼭 알아두세요!</b>
+                    <ul>
+                        <li>엔카 포인트는 <span style="color:red;">지급일 다음날부터</span> 사용이 가능합니다.</li>
+                        <li>1 P = 엔카 사이트 내에서 <b>현금 1원</b>의 의미로 같습니다.</li>
+                        <li>최소 3,000P 이상부터 사용 가능하며, 타인에게 양도하거나 현금으로 전환할 수 없습니다.</li>
+                        <li>지급 원인이 된 사전(상품 결제, 기능 사용 등)이 무효화된 경우 해당 포인트는 회수됩니다.</li>
+                        <li>유효기간은 <b>1년</b> 기준으로 하며, 정책에 따라 변동될 수 있습니다.</li>
+                    </ul>
+                </div>
+            </div>
+
+
+            <!-- ✅ 이용안내 -->
+            <div id="coupon-guide-section" class="hidden">
+                <h3>쿠폰/포인트 이용안내</h3>
+                <p class="info-gray">현재 발행/지급 중인 쿠폰/포인트와 이용안내를 확인하실 수 있습니다.</p>
+                <br>
+                <div class="tab-buttons" style="margin-top: 10px; border-bottom: 2px solid #ccc;">
+                    <button class="tab-btn active" data-target="guide-coupon-box">쿠폰</button>
+                    <button class="tab-btn" data-target="guide-point-box">포인트</button>
+                </div>
+
+                <!-- 쿠폰 안내 -->
+                <div id="guide-coupon-box" class="coupon-guide-box">
+                    <table class="gray-table">
+                        <thead>
+                        <tr>
+                            <th>쿠폰명(할인액/율)</th>
+                            <th>발행기간</th>
+                            <th>발행조건</th>
+                            <th>발행여부</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td colspan="4" class="empty-message">발행중인 쿠폰이 없습니다.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="info-box">
+                        <b>쿠폰 이용안내</b>
+                        <ul>
+                            <li>쿠폰은 <span style="color:red;">발행일 다음날부터</span> 사용 가능</li>
+                            <li>하나의 쿠폰은 하나의 상품에만 적용됩니다.</li>
+                            <li>양도/현금화 불가, 무효사유 발생 시 회수</li>
+                            <li>1장당 포인트 전환 시 1,500P로 전환되며 유효기간은 1년입니다.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 포인트 안내 -->
+                <div id="guide-point-box" class="coupon-guide-box hidden">
+                    <table class="gray-table">
+                        <thead>
+                        <tr>
+                            <th>포인트명(할인액/율)</th>
+                            <th>지급기간</th>
+                            <th>지급조건</th>
+                            <th>지급여부</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td colspan="4" class="empty-message">지급 중인 포인트가 없습니다.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="info-box">
+                        <b>포인트 이용안내</b>
+                        <ul>
+                            <li>포인트는 <span style="color:red;">지급일 다음날부터</span> 사용 가능</li>
+                            <li>1P = 현금 1원, 최소 3,000P 이상 사용 가능</li>
+                            <li>양도/환불 불가, 무효화 사유 발생 시 회수</li>
+                            <li>유효기간은 <b>1년</b> 기준이며 변동 가능</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- ######### 수출시세 ######### -->
+            <!-- ✅ 수출시세검색 섹션 -->
+            <div id="export-price-section" class="hidden">
+                <h3>수출시세검색</h3>
+                <p class="info-gray">수출시세 검색 서비스를 통해 전국 각지의 중고차 수출 매입 정보를 한눈에 확인하세요!</p>
+
+                <!-- 🚗 내 수출 가능한 차량이 없습니다 -->
+                <div class="alert-box red" style="margin-top: 10px;">
+                    <span class="icon-alert">🚫</span> 나의 수출 가능 차량이 없습니다.
+                </div>
+
+                <!-- 🔍 수출시세 검색 -->
+                <div class="export-search-box">
+                    <div class="search-header">
+                        <span class="icon-search">🔍</span> 수출시세 검색
+                    </div>
+
+                    <div class="search-form">
+                        <label>차종 및 연식:
+                            <select><option>제조사</option></select>
+                            <select><option>모델</option></select>
+                            <select><option>등급</option></select>
+                            <select><option>연식</option></select>
+                        </label>
+                        <label>변속기:
+                            <select><option>무관</option></select>
+                            지역:
+                            <select><option>전국</option></select>
+                        </label>
+                        <button class="btn-gray-small">검색</button>
+                    </div>
+                </div>
+
+                <!-- 📦 등록업체 수 -->
+                <div class="export-status" style="margin-top: 8px;">
+                    등록업체 수: <span style="color: red;">총 0개</span>
+                </div>
+
+                <!-- 🔽 제조사 탭 -->
+                <div class="manufacturer-tabs tab-buttons" style="margin-top: 10px; border-bottom: 2px solid #d32f2f;">
+                    <button class="tab-btn active">현대 (0개모델)</button>
+                    <button class="tab-btn">기아 (0개모델)</button>
+                    <button class="tab-btn">GM대우 (0개모델)</button>
+                    <button class="tab-btn">르노삼성 (0개모델)</button>
+                    <button class="tab-btn">쌍용 (0개모델)</button>
+                    <button class="tab-btn">기타 (0개모델)</button>
+                </div>
+
+                <!-- 🚫 등록된 시세 없음 -->
+                <table class="simple-table">
+                    <thead>
+                    <tr>
+                        <th>모델</th>
+                        <th>등급</th>
+                        <th>수출가능 연식</th>
+                        <th>등록업체 수</th>
+                        <th>연식선택</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td colspan="5" style="text-align: center;">해당 제조사에 등록된 시세가 없습니다.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+
+            <!-- #########구매/판매 영역######### -->
             <!-- 탭 버튼 -->
             <!-- 탭 버튼 -->
             <div class="vehicle-tabs">
@@ -709,7 +1203,10 @@
             // 클릭된 상단 탭에 따라 콘텐츠 전환
             const tabToContentMap = {
               "내차 구매": "interested-cars-section",
-              "내차 판매": "sell-car-section"
+              "내차 판매": "sell-car-section",
+              "결제 관리": "payment-history-section",
+              "쿠폰/포인트": "coupon-history-section",
+              "수출시세": "export-price-section"
             };
 
             const targetId = tabToContentMap[text];
@@ -747,7 +1244,19 @@
                 // 상단 탭 연동
                 const sidebarToTabMap = {
                     "interested-cars-section": "내차 구매",
-                    "sell-car-section": "내차 판매"
+                    "accident-history-section": "내차 구매",
+                    "warranty-section": "내차 구매",
+                    "trust-visit-section": "내차 구매",
+                    "trust-delivery-section": "내차 구매",
+                    "sell-car-section": "내차 판매",
+                    "description-wrapper": "내차 판매",
+                    "purchase-inquiry-section": "내차 판매",
+                    "payment-section": "결제 관리",
+                    "refund-info-section": "결제 관리",
+                    "coupon-history-section": "쿠폰/포인트",
+                    "point-history-section": "쿠폰/포인트",
+                    "coupon-guide-section": "쿠폰/포인트",
+                    "export-price-section": "수출시세"
                 };
 
                 const topTabText = sidebarToTabMap[targetId];
@@ -835,6 +1344,71 @@
             document.getElementById(target).classList.remove("hidden");
           });
         });
+
+        // ✅ 구매문의 탭 전환 (국산/수입차 ↔ 화물/특장)
+        document.querySelectorAll('#purchase-inquiry-section .tab-buttons .tab-btn').forEach(tab => {
+            tab.addEventListener("click", function () {
+                // 탭 스타일 적용
+                document.querySelectorAll('#purchase-inquiry-section .tab-buttons .tab-btn').forEach(btn => btn.classList.remove("active"));
+                this.classList.add("active");
+
+                // 콘텐츠 전환
+                const targetId = this.dataset.target;
+                document.querySelectorAll('.inquiry-box').forEach(box => box.classList.add("hidden"));
+                document.getElementById(targetId).classList.remove("hidden");
+
+                // 차량구분 라디오 버튼 "전체"로 초기화
+                let radios = document.querySelectorAll(`#${targetId} input[type="radio"]`);
+                if (radios.length > 0) {
+                    radios[0].checked = true;
+                }
+            });
+        });
+
+        // ✅ 결제/입금대기 탭 전환
+        document.querySelectorAll('#payment-history-section .tab-buttons .tab-btn').forEach(tab => {
+            tab.addEventListener("click", function () {
+                // 모든 탭에서 active 제거 후 현재 탭에만 active
+                document.querySelectorAll('#payment-history-section .tab-buttons .tab-btn').forEach(btn => btn.classList.remove("active"));
+                this.classList.add("active");
+
+                // 모든 박스 숨기고 해당 타겟만 보이게
+                const targetId = this.dataset.target;
+                document.querySelectorAll('#payment-history-section .payment-box').forEach(box => box.classList.add("hidden"));
+                document.getElementById(targetId).classList.remove("hidden");
+            });
+        });
+
+        // ✅ 공통 탭 전환 처리 함수
+        function handleTabToggle(containerSelector, tabSelector, contentSelector, activeClass = "active", hiddenClass = "hidden") {
+            document.querySelectorAll(`${containerSelector} ${tabSelector}`).forEach(tab => {
+                tab.addEventListener("click", function () {
+                    // 버튼 활성화 스타일 처리
+                    document.querySelectorAll(`${containerSelector} ${tabSelector}`).forEach(btn => btn.classList.remove(activeClass));
+                    this.classList.add(activeClass);
+
+                    // 콘텐츠 숨기고 타겟만 보이기
+                    const targetId = this.dataset.target;
+                    document.querySelectorAll(`${containerSelector} ${contentSelector}`).forEach(box => box.classList.add(hiddenClass));
+                    const targetBox = document.getElementById(targetId);
+                    if (targetBox) targetBox.classList.remove(hiddenClass);
+                });
+            });
+        }
+
+        // ✅ 쿠폰 탭 (보유/사용가능 vs 만료/완료)
+        handleTabToggle(
+            '#coupon-history-section',
+            '.tab-buttons .tab-btn',
+            '.coupon-box'
+        );
+
+        // ✅ 쿠폰/포인트 이용안내 탭
+        handleTabToggle(
+            '#coupon-guide-section',
+            '.tab-buttons .tab-btn',
+            '.coupon-guide-box'
+        );
     });
 </script>
 
