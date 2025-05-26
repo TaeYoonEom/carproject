@@ -753,16 +753,28 @@ a.sidebar-category:hover {
   cursor: pointer;
   border-radius: 4px 4px 0 0;
   position: relative;
-  top: 1px; /* 약간 올려서 선과 맞춤 */
+  top: 1px;
+  margin-right: -1px; /* 버튼들 붙이기 */
+  transition: all 0.2s ease;
 }
 
 /* 활성화된 탭 버튼 */
 .tab-btn.active {
   background-color: #fff;
-  color: #d20000;
-  border: 1px solid #d20000;
-  border-bottom: 1px solid white;
+  color: #d32f2f;
+  border: 1px solid #d32f2f;
+  border-bottom: 2px solid white;
   z-index: 2;
+}
+/* 방문 탭 특화 스타일 보정 */
+#trust-visit-section .tab-buttons {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 8px;
+}
+
+#trust-visit-section .tab-btn {
+  border-radius: 4px 4px 0 0;
+  margin-right: 4px;
 }
 
 /* 탭 콘텐츠 */
@@ -1492,26 +1504,6 @@ h2 {
   background-color: #fdfdfd;
 }
 
-/* ✅ 공통 버튼 스타일 */
-.tab-buttons button {
-  padding: 6px 14px;
-  font-size: 13px;
-  background-color: white;
-  border: 1px solid transparent;
-  color: #333;
-  cursor: pointer;
-  border-radius: 0;
-  transition: all 0.2s ease;
-}
-
-/* ✅ 선택된 버튼 스타일 */
-.tab-buttons button.active {
-  color: #d32f2f;
-  font-weight: bold;
-  border: 1px solid #d32f2f;
-  border-bottom: 2px solid #fff;
-  background-color: white;
-}
 
 /* ✅ 오른쪽 float 버튼 */
 .tab-buttons .float-right {
@@ -1630,12 +1622,15 @@ h2 {
     border-color: #999;
 }
 
-.tab-buttons .tab-btn.active {
+/* 기존 tab-buttons 스타일 유지 */
+.tab-buttons .tab-btn.active,
+.vehicle-tabs .tab-btn.active {
     background-color: #fff;
     border: 2px solid #d32f2f;
     color: #d32f2f;
     font-weight: bold;
 }
+
 .alert-box.red {
     background: #fce4e4;
     border: 1px solid #d32f2f;

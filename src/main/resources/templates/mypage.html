@@ -174,6 +174,170 @@
                 <br>
             </div>
 
+            <!-- #########구매/판매 영역######### -->
+            <!-- 탭 버튼 -->
+            <div class="vehicle-tabs">
+                <br>
+                <button class="tab-btn active" data-target="tab-normal">국산/수입차</button>
+                <button class="tab-btn" data-target="tab-truck">화물·특장·버스</button>
+            </div>
+
+            <!-- 국산/수입차 콘텐츠 -->
+            <div id="tab-normal" class="vehicle-tab-content">
+                <section class="car-status">
+                    <!-- ✅ 내차 구매 -->
+                    <div class="car-box">
+                        <h4>내차 구매</h4>
+                        <ul style="font-size: 13px; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 6px;">
+                            <li> 찜한 차량 <span style="float: right;">더보기 &gt;</span></li>
+                        </ul>
+                        <p class="no-data"><span style="color: orange;">찜한 차량</span>이 없습니다.</p>
+                    </div>
+
+                    <!-- ✅ 내차 판매 -->
+                    <div class="car-box">
+                        <h4>내차 판매</h4>
+                        <ul style="font-size: 13px; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 6px;">
+                            <li> 판매중 차량 <span style="color: red;">총 0대</span> <span style="float: right;">더보기 &gt;</span></li>
+                        </ul>
+                        <p class="no-data"><span style="color: orange;">판매중 차량</span>이 없습니다.</p>
+
+                        <!-- 판매차량 관리 -->
+                        <div style="margin-top: 16px;">
+                            <br>
+                            <strong style="font-size: 13px;">• 판매차량 관리</strong>
+                            <span style="float: right;">더보기 &gt;</span>
+                            <div style="display: flex; gap: 10px; margin-top: 8px; font-size: 13px;">
+                                <div style="flex: 1; border: 1px solid #ccc; padding: 8px; text-align: center;">
+                                    <strong>판매대기</strong><br>
+                                    등록대기 <span style="color: red;">0대</span><br>
+                                    임시저장 <span style="color: red;">0대</span>
+                                </div>
+                                <div style="flex: 1; border: 1px solid #ccc; padding: 8px; text-align: center;">
+                                    <strong>판매완료<br>(최근 1년)</strong><br>
+                                    <span style="color: red;">0대</span>
+                                </div>
+                                <div style="flex: 1; border: 1px solid #ccc; padding: 8px; text-align: center;">
+                                    <strong>삭제<br>(최근 3개월)</strong><br>
+                                    기간만료 <span style="color: red;">0대</span><br>
+                                    직접삭제 <span style="color: red;">0대</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 비교견적 신청내역 -->
+                        <div style="margin-top: 16px;">
+                            <br>
+                            <strong style="font-size: 13px;">• 비교견적 신청내역</strong>
+                            <span style="float: right;">더보기 &gt;</span>
+                            <table style="width: 100%; border: 1px solid #ccc; border-collapse: collapse; font-size: 13px; margin-top: 8px;">
+                                <thead style="background: #f9f9f9;">
+                                <tr>
+                                    <th style="border: 1px solid #ccc;">신청일</th>
+                                    <th style="border: 1px solid #ccc;">결제상태</th>
+                                    <th style="border: 1px solid #ccc;">진행상황</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td style="border: 1px solid #ccc;">-</td>
+                                    <td style="border: 1px solid #ccc;">-</td>
+                                    <td style="border: 1px solid #ccc;">-</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+
+            <!-- 화물·특장·버스 콘텐츠 -->
+            <div id="tab-truck" class="vehicle-tab-content hidden">
+                <section class="car-status">
+
+                    <!-- ✅ 내차 구매 박스 -->
+                    <div class="car-box">
+                        <h4>내차 구매</h4>
+                        <ul style="font-size: 13px; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 6px;">
+                            <li> 찜한 차량 <span style="float: right;">더보기 &gt;</span></li>
+                        </ul>
+                        <p class="no-data"><span style="color: orange;">찜한 차량</span>이 없습니다.</p>
+                    </div>
+
+                    <!-- ✅ 내차 판매 박스 -->
+                    <div class="car-box">
+                        <h4>내차 판매</h4>
+                        <ul style="font-size: 13px; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 6px;">
+                            <li> 판매중 차량 <span style="color: red;">총 0대</span> <span style="float: right;">더보기 &gt;</span></li>
+                        </ul>
+                        <p class="no-data"><span style="color: orange;">판매중 차량</span>이 없습니다.</p>
+
+                        <!-- 판매차량 관리 -->
+                        <div style="margin-top: 16px;">
+                            <br>
+                            <strong style="font-size: 13px;">• 판매차량 관리</strong>
+                            <span style="float: right;">더보기 &gt;</span>
+                            <div style="display: flex; gap: 10px; margin-top: 8px; font-size: 13px;">
+                                <div style="flex: 1; border: 1px solid #ccc; padding: 8px; text-align: center;">
+                                    <strong>판매대기</strong><br>
+                                    등록대기 <span style="color: red;">0대</span><br>
+                                    임시저장 <span style="color: red;">0대</span>
+                                </div>
+                                <div style="flex: 1; border: 1px solid #ccc; padding: 8px; text-align: center;">
+                                    <strong>판매완료<br>(최근 1년)</strong><br>
+                                    <span style="color: red;">0대</span>
+                                </div>
+                                <div style="flex: 1; border: 1px solid #ccc; padding: 8px; text-align: center;">
+                                    <strong>삭제<br>(최근 3개월)</strong><br>
+                                    기간만료 <span style="color: red;">0대</span><br>
+                                    직접삭제 <span style="color: red;">0대</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- 가이드 및 주의사항 영역 -->
+            <div class="guide-wrapper">
+                <div class="guide-box">
+                    <h4>구매 가이드 <span class="more">더보기 &gt;</span></h4>
+                    <ul>
+                        <li>좋은 중고차란?</li>
+                        <li>허위매물 구별</li>
+                        <li>사고유무 구분 기준</li>
+                        <li>계약 시 준비할 서류</li>
+                        <li>이전 등록비란?</li>
+                    </ul>
+                </div>
+
+                <div class="guide-box">
+                    <h4>판매 가이드 <span class="more">더보기 &gt;</span></h4>
+                    <ul>
+                        <li>언제 팔아야 할까?</li>
+                        <li>시세 확인</li>
+                        <li>계약 시 준비할 서류</li>
+                        <li>계약 종료 후 확인할 사항</li>
+                    </ul>
+                </div>
+
+                <div class="guide-box">
+                    <h4>내차판매 이용 시 주의사항
+                        <button class="btn-gray-small">클린엔카 캠페인</button>
+                    </h4>
+                    <p class="guide-info-text">
+                        아래 경우 차량이 삭제되거나, 이용제한을 받을 수 있습니다. <br>
+                        (삭제 시, 등록비용 등 일체 비용은 환불 없음)
+                    </p>
+                    <ul class="warning-list">
+                        <li>- 본인 명의가 아닌 경우</li>
+                        <li>- 소유한지 6개월 미만인 경우</li>
+                        <li>- 허위매물로 등록한 경우</li>
+                        <li>- 팔린 차량을 고의적으로 삭제하지 않은 경우</li>
+                    </ul>
+                </div>
+            </div>
+
             <!-- #### 사이드바 #### -->
             <!-- ############# 내차 구매 ################ -->
             <!-- 관심 차량 콘텐츠 (초기에 숨김) -->
@@ -285,10 +449,11 @@
                 </p>
 
                 <!-- 탭 버튼 -->
-                <div class="tab-buttons" style="margin-top: 20px;">
-                    <button class="visit-tab-btn active" data-target="visit-purchase-box">예약/구매</button>
-                    <button class="visit-tab-btn" data-target="visit-cancel-box">취소/환불</button>
+                <div class="vehicle-tabs" style="margin-top: 20px;">
+                    <button class="tab-btn active" data-target="visit-purchase-box">예약/구매</button>
+                    <button class="tab-btn" data-target="visit-cancel-box">취소/환불</button>
                 </div>
+
 
                 <!-- ✅ 예약/구매 콘텐츠 -->
                 <div id="visit-purchase-box" class="visit-tab-content">
@@ -335,9 +500,9 @@
                 </p>
 
                 <!-- 탭 버튼 -->
-                <div class="tab-buttons" style="margin-top: 20px;">
-                    <button class="delivery-tab-btn active" data-target="delivery-main-box">엔카믿고 배송</button>
-                    <button class="delivery-tab-btn" data-target="delivery-pickup-box">홈서비스 방문 픽업</button>
+                <div class="vehicle-tabs">
+                    <button class="tab-btn active" data-target="delivery-main-box">엔카믿고 배송</button>
+                    <button class="tab-btn" data-target="delivery-pickup-box">홈서비스 방문 픽업</button>
                 </div>
 
                 <!-- ✅ 엔카믿고 배송 콘텐츠 -->
@@ -378,6 +543,7 @@
                     </table>
                 </div>
             </div>
+
             <!-- ########## 내차 판매 ################## -->
             <!-- 판매차량 관리 콘텐츠 -->
             <div id="sell-car-section" class="hidden">
@@ -524,7 +690,7 @@
                 <h3>구매문의 내역</h3>
 
                 <!-- 탭 버튼 -->
-                <div class="tab-buttons" style="margin-top: 10px; border-bottom: 2px solid #ccc;">
+                <div class="vehicle-tabs" style="margin-top: 10px; border-bottom: 2px solid #ccc;">
                     <button class="tab-btn active" data-target="inquiry-normal-box">국산/수입차(총 0건)</button>
                     <button class="tab-btn" data-target="inquiry-truck-box">화물•특장•버스(총 0건)</button>
                 </div>
@@ -594,7 +760,7 @@
                 </p>
 
                 <!-- ✅ 탭 버튼 -->
-                <div class="tab-buttons" style="border-bottom: 2px solid #ccc;">
+                <div class="vehicle-tabs" style="border-bottom: 2px solid #ccc;">
                     <button class="tab-btn active" data-target="payment-list-box">결제 내역</button>
                     <button class="tab-btn" data-target="deposit-list-box">입금대기 내역</button>
                 </div>
@@ -772,7 +938,7 @@
 
 
                 <!-- ✅ 탭 버튼 -->
-                <div class="tab-buttons" style="border-bottom: 2px solid #ccc; margin-top: 10px;">
+                <div class="vehicle-tabs" style="border-bottom: 2px solid #ccc; margin-top: 10px;">
                     <br>
                     <button class="tab-btn active" data-target="coupon-valid-box">보유/사용가능 쿠폰</button>
                     <button class="tab-btn" data-target="coupon-expired-box">사용완료/만료 쿠폰</button>
@@ -876,7 +1042,7 @@
                 <h3>쿠폰/포인트 이용안내</h3>
                 <p class="info-gray">현재 발행/지급 중인 쿠폰/포인트와 이용안내를 확인하실 수 있습니다.</p>
                 <br>
-                <div class="tab-buttons" style="margin-top: 10px; border-bottom: 2px solid #ccc;">
+                <div class="vehicle-tabs" style="margin-top: 10px; border-bottom: 2px solid #ccc;">
                     <button class="tab-btn active" data-target="guide-coupon-box">쿠폰</button>
                     <button class="tab-btn" data-target="guide-point-box">포인트</button>
                 </div>
@@ -1006,173 +1172,6 @@
                     </tr>
                     </tbody>
                 </table>
-            </div>
-
-
-
-            <!-- #########구매/판매 영역######### -->
-            <!-- 탭 버튼 -->
-            <!-- 탭 버튼 -->
-            <div class="vehicle-tabs">
-                <br>
-                <button class="tab-btn active" data-target="tab-normal">국산/수입차</button>
-                <button class="tab-btn" data-target="tab-truck">화물·특장·버스</button>
-            </div>
-
-            <!-- 국산/수입차 콘텐츠 -->
-            <div id="tab-normal" class="vehicle-tab-content">
-                <section class="car-status">
-                    <!-- ✅ 내차 구매 -->
-                    <div class="car-box">
-                        <h4>내차 구매</h4>
-                        <ul style="font-size: 13px; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 6px;">
-                            <li> 찜한 차량 <span style="float: right;">더보기 &gt;</span></li>
-                        </ul>
-                        <p class="no-data"><span style="color: orange;">찜한 차량</span>이 없습니다.</p>
-                    </div>
-
-                    <!-- ✅ 내차 판매 -->
-                    <div class="car-box">
-                        <h4>내차 판매</h4>
-                        <ul style="font-size: 13px; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 6px;">
-                            <li> 판매중 차량 <span style="color: red;">총 0대</span> <span style="float: right;">더보기 &gt;</span></li>
-                        </ul>
-                        <p class="no-data"><span style="color: orange;">판매중 차량</span>이 없습니다.</p>
-
-                        <!-- 판매차량 관리 -->
-                        <div style="margin-top: 16px;">
-                            <br>
-                            <strong style="font-size: 13px;">• 판매차량 관리</strong>
-                            <span style="float: right;">더보기 &gt;</span>
-                            <div style="display: flex; gap: 10px; margin-top: 8px; font-size: 13px;">
-                                <div style="flex: 1; border: 1px solid #ccc; padding: 8px; text-align: center;">
-                                    <strong>판매대기</strong><br>
-                                    등록대기 <span style="color: red;">0대</span><br>
-                                    임시저장 <span style="color: red;">0대</span>
-                                </div>
-                                <div style="flex: 1; border: 1px solid #ccc; padding: 8px; text-align: center;">
-                                    <strong>판매완료<br>(최근 1년)</strong><br>
-                                    <span style="color: red;">0대</span>
-                                </div>
-                                <div style="flex: 1; border: 1px solid #ccc; padding: 8px; text-align: center;">
-                                    <strong>삭제<br>(최근 3개월)</strong><br>
-                                    기간만료 <span style="color: red;">0대</span><br>
-                                    직접삭제 <span style="color: red;">0대</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 비교견적 신청내역 -->
-                        <div style="margin-top: 16px;">
-                            <br>
-                            <strong style="font-size: 13px;">• 비교견적 신청내역</strong>
-                            <span style="float: right;">더보기 &gt;</span>
-                            <table style="width: 100%; border: 1px solid #ccc; border-collapse: collapse; font-size: 13px; margin-top: 8px;">
-                                <thead style="background: #f9f9f9;">
-                                <tr>
-                                    <th style="border: 1px solid #ccc;">신청일</th>
-                                    <th style="border: 1px solid #ccc;">결제상태</th>
-                                    <th style="border: 1px solid #ccc;">진행상황</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td style="border: 1px solid #ccc;">-</td>
-                                    <td style="border: 1px solid #ccc;">-</td>
-                                    <td style="border: 1px solid #ccc;">-</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-
-            <!-- 화물·특장·버스 콘텐츠 -->
-            <div id="tab-truck" class="vehicle-tab-content hidden">
-                <section class="car-status">
-
-                    <!-- ✅ 내차 구매 박스 -->
-                    <div class="car-box">
-                        <h4>내차 구매</h4>
-                        <ul style="font-size: 13px; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 6px;">
-                            <li> 찜한 차량 <span style="float: right;">더보기 &gt;</span></li>
-                        </ul>
-                        <p class="no-data"><span style="color: orange;">찜한 차량</span>이 없습니다.</p>
-                    </div>
-
-                    <!-- ✅ 내차 판매 박스 -->
-                    <div class="car-box">
-                        <h4>내차 판매</h4>
-                        <ul style="font-size: 13px; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 6px;">
-                            <li> 판매중 차량 <span style="color: red;">총 0대</span> <span style="float: right;">더보기 &gt;</span></li>
-                        </ul>
-                        <p class="no-data"><span style="color: orange;">판매중 차량</span>이 없습니다.</p>
-
-                        <!-- 판매차량 관리 -->
-                        <div style="margin-top: 16px;">
-                            <br>
-                            <strong style="font-size: 13px;">• 판매차량 관리</strong>
-                            <span style="float: right;">더보기 &gt;</span>
-                            <div style="display: flex; gap: 10px; margin-top: 8px; font-size: 13px;">
-                                <div style="flex: 1; border: 1px solid #ccc; padding: 8px; text-align: center;">
-                                    <strong>판매대기</strong><br>
-                                    등록대기 <span style="color: red;">0대</span><br>
-                                    임시저장 <span style="color: red;">0대</span>
-                                </div>
-                                <div style="flex: 1; border: 1px solid #ccc; padding: 8px; text-align: center;">
-                                    <strong>판매완료<br>(최근 1년)</strong><br>
-                                    <span style="color: red;">0대</span>
-                                </div>
-                                <div style="flex: 1; border: 1px solid #ccc; padding: 8px; text-align: center;">
-                                    <strong>삭제<br>(최근 3개월)</strong><br>
-                                    기간만료 <span style="color: red;">0대</span><br>
-                                    직접삭제 <span style="color: red;">0대</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-            <!-- 가이드 및 주의사항 영역 -->
-            <div class="guide-wrapper">
-                <div class="guide-box">
-                    <h4>구매 가이드 <span class="more">더보기 &gt;</span></h4>
-                    <ul>
-                        <li>좋은 중고차란?</li>
-                        <li>허위매물 구별</li>
-                        <li>사고유무 구분 기준</li>
-                        <li>계약 시 준비할 서류</li>
-                        <li>이전 등록비란?</li>
-                    </ul>
-                </div>
-
-                <div class="guide-box">
-                    <h4>판매 가이드 <span class="more">더보기 &gt;</span></h4>
-                    <ul>
-                        <li>언제 팔아야 할까?</li>
-                        <li>시세 확인</li>
-                        <li>계약 시 준비할 서류</li>
-                        <li>계약 종료 후 확인할 사항</li>
-                    </ul>
-                </div>
-
-                <div class="guide-box">
-                    <h4>내차판매 이용 시 주의사항
-                        <button class="btn-gray-small">클린엔카 캠페인</button>
-                    </h4>
-                    <p class="guide-info-text">
-                        아래 경우 차량이 삭제되거나, 이용제한을 받을 수 있습니다. <br>
-                        (삭제 시, 등록비용 등 일체 비용은 환불 없음)
-                    </p>
-                    <ul class="warning-list">
-                        <li>- 본인 명의가 아닌 경우</li>
-                        <li>- 소유한지 6개월 미만인 경우</li>
-                        <li>- 허위매물로 등록한 경우</li>
-                        <li>- 팔린 차량을 고의적으로 삭제하지 않은 경우</li>
-                    </ul>
-                </div>
             </div>
         </main>
     </div>
@@ -1345,25 +1344,6 @@
           });
         });
 
-        // ✅ 구매문의 탭 전환 (국산/수입차 ↔ 화물/특장)
-        document.querySelectorAll('#purchase-inquiry-section .tab-buttons .tab-btn').forEach(tab => {
-            tab.addEventListener("click", function () {
-                // 탭 스타일 적용
-                document.querySelectorAll('#purchase-inquiry-section .tab-buttons .tab-btn').forEach(btn => btn.classList.remove("active"));
-                this.classList.add("active");
-
-                // 콘텐츠 전환
-                const targetId = this.dataset.target;
-                document.querySelectorAll('.inquiry-box').forEach(box => box.classList.add("hidden"));
-                document.getElementById(targetId).classList.remove("hidden");
-
-                // 차량구분 라디오 버튼 "전체"로 초기화
-                let radios = document.querySelectorAll(`#${targetId} input[type="radio"]`);
-                if (radios.length > 0) {
-                    radios[0].checked = true;
-                }
-            });
-        });
 
         // ✅ 결제/입금대기 탭 전환
         document.querySelectorAll('#payment-history-section .tab-buttons .tab-btn').forEach(tab => {
@@ -1379,34 +1359,90 @@
             });
         });
 
-        // ✅ 공통 탭 전환 처리 함수
+        // ✅ 공통 탭 전환 처리 함수 (전역에서 재사용)
         function handleTabToggle(containerSelector, tabSelector, contentSelector, activeClass = "active", hiddenClass = "hidden") {
-            document.querySelectorAll(`${containerSelector} ${tabSelector}`).forEach(tab => {
-                tab.addEventListener("click", function () {
-                    // 버튼 활성화 스타일 처리
-                    document.querySelectorAll(`${containerSelector} ${tabSelector}`).forEach(btn => btn.classList.remove(activeClass));
-                    this.classList.add(activeClass);
+            const tabs = document.querySelectorAll(`${containerSelector} ${tabSelector}`);
+            const contents = document.querySelectorAll(`${containerSelector} ${contentSelector}`);
 
-                    // 콘텐츠 숨기고 타겟만 보이기
+            tabs.forEach(tab => {
+                tab.addEventListener("click", function () {
+                    // 스타일 초기화
+                    tabs.forEach(btn => btn.classList.remove(activeClass));
+                    contents.forEach(content => content.classList.add(hiddenClass));
+
+                    // 선택한 탭 활성화
+                    this.classList.add(activeClass);
                     const targetId = this.dataset.target;
-                    document.querySelectorAll(`${containerSelector} ${contentSelector}`).forEach(box => box.classList.add(hiddenClass));
-                    const targetBox = document.getElementById(targetId);
-                    if (targetBox) targetBox.classList.remove(hiddenClass);
+                    const targetContent = document.getElementById(targetId);
+                    if (targetContent) targetContent.classList.remove(hiddenClass);
                 });
             });
+
+            // ✅ 초기에 active 클래스가 붙어 있는 버튼이 존재하면 그에 맞게 콘텐츠 표시
+            const initiallyActiveTab = Array.from(tabs).find(tab => tab.classList.contains(activeClass));
+            if (initiallyActiveTab) {
+                const initialTarget = initiallyActiveTab.dataset.target;
+                contents.forEach(content => content.classList.add(hiddenClass));
+                const initialContent = document.getElementById(initialTarget);
+                if (initialContent) initialContent.classList.remove(hiddenClass);
+            }
         }
 
-        // ✅ 쿠폰 탭 (보유/사용가능 vs 만료/완료)
+
+
+        // 🚗 엔카믿고 방문 탭 전환 (자동 숨김/표시)
+        handleTabToggle(
+          '#trust-visit-section',
+          '.vehicle-tabs .tab-btn',
+          '.visit-tab-content'
+        );
+
+
+        // 🚚 엔카믿고 배송 탭 전환 (통일)
+        handleTabToggle(
+            '#trust-delivery-section',
+            '.vehicle-tabs .tab-btn',        // ✅ 정확한 선택자
+            '.delivery-tab-content'
+        );
+
+
+        // 🛒 구매문의 탭 전환 (탭 전환만)
+        handleTabToggle(
+          '#purchase-inquiry-section',        // ✅ 부모 ID
+          '.vehicle-tabs .tab-btn',           // ✅ 버튼 위치
+          '.inquiry-box'                      // ✅ 전환할 콘텐츠
+        );
+
+        // 라디오 버튼 초기화만 따로 처리
+        document.querySelectorAll('#purchase-inquiry-section .tab-buttons .tab-btn').forEach(tab => {
+            tab.addEventListener("click", function () {
+                const targetId = this.dataset.target;
+                const radios = document.querySelectorAll(`#${targetId} input[type="radio"]`);
+                if (radios.length > 0) {
+                    radios[0].checked = true;
+                }
+            });
+        });
+
+
+        // 💳 결제 내역 / 입금대기 내역 탭
+        handleTabToggle(
+            '#payment-history-section',
+            '.vehicle-tabs .tab-btn',
+            '.payment-box'
+        );
+
+        // 🎟️ 쿠폰 탭 (보유/만료) - vehicle-tabs로 변경
         handleTabToggle(
             '#coupon-history-section',
-            '.tab-buttons .tab-btn',
+            '.vehicle-tabs .tab-btn',
             '.coupon-box'
         );
 
-        // ✅ 쿠폰/포인트 이용안내 탭
+        // 🧾 쿠폰/포인트 이용안내 탭 - vehicle-tabs로 변경
         handleTabToggle(
             '#coupon-guide-section',
-            '.tab-buttons .tab-btn',
+            '.vehicle-tabs .tab-btn',
             '.coupon-guide-box'
         );
     });
