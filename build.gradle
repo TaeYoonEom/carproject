@@ -30,6 +30,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	runtimeOnly 'com.h2database:h2'
 
+	implementation 'org.springframework.boot:spring-boot-starter-mail' // 이메일
 	// ✅ Lombok 추가
 	// ✅ Lombok
 	compileOnly 'org.projectlombok:lombok'

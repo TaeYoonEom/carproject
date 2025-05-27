@@ -19,7 +19,7 @@ public class CarSaleService {
         return carSaleRepository.findAll();
     }
 
-    public List<CarSale> findByCarType(String carType) {
-        return carSaleRepository.findByCarType(carType);
-    }
+//    public List<CarSale> findByCarType(String carType) { // 에러에러에러 주석처리
+//        return carSaleRepository.findByCarType(carType);
+//    }
 }

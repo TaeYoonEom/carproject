@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <title>로그인 - Encar</title>
@@ -70,6 +70,7 @@
 <body>
 <div class="login-container">
   <div class="login-title">Encar</div>
+
   <form action="/login" method="post">
     <div class="login-checkbox">
       <input type="checkbox" id="rememberId">
@@ -79,14 +80,25 @@
     <input type="password" class="login-input" placeholder="비밀번호" name="password" required>
     <button type="submit" class="login-button">로그인</button>
   </form>
+
   <div class="login-links">
-    <a href="#">아이디 찾기</a> |
-    <a href="#">비밀번호 찾기</a> |
+    <a href="/find-id">아이디 찾기</a> |
+    <a href="find-password">비밀번호 찾기</a> |
     <a href="/register">회원가입</a>
   </div>
   <div class="login-footer">
     © Encar 1599-5455
   </div>
 </div>
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  const hasError = /*[[${param.error != null}]]*/ false;
+  if (hasError) {
+    alert("아이디 또는 비밀번호가 잘못되었습니다.");
+  }
+  /*]]>*/
+</script>
+
 </body>
 </html>

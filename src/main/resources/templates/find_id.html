@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>아이디 찾기 - Encar</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .find-container {
+          max-width: 400px;
+          margin: 60px auto;
+          padding: 30px;
+          border: 1px solid #eee;
+          border-radius: 10px;
+          text-align: center;
+          background-color: #fff;
+        }
+        .find-title {
+          font-size: 28px;
+          font-weight: bold;
+          color: red;
+          margin-bottom: 20px;
+        }
+        .find-input {
+          width: 100%;
+          padding: 12px;
+          margin: 10px 0;
+          font-size: 16px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+        }
+        .find-button {
+          width: 100%;
+          padding: 12px;
+          background-color: red;
+          color: white;
+          border: none;
+          border-radius: 5px;
+          font-size: 16px;
+          cursor: pointer;
+          font-weight: bold;
+        }
+        .result-message {
+          margin-top: 20px;
+          font-size: 16px;
+          color: green;
+        }
+        .error-message {
+          margin-top: 20px;
+          font-size: 16px;
+          color: red;
+        }
+    </style>
+</head>
+<body>
+<div class="find-container">
+    <div class="find-title">아이디 찾기</div>
+    <form action="/find-id" method="post">
+        <input type="text" name="name" class="find-input" placeholder="이름" required>
+        <input type="text" name="phone" class="find-input" placeholder="전화번호" required>
+        <button type="submit" class="find-button">아이디 찾기</button>
+    </form>
+
+    <!-- 아이디 출력 결과 -->
+    <div th:if="${foundId}" class="result-message">
+        회원님의 아이디는 <strong th:text="${foundId}"></strong> 입니다.
+    </div>
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+    <!-- ✅ 로그인 / 비밀번호 찾기 링크 추가 -->
+    <div style="margin-top: 30px; font-size: 14px; color: #555;">
+        <a href="/login" style="margin-right: 10px; color: #333; text-decoration: none;">로그인</a> |
+        <a href="/find-password" style="margin-left: 10px; color: #333; text-decoration: none;">비밀번호 찾기</a>
+    </div>
+
+</div>
+</body>
+</html>
