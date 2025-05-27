@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
 
-
 @Getter
 @Setter
 @Entity
@@ -35,7 +34,17 @@ public class CarSale {
     private int mileage;
     private int year;
     private LocalDateTime createdAt;
-    @Column(name = "car_type", columnDefinition = "ENUM('국산', '수입', '전기/친환경', '화물/특장')")
-    private String carType;
+
+    private String carGrade;
+    private int capacity;
+
+    @Column(name = "sale_type", length = 50)
+    private String saleType;
+
+    @Column(name = "fuel_type", length = 50)
+    private String fuelType;
+
+    @Column(length = 50)
+    private String transmission;
 
 }
