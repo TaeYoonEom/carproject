@@ -38,13 +38,14 @@ public class CarSale {
     private String carGrade;
     private int capacity;
 
-    @Column(name = "sale_type", length = 50)
     private String saleType;
 
-    @Column(name = "fuel_type", length = 50)
     private String fuelType;
 
     @Column(length = 50)
     private String transmission;
+
+    @Column(length = 50)
+    private String carType;
 
 }

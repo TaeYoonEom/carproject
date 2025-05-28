@@ -15,11 +15,13 @@ public class CarSaleService {
         this.carSaleRepository = carSaleRepository;
     }
 
+    // ✅ 전체 차량 조회
     public List<CarSale> getAllCars() {
         return carSaleRepository.findAll();
     }
 
-//    public List<CarSale> findByCarType(String carType) { // 에러에러에러 주석처리
-//        return carSaleRepository.findByCarType(carType);
-//    }
+    // ✅ 차량 유형별 검색
+    public List<CarSale> findByCarType(String carType) {
+        return carSaleRepository.findByCarType(carType);
+    }
 }
