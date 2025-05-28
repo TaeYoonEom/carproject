@@ -55,6 +55,7 @@ public class FindPasswordController {
             // ✅ 이메일 전송
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(email);
+            message.setFrom("djaxodbs010@gmail.com"); // ✅ 반드시 명시
             message.setSubject("[Encar] 임시 비밀번호 안내");
             message.setText("회원님의 임시 비밀번호는 다음과 같습니다:\n\n" +
                     "임시 비밀번호: " + tempPassword + "\n\n" +
