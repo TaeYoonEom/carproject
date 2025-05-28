@@ -19,13 +19,13 @@ public class KoreanController {
     }
 
     // 차량 목록 전체 + 우대/일반 구분해서 전달
-//    @GetMapping("/korean") // 에러에러에러 주석처리
-//    public String showKoreanCars(Model model) {
-//        // 전체 차량 목록 가져오기
-//        List<CarSale> carList = carSaleService.findByCarType("국산");
-//
-//        model.addAttribute("carList", carList);
-//
-//        return "korean_page";
-//    }
+    @GetMapping("/korean")
+    public String showKoreanCars(Model model) {
+        // 전체 차량 목록 가져오기
+        List<CarSale> carList = carSaleService.getAllCars();
+
+        model.addAttribute("carList", carList);
+
+        return "korean_page";
+    }
 }

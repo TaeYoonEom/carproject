@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface CarSaleRepository extends JpaRepository<CarSale, Integer> {
-//    List<CarSale> findByCarType(String carType); // 에러에러에러 주석처리
+    List<CarSale> findByCarType(String carType);
 }
