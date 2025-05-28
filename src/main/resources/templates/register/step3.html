@@ -135,3 +135,30 @@
 </div>
 </body>
 </html>
+
+<script>
+  document.querySelector(".check-button").addEventListener("click", function () {
+      const username = document.querySelector("input[name='username']").value;
+
+      if (!username) {
+          alert("아이디를 입력해주세요.");
+          return;
+      }
+
+      fetch(`/register/check-username?username=${encodeURIComponent(username)}`)
+          .then(response => response.json())
+          .then(isDuplicate => {
+              if (isDuplicate) {
+                  alert("이미 사용 중인 아이디입니다.");
+                  document.querySelector("input[name='username']").style.border = "2px solid red";
+              } else {
+                  alert("사용 가능한 아이디입니다.");
+                  document.querySelector("input[name='username']").style.border = "2px solid green";
+              }
+          })
+          .catch(error => {
+              console.error("중복 확인 실패:", error);
+              alert("서버 오류가 발생했습니다.");
+          });
+  });
+</script>
