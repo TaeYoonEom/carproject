@@ -17,6 +17,13 @@ public class RegisterController {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    @GetMapping("/check-username")
+    @ResponseBody
+    public boolean checkUsername(@RequestParam String username) {
+        return memberRepository.existsByLoginId(username);
+    }
+
+
     @GetMapping("/step3")
     public String showStep3() {
         return "register/step3";
