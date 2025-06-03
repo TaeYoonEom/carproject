@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -25,10 +26,10 @@ public class FindIdController {
                          @RequestParam String phone,
                          Model model) {
 
-        Optional<Member> member = memberRepository.findByNameAndPhone(name, phone);
+        List<Member> members = memberRepository.findByNameAndPhone(name, phone);
 
-        if (member.isPresent()) {
-            model.addAttribute("foundId", member.get().getLoginId());
+        if (!members.isEmpty()) {
+            model.addAttribute("foundIds", members);  // 리스트 전달
         } else {
             model.addAttribute("error", "입력하신 정보와 일치하는 아이디가 없습니다.");
         }

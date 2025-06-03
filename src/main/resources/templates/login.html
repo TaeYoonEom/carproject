@@ -69,7 +69,10 @@
 </head>
 <body>
 <div class="login-container">
-  <div class="login-title">Encar</div>
+  <div class="login-title">
+    <a href="/" style="text-decoration: none; color: inherit;">Encar</a>
+  </div>
+
 
   <form action="/login" method="post">
     <div class="login-checkbox">
@@ -79,16 +82,15 @@
     <input type="text" class="login-input" placeholder="아이디" name="username" required>
     <input type="password" class="login-input" placeholder="비밀번호" name="password" required>
     <button type="submit" class="login-button">로그인</button>
-    <!-- ✅ 카카오 로그인 버튼 (REST KEY 포함, 리디렉션 URI: http://localhost:8080/) -->
-    <div style="margin-top: 20px;">
-      <a id="kakao-login-btn"
-         href="https://kauth.kakao.com/oauth/authorize?client_id=2da4e925cb390a0ee676856156508384&redirect_uri=http://localhost:8080/login/oauth2/code/kakao&response_type=code">
-        <img src="https://t1.kakaocdn.net/kakaocorp/kakaocorp/admin/login/kakao_login_medium_narrow.png"
-             alt="카카오 로그인 버튼" style="width: 100%; max-width: 300px;">
+    <div>
+      <!-- ✅ Spring Security의 OAuth2 Client가 처리하도록 내부 경로 사용 -->
+      <a href="/oauth2/authorization/kakao">
+        <img src="/img/kakao_login.png" alt="카카오 로그인"
+             style="display: block; width: 100%; max-width: 400px; height: auto;">
       </a>
     </div>
   </form>
-
+  <br>
   <div class="login-links">
     <a href="/find-id">아이디 찾기</a> |
     <a href="find-password">비밀번호 찾기</a> |

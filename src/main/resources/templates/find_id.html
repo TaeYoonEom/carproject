@@ -61,9 +61,18 @@
     </form>
 
     <!-- 아이디 출력 결과 -->
-    <div th:if="${foundId}" class="result-message">
-        회원님의 아이디는 <strong th:text="${foundId}"></strong> 입니다.
+    <div th:if="${foundIds}">
+        <div class="result-message">
+            <p>입력하신 정보와 일치하는 아이디 목록입니다:</p>
+            <ul style="text-align: left; padding-left: 60px;">
+                <li th:each="member : ${foundIds}">
+                    <strong th:text="${member.loginId}">아이디</strong>
+                </li>
+            </ul>
+        </div>
     </div>
+
+    <!-- 에러 메시지 -->
     <div th:if="${error}" class="error-message" th:text="${error}"></div>
     <!-- ✅ 로그인 / 비밀번호 찾기 링크 추가 -->
     <div style="margin-top: 30px; font-size: 14px; color: #555;">
