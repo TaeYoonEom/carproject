@@ -31,6 +31,7 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 
 	implementation 'org.springframework.boot:spring-boot-starter-mail' // 이메일
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client' //카카오톡 로그인
 	// ✅ Lombok 추가
 	// ✅ Lombok
 	compileOnly 'org.projectlombok:lombok'

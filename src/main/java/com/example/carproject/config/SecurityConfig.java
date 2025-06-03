@@ -1,37 +1,60 @@
 package com.example.carproject.config;
 
+import com.example.carproject.service.CustomOAuth2UserService;
+import com.example.carproject.security.CustomUserDetailsService; // ✅ 반드시 import
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
+    // 🔐 비밀번호 암호화 Bean 등록
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // ✅ CustomUserDetailsService 주입 추가됨!
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http,
+                                           CustomOAuth2UserService customOAuth2UserService,
+                                           CustomUserDetailsService customUserDetailsService) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll()
                 )
                 .csrf(csrf -> csrf.disable())
+
+                // ✅ 일반 로그인 설정
                 .formLogin(form -> form
-                        .loginPage("/login")                 // 커스텀 로그인 페이지
-                        .loginProcessingUrl("/login")        // 로그인 처리 경로
-                        .defaultSuccessUrl("/", true)        // 로그인 성공 시 이동 경로
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
+
+                // ✅ 여기가 핵심!!
+                .userDetailsService(customUserDetailsService)
+
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService)
+                        )
+                        .defaultSuccessUrl("/", true)
+                )
+
                 .logout(logout -> logout
-                        .logoutUrl("/logout")                // 로그아웃 경로
-                        .logoutSuccessUrl("/")               // 로그아웃 후 리디렉션
-                        .invalidateHttpSession(true)         // 세션 무효화
-                        .deleteCookies("JSESSIONID")         // 쿠키 삭제
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
                         .permitAll()
                 );
 
