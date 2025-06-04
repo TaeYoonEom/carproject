@@ -1,28 +1,43 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{base}" lang="ko">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}"
+      lang="ko">
 <head>
-    <link rel="stylesheet" th:href="@{/css/sell_quick.css}">
+    <title>빠른 차량 판매</title>
+
+    <!-- ✅ 개별 CSS 추가 -->
+    <th:block layout:fragment="style">
+        <link rel="stylesheet" th:href="@{/css/sell_quick.css}">
+    </th:block>
 </head>
 <body>
+
+<!-- ✅ 본문 삽입 -->
 <div layout:fragment="content">
     <div class="quick-container">
 
-        <!-- 비교견적 상단 안내 -->
+        <!-- 상단 안내 -->
         <h2 class="title">내 차의 최고가 견적을 확인하세요.</h2>
 
         <!-- 차량번호 입력창 -->
         <div class="input-box">
-            <input type="text" placeholder="123가4567" />
-            <button>조회</button>
+            <input type="text" id="carNumber" placeholder="123가4567" />
+            <button id="checkBtn">조회</button>
         </div>
+
+        <!-- 로그인 여부 dataset 전달 -->
+        <div id="auth-status" th:data-authenticated="${#authorization.expression('isAuthenticated()')}"></div>
 
         <!-- 보조 링크 -->
         <div class="helper-links">
             <a href="#">내 차량 전체보기</a>
             <a href="#">이용안내 가이드</a>
         </div>
+
         <hr>
-        <!-- 하단 설명 섹션 -->
+
+        <!-- 설명 박스 -->
         <section class="info-section">
             <h3>엔카 비교견적은?</h3>
             <div class="info-boxes">
@@ -40,5 +55,42 @@
 
     </div>
 </div>
+
+<!-- ✅ 자바스크립트 삽입 -->
+<th:block layout:fragment="script">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const checkBtn = document.getElementById("checkBtn");
+          checkBtn.addEventListener("click", function () {
+            const carNumber = document.getElementById("carNumber").value.trim();
+            const isAuthenticated = document.getElementById("auth-status").dataset.authenticated === "true";
+
+            if (!carNumber) {
+              alert("차량 번호를 입력해주세요.");
+              return;
+            }
+
+            if (!isAuthenticated) {
+              alert("로그인이 필요합니다. 로그인 후 다시 시도해주세요.");
+              window.open(
+                "/sell/detail/owner?carNumber=" + encodeURIComponent(carNumber),
+                "ownerWindow",
+                "width=500,height=800,top=100,left=200,resizable=no"
+              );
+              return;
+            }
+
+            // 새 창으로 이동
+                        // 기존 handleCarCheck 함수 내 window.open 부분만 수정
+            window.open(
+              "/sell/detail/owner?carNumber=" + encodeURIComponent(carNumber),
+              "ownerWindow",
+              "width=500,height=800,top=100,left=200,resizable=no"
+            );
+          });
+        });
+    </script>
+</th:block>
+
 </body>
 </html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}"
+      lang="ko">
+<head>
+  <title>차량 정보 입력</title>
+
+  <!-- ✅ 개별 CSS 연결 -->
+  <th:block layout:fragment="style">
+    <link rel="stylesheet" th:href="@{/css/sell_input.css}">
+  </th:block>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="input-container">
+    <h2>차량 정보 입력</h2>
+
+    <form th:action="@{/sell/detail/input/save}" method="post" onsubmit="return validateForm()">
+      <!-- 차량 번호 (수정 불가) -->
+      <div class="form-group">
+        <label>차량 번호</label>
+        <input type="text" name="carNumber" th:value="${draft.carNumber}" readonly>
+      </div>
+
+      <!-- 소유자명 (수정 불가) -->
+      <div class="form-group">
+        <label>소유자명</label>
+        <input type="text" name="ownerName" th:value="${draft.ownerName}" readonly>
+      </div>
+
+      <!-- 모델명 -->
+      <div class="form-group">
+        <label>모델명</label>
+        <input type="text" name="modelName" th:value="${draft.modelName}" required>
+      </div>
+
+      <!-- 연식 (월 선택) -->
+      <div class="form-group">
+        <label>연식 (YYYY-MM)</label>
+        <input type="month" name="manufactureDate" required>
+      </div>
+
+      <!-- 주행거리 -->
+      <div class="form-group">
+        <label>주행거리 (km)</label>
+        <input type="number" name="mileage" th:value="${draft.mileage}" min="0" required>
+      </div>
+
+      <!-- 거래 지역 -->
+      <div class="form-group">
+        <label>거래 지역</label>
+        <div style="display: flex; gap: 10px;">
+          <select id="province" required>
+            <option value="">시/도 선택</option>
+            <option value="서울특별시">서울특별시</option>
+            <option value="경기도">경기도</option>
+            <option value="부산광역시">부산광역시</option>
+            <option value="강원도">강원도</option>
+            <!-- 필요시 추가 -->
+          </select>
+
+          <select id="city" required disabled>
+            <option value="">시/군/구 선택</option>
+          </select>
+        </div>
+
+        <!-- 실제 전송될 지역 값 -->
+        <input type="hidden" name="region" id="regionInput" />
+      </div>
+
+      <!-- 저장 버튼 -->
+      <div class="form-actions">
+        <button type="submit">정보 저장하고 다음</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<th:block layout:fragment="script">
+  <script>
+    function validateForm() {
+        const modelName = document.querySelector("input[name='modelName']").value.trim();
+        const date = document.querySelector("input[name='manufactureDate']").value;
+        const mileage = document.querySelector("input[name='mileage']").value;
+        const region = document.querySelector("select[name='region']").value;
+
+        if (!modelName || !date || !mileage || !region) {
+            alert("모든 필수 정보를 입력해주세요.");
+            return false;
+        }
+        return true;
+    }
+  </script>
+  <script>
+    const provinceCityMap = {
+      "서울특별시": ["강남구", "서초구", "강북구", "송파구", "관악구"],
+      "경기도": ["부천시", "관명시", "안양시", "성남시", "광명시"],
+      "부산광역시": ["해운대구", "사하구", "남구", "중구"],
+      "강원도": ["춘천시", "원주시", "강릉시"]
+    };
+
+    const provinceSelect = document.getElementById("province");
+    const citySelect = document.getElementById("city");
+    const regionInput = document.getElementById("regionInput");
+
+    provinceSelect.addEventListener("change", function () {
+      const selectedProvince = this.value;
+      citySelect.innerHTML = `<option value="">시/군/구 선택</option>`;
+
+      if (selectedProvince && provinceCityMap[selectedProvince]) {
+        provinceCityMap[selectedProvince].forEach(city => {
+          const option = document.createElement("option");
+          option.value = city;
+          option.textContent = city;
+          citySelect.appendChild(option);
+        });
+        citySelect.disabled = false;
+      } else {
+        citySelect.disabled = true;
+      }
+
+      // 초기화
+      regionInput.value = "";
+    });
+
+    citySelect.addEventListener("change", function () {
+      const province = provinceSelect.value;
+      const city = this.value;
+      if (province && city) {
+        regionInput.value = `${province} ${city}`;
+      }
+    });
+  </script>
+
+</th:block>
+
+</body>
+</html>
