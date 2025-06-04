@@ -1,7 +1,7 @@
-package com.example.carproject.controller;
+package com.example.carproject.buy.controller;
 
-import com.example.carproject.domain.CarSale;
-import com.example.carproject.service.CarSaleService;
+import com.example.carproject.buy.domain.CarSale;
+import com.example.carproject.buy.service.CarSaleService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +26,6 @@ public class KoreanController {
 
         model.addAttribute("carList", carList);
 
-        return "korean_page";
+        return "buy/korean_page";
     }
 }
