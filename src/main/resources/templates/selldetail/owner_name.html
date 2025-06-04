@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>차량 소유자명 입력</title>
+  <style>
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #fff;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px 100px;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      max-width: 320px;
+      padding: 14px 20px;
+      font-size: 18px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      background-color: #f3f6fb;
+      color: #333;
+      text-align: center;
+    }
+
+    .notice {
+      font-size: 13px;
+      margin-top: 8px;
+      color: #999;
+    }
+
+    .confirm-btn {
+      display: none;
+      margin-top: 30px;
+      background-color: #d62828;
+      color: white;
+      padding: 14px 50px;
+      border: none;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .confirm-btn:hover {
+      background-color: #b71f1f;
+    }
+
+    /* ===== Modal Style ===== */
+    .modal {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      max-height: 90%;
+      background: white;
+      border-top: 1px solid #ccc;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.15);
+      padding: 25px 20px;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 18px;
+      align-items: center;
+    }
+
+    .close-btn {
+      border: none;
+      background: none;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .terms-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .terms-list label {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 15px;
+      width: 100%;
+    }
+
+    .terms-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-grow: 1;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 6px;
+    }
+
+    .terms-label .main {
+      font-size: 15px;
+    }
+
+    .required-text {
+      color: #d62828;
+      font-size: 13px;
+      margin-left: 6px;
+    }
+
+    .optional-text {
+      color: #888;
+      font-size: 13px;
+      margin-left: 6px;
+    }
+
+    .arrow {
+      color: #888;
+      font-size: 18px;
+    }
+
+    .terms-warning {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #888;
+      line-height: 1.5;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .modal-footer button {
+      padding: 12px 32px;
+      background-color: #d62828;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    @media (min-width: 600px) {
+      .modal {
+        padding: 30px 40px;
+      }
+
+      .terms-list label {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="back-btn" onclick="window.history.back()">←</div>
+
+<div class="container">
+  <h2>차량 소유자명을 알려주세요</h2>
+  <input type="text" id="ownerName" placeholder="자동차등록증에 기재된 성명" oninput="showConfirm()" />
+  <p class="notice">※ 자동차등록증에 기재된 성명(명칭)</p>
+  <button class="confirm-btn" id="confirmBtn" onclick="openTerms()">확인</button>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="termsModal">
+  <div class="modal-header">
+    이용 약관
+    <button class="close-btn" onclick="closeModal()">✕</button>
+  </div>
+
+  <div class="terms-list">
+    <label>
+      <input type="checkbox" class="required">
+      <div class="terms-label">
+        <div class="main">이용약관<span class="required-text">(필수)</span></div>
+        <div class="arrow">›</div>
+      </div>
+    </label>
+    <label>
+      <input type="checkbox" class="required">
+      <div class="terms-label">
+        <div class="main">개인정보 수집 및 이용<span class="required-text">(필수)</span></div>
+        <div class="arrow">›</div>
+      </div>
+    </label>
+    <label>
+      <input type="checkbox" class="required">
+      <div class="terms-label">
+        <div class="main">개인정보 제3자 제공 동의<span class="required-text">(필수)</span></div>
+        <div class="arrow">›</div>
+      </div>
+    </label>
+    <label>
+      <input type="checkbox">
+      <div class="terms-label">
+        <div class="main">서비스 소개 등을 위한 동의<span class="optional-text">(선택)</span></div>
+        <div class="arrow">›</div>
+      </div>
+    </label>
+  </div>
+
+  <p class="terms-warning">
+    차주 또는 대리인 외의 제3자가 부정한 목적으로 신청 시 민·형사상 불이익이 발생할 수 있습니다.
+  </p>
+
+  <div class="modal-footer">
+    <button onclick="goToNext()">필수 약관만 동의</button>
+  </div>
+</div>
+
+<script>
+  function showConfirm() {
+    const name = document.getElementById("ownerName").value.trim();
+    document.getElementById("confirmBtn").style.display = name ? "block" : "none";
+  }
+
+  function openTerms() {
+    document.getElementById("termsModal").style.display = "block";
+  }
+
+  function closeModal() {
+    document.getElementById("termsModal").style.display = "none";
+  }
+
+  function goToNext() {
+    const required = document.querySelectorAll(".required");
+    const allChecked = Array.from(required).every(cb => cb.checked);
+    if (!allChecked) {
+      alert("모든 필수 약관에 동의해주세요.");
+      return;
+    }
+
+    const name = document.getElementById("ownerName").value.trim();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const carNumber = urlParams.get("carNumber");
+
+    if (!carNumber) {
+      alert("차량번호 정보가 없습니다. 처음부터 다시 시도해주세요.");
+      return;
+    }
+
+    const query = `carNumber=${encodeURIComponent(carNumber)}&owner=${encodeURIComponent(name)}`;
+    window.location.href = `/sell/detail/input?${query}`;
+  }
+</script>
+
+</body>
+</html>
