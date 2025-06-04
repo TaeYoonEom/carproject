@@ -30,7 +30,8 @@ public class SecurityConfig {
                                 "/", "/login", "/register", "/find-id", "/find-password", "/reset-password",
                                 "/css/**", "/js/**", "/img/**", "/oauth2/**", "/error"
                         ).permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/mypage/**").authenticated() // ✅ 마이페이지만 인증 필요
+                        .anyRequest().permitAll()
                 )
                 .csrf(csrf -> csrf.disable()) // ✅ CSRF 비활성화
 
