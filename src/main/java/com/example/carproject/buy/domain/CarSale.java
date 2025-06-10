@@ -29,8 +29,8 @@ public class CarSale {
     private String driveType;
     private String saleLocation;
     private int price;
-    private String bankAccount;
-    private String bankName;
+   // private String bankAccount;
+   // private String bankName;
     private int mileage;
     private int year;
     private LocalDateTime createdAt;
