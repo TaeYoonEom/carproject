@@ -43,4 +43,33 @@ public class CarEntryDraft {
 
     @Column(name = "is_submitted")
     private Boolean isSubmitted;
+
+    @Column(name = "front_view_url")
+    private String frontViewUrl;
+
+    @Column(name = "left_side_url")
+    private String leftSideUrl;
+
+    @Column(name = "right_side_url")
+    private String rightSideUrl;
+
+    @Column(name = "rear_view_url")
+    private String rearViewUrl;
+
+    @Column(name = "driver_seat_url")
+    private String driverSeatUrl;
+
+    @Column(name = "back_seat_url")
+    private String backSeatUrl;
+
+    @Column(name = "exterior_color")
+    private String exteriorColor;
+
+    @Column(name = "interior_color")
+    private String interiorColor;
+
+    @Column(name = "seat_color")
+    private String seatColor;
+
+
 }

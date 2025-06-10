@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>차량 사진 등록</title>
+    <link rel="stylesheet" th:href="@{/css/car_photo.css}">
+    <style>
+        body {
+          font-family: 'Noto Sans KR', sans-serif;
+          background: #fafafa;
+          margin: 0;
+          padding: 0;
+        }
+        .photo-container {
+          max-width: 650px;
+          margin: 40px auto;
+          background: #fff;
+          border-radius: 14px;
+          box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+          padding: 40px 32px;
+        }
+        .photo-title {
+          font-size: 23px;
+          font-weight: bold;
+          margin-bottom: 8px;
+        }
+        .photo-desc {
+          font-size: 18px;
+          color: #222;
+          margin-bottom: 22px;
+        }
+        .photo-tip {
+          background: #f5f6fa;
+          border-radius: 10px;
+          padding: 18px 16px;
+          margin-bottom: 22px;
+          color: #666;
+          font-size: 14px;
+        }
+        .photo-list-preview {
+          display: flex;
+          gap: 16px;
+          margin-bottom: 18px;
+        }
+        .photo-list-preview img {
+          width: 86px;
+          height: 60px;
+          object-fit: cover;
+          border-radius: 8px;
+          border: 1px solid #eee;
+        }
+        .photo-upload-box {
+          border: 2px dashed #ddd;
+          border-radius: 12px;
+          width: 170px;
+          height: 160px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+          cursor: pointer;
+          margin-bottom: 10px;
+          background: #fafbfc;
+        }
+        .photo-upload-box:hover {
+          border-color: #d62828;
+        }
+        .photo-upload-box input[type="file"] {
+          display: none;
+        }
+        .upload-count {
+          font-size: 13px;
+          color: #888;
+          margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+<div class="photo-container">
+    <div class="photo-title">차량사진 5장 이상 등록해주세요</div>
+    <div class="photo-desc">사진에 얼굴, 개인정보가 포함되지 않도록 유의하세요</div>
+    <div class="photo-tip">
+        <b>차량 사진 TIP</b><br>
+        전면, 후면, 계기판, 좌측면, 우측면 필수 등록<br>
+        사진은 눌러 순서 변경 가능
+    </div>
+    <div class="photo-list-preview">
+        <img src="/img/car-front.png" alt="전면">
+        <img src="/img/car-back.png" alt="후면">
+        <img src="/img/car-dash.png" alt="계기판">
+        <img src="/img/car-left.png" alt="좌측면">
+        <img src="/img/car-right.png" alt="우측면">
+        <!-- 필요한 경우 추가 미리보기 썸네일 -->
+    </div>
+    <form th:action="@{/sell/detail/photo/upload}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="carId" th:value="${car.id}" />
+        <label class="photo-upload-box">
+            <span style="font-size: 34px; color: #bbb;">+</span>
+            <div class="upload-count"><span id="photo-count">0</span> / 20</div>
+            <input type="file" name="photos" id="photos" accept="image/*" multiple required onchange="updatePhotoCount(this)">
+        </label>
+        <button type="submit" class="next-btn" style="width:100%; margin:14px 0 0 0; font-size:17px;">
+            사진 등록하고 다음
+        </button>
+    </form>
+</div>
+<script>
+    function updatePhotoCount(input) {
+      document.getElementById("photo-count").innerText = input.files.length;
+    }
+    function validatePhotoCount() {
+      const files = document.getElementById('photos').files;
+      if (files.length < 5) {
+        alert('사진은 5장 이상 업로드해야 합니다!');
+        return false;
+      }
+      return true;
+    }
+</script>
+</body>
+</html>

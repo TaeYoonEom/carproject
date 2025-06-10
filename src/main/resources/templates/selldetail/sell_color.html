@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>차량 색상 선택</title>
+  <link rel="stylesheet" th:href="@{/css/sell_color.css}">
+  <style>
+    body { font-family: 'Noto Sans KR', sans-serif; background: #fafafa; }
+    .color-container { max-width: 500px; margin: 40px auto; background: #fff; border-radius: 14px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); padding: 40px 32px; }
+    .color-title { font-size: 23px; font-weight: bold; margin-bottom: 18px; }
+    .color-form-group { margin-bottom: 22px; }
+    .color-label { font-size: 16px; font-weight: 500; margin-bottom: 7px; display: block; }
+    select { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 15px; }
+    .next-btn { width: 100%; margin-top: 18px; font-size: 17px; padding: 12px; background: #d62828; color: #fff; border: none; border-radius: 8px; font-weight: bold; }
+    .next-btn:hover { background: #b71f1f; }
+  </style>
+</head>
+<body>
+<div class="color-container">
+  <div class="color-title">차량 색상 선택</div>
+  <form th:action="@{/sell/detail/color/save}" method="post">
+    <input type="hidden" name="carId" th:value="${carId}"/>
+    <div class="color-form-group">
+      <label class="color-label">외부 색상</label>
+      <select name="exteriorColor" required>
+        <option value="">선택</option>
+        <option value="화이트">화이트</option>
+        <option value="블랙">블랙</option>
+        <option value="실버">실버</option>
+        <option value="그레이">그레이</option>
+        <option value="레드">레드</option>
+        <option value="블루">블루</option>
+        <option value="베이지">베이지</option>
+        <!-- 더 추가 가능 -->
+      </select>
+    </div>
+    <div class="color-form-group">
+      <label class="color-label">내부 색상</label>
+      <select name="interiorColor" required>
+        <option value="">선택</option>
+        <option value="블랙">블랙</option>
+        <option value="그레이">그레이</option>
+        <option value="베이지">베이지</option>
+        <option value="브라운">브라운</option>
+        <option value="레드">레드</option>
+        <!-- 더 추가 가능 -->
+      </select>
+    </div>
+    <div class="color-form-group">
+      <label class="color-label">시트 색상</label>
+      <select name="seatColor" required>
+        <option value="">선택</option>
+        <option value="블랙">블랙</option>
+        <option value="그레이">그레이</option>
+        <option value="베이지">베이지</option>
+        <option value="브라운">브라운</option>
+        <option value="화이트">화이트</option>
+        <!-- 더 추가 가능 -->
+      </select>
+    </div>
+    <button type="submit" class="next-btn">다음</button>
+  </form>
+</div>
+</body>
+</html>

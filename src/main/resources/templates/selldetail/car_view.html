@@ -11,16 +11,15 @@
     body {
       font-family: 'Noto Sans KR', sans-serif;
       background-color: #fafafa;
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
     }
     .detail-container {
       max-width: 500px;
-      margin: 50px auto;
+      margin: 40px auto;
       padding: 30px;
-      background-color: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.10);
     }
     .detail-title {
       font-size: 24px;
@@ -41,22 +40,67 @@
       border-bottom: 1px solid #eee;
       font-size: 16px;
     }
-    .detail-list strong {
-      color: #333;
-    }
     .go-back {
       display: block;
-      margin-top: 30px;
+      margin-top: 32px;
       text-align: center;
-      background-color: #d62828;
+      background: #d62828;
       color: white;
-      padding: 12px;
+      padding: 14px 0;
       border-radius: 8px;
       text-decoration: none;
       font-weight: bold;
+      font-size: 18px;
     }
-    .go-back:hover {
-      background-color: #b71f1f;
+    .go-back:hover { background: #b71f1f; }
+
+    /* 시세 박스 */
+    .estimate-box {
+      background: #fcfcfc;
+      border-radius: 12px;
+      padding: 36px 12px 24px;
+      margin: 35px 0 0 0;
+      box-shadow: 0 2px 10px rgba(180,0,0,0.06);
+      text-align: center;
+    }
+    .estimate-label {
+      font-size: 18px;
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 8px;
+    }
+    .model-info {
+      font-size: 13px;
+      color: #aaa;
+      margin-bottom: 18px;
+    }
+    .estimate-main {
+      font-size: 30px;
+      font-weight: bold;
+      color: #d62828;
+      margin-bottom: 16px;
+    }
+    .estimate-bar-wrap {
+      width: 90%;
+      height: 8px;
+      background: #eee;
+      border-radius: 6px;
+      margin: 20px auto 0;
+      position: relative;
+    }
+    .estimate-bar {
+      height: 8px;
+      border-radius: 6px;
+      background: #d62828;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+    .estimate-guide {
+      font-size: 13px;
+      color: #888;
+      margin-top: 16px;
+      margin-bottom: 0;
     }
   </style>
 </head>
@@ -71,7 +115,29 @@
     <li><strong>주행거리</strong> <span th:text="${car.mileage} + ' km'"></span></li>
     <li><strong>거래 지역</strong> <span th:text="${car.region}"></span></li>
   </ul>
-  <a href="/sell" class="go-back">← 판매 홈으로 돌아가기</a>
+
+  <!-- 시세 안내 박스 -->
+  <div class="estimate-box">
+    <div class="estimate-label">이 차의 시세는</div>
+    <div class="model-info" th:text="${car.modelName}"></div>
+    <div class="estimate-main">
+      <span th:text="${minPrice}"></span> ~ <span th:text="${maxPrice}"></span> 만원
+    </div>
+
+    <!-- 시세 바 (간단한 비율 시각화) -->
+    <div class="estimate-bar-wrap">
+      <div class="estimate-bar"
+           th:style="'width:' + (${estimatedPrice} - ${minPrice}) * 100 / (${maxPrice} - ${minPrice}) + '%; background:#d62828;'">
+      </div>
+    </div>
+    <div class="estimate-guide">입력된 연식과 주행거리 기준</div>
+  </div>
+  <!-- 다음 단계로 이동 버튼 -->
+  <a class="next-btn"
+     th:href="@{|/sell/detail/photo?carId=${car.id}|}">
+    내 차 사진 등록하기
+  </a>
+
 </div>
 </body>
 </html>
