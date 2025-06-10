@@ -1,0 +1,161 @@
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #f7f7fa;
+  margin: 0; padding: 0;
+}
+
+.detail-container {
+  max-width: 480px;
+  margin: 54px auto 0;
+  padding: 36px 30px 36px 30px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 6px 24px rgba(210,40,40,0.11), 0 1.5px 4px rgba(0,0,0,0.08);
+}
+
+.detail-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #d62828;
+  margin-bottom: 28px;
+  text-align: center;
+  letter-spacing: -1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.car-detail-icon {
+  width: 32px;
+  vertical-align: middle;
+  margin-bottom: 2px;
+}
+
+.detail-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px 0;
+  background: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 1.5px 5px rgba(210,40,40,0.04);
+}
+
+.detail-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid #eee;
+  font-size: 16.5px;
+}
+
+.detail-list li:last-child {
+  border-bottom: none;
+}
+
+.item-label {
+  font-weight: 500;
+  color: #8a8a8a;
+  min-width: 90px;
+  display: inline-block;
+}
+
+/* 시세 박스 */
+.estimate-box {
+  background: linear-gradient(115deg, #fff5ee 60%, #fffbe0 100%);
+  border-radius: 14px;
+  padding: 34px 14px 22px 14px;
+  margin: 38px 0 0 0;
+  box-shadow: 0 2px 14px rgba(250, 170, 150, 0.13);
+  text-align: center;
+}
+
+.estimate-label {
+  font-size: 18px;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 6px;
+  letter-spacing: -0.5px;
+}
+
+.model-info {
+  font-size: 13.5px;
+  color: #bdbdbd;
+  margin-bottom: 18px;
+}
+
+.estimate-main {
+  font-size: 33px;
+  font-weight: 700;
+  color: #d62828;
+  margin-bottom: 13px;
+  letter-spacing: 2px;
+}
+
+.price-unit {
+  font-size: 19px;
+  color: #d62828;
+  font-weight: 600;
+  margin-left: 2px;
+}
+
+.estimate-bar-wrap {
+  width: 92%;
+  height: 10px;
+  background: #e4e5eb;
+  border-radius: 8px;
+  margin: 18px auto 0;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0.5px 2px #e3e3e3;
+}
+
+.estimate-bar {
+  height: 10px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #d62828 65%, #f77f00 100%);
+  position: absolute;
+  left: 0;
+  top: 0;
+  transition: width 0.4s cubic-bezier(.6,.7,0,1.01);
+  z-index: 3;
+}
+
+.estimate-guide {
+  font-size: 13.5px;
+  color: #888;
+  margin-top: 16px;
+  margin-bottom: 0;
+}
+
+.next-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  margin: 36px auto 0;
+  padding: 15px 0 15px 0;
+  font-size: 18px;
+  background: linear-gradient(90deg, #d62828 80%, #f77f00 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-weight: bold;
+  letter-spacing: 1.2px;
+  text-decoration: none;
+  box-shadow: 0 6px 20px rgba(214, 40, 40, 0.12);
+  transition: background 0.18s, transform 0.14s, box-shadow 0.18s;
+  cursor: pointer;
+}
+.next-btn:hover {
+  background: linear-gradient(90deg, #f77f00 40%, #d62828 100%);
+  transform: translateY(-2px) scale(1.025);
+  box-shadow: 0 12px 30px rgba(214, 40, 40, 0.16);
+}
+.btn-icon {
+  width: 21px;
+  height: 21px;
+  vertical-align: middle;
+  margin-bottom: 2px;
+}

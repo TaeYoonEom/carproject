@@ -3,118 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <title>차량 사진 등록</title>
-    <link rel="stylesheet" th:href="@{/css/car_photo.css}">
-    <style>
-        body {
-          font-family: 'Noto Sans KR', sans-serif;
-          background: #fafafa;
-          margin: 0;
-          padding: 0;
-        }
-        .photo-container {
-          max-width: 650px;
-          margin: 40px auto;
-          background: #fff;
-          border-radius: 14px;
-          box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-          padding: 40px 32px;
-        }
-        .photo-title {
-          font-size: 23px;
-          font-weight: bold;
-          margin-bottom: 8px;
-        }
-        .photo-desc {
-          font-size: 18px;
-          color: #222;
-          margin-bottom: 22px;
-        }
-        .photo-tip {
-          background: #f5f6fa;
-          border-radius: 10px;
-          padding: 18px 16px;
-          margin-bottom: 22px;
-          color: #666;
-          font-size: 14px;
-        }
-        .photo-list-preview {
-          display: flex;
-          gap: 16px;
-          margin-bottom: 18px;
-        }
-        .photo-list-preview img {
-          width: 86px;
-          height: 60px;
-          object-fit: cover;
-          border-radius: 8px;
-          border: 1px solid #eee;
-        }
-        .photo-upload-box {
-          border: 2px dashed #ddd;
-          border-radius: 12px;
-          width: 170px;
-          height: 160px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-direction: column;
-          cursor: pointer;
-          margin-bottom: 10px;
-          background: #fafbfc;
-        }
-        .photo-upload-box:hover {
-          border-color: #d62828;
-        }
-        .photo-upload-box input[type="file"] {
-          display: none;
-        }
-        .upload-count {
-          font-size: 13px;
-          color: #888;
-          margin-top: 6px;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/sell_car_photo.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <div class="photo-container">
-    <div class="photo-title">차량사진 5장 이상 등록해주세요</div>
+    <div class="photo-title">차량사진 6장 등록해주세요</div>
     <div class="photo-desc">사진에 얼굴, 개인정보가 포함되지 않도록 유의하세요</div>
     <div class="photo-tip">
         <b>차량 사진 TIP</b><br>
-        전면, 후면, 계기판, 좌측면, 우측면 필수 등록<br>
-        사진은 눌러 순서 변경 가능
+        전면, 좌측, 우측, 후면, 운전석, 뒷자석 필수 등록
     </div>
-    <div class="photo-list-preview">
-        <img src="/img/car-front.png" alt="전면">
-        <img src="/img/car-back.png" alt="후면">
-        <img src="/img/car-dash.png" alt="계기판">
-        <img src="/img/car-left.png" alt="좌측면">
-        <img src="/img/car-right.png" alt="우측면">
-        <!-- 필요한 경우 추가 미리보기 썸네일 -->
-    </div>
-    <form th:action="@{/sell/detail/photo/upload}" method="post" enctype="multipart/form-data">
+    <form th:action="@{/sell/detail/photo/upload}" method="post" enctype="multipart/form-data" onsubmit="return validatePhotoCount()">
         <input type="hidden" name="carId" th:value="${car.id}" />
-        <label class="photo-upload-box">
-            <span style="font-size: 34px; color: #bbb;">+</span>
-            <div class="upload-count"><span id="photo-count">0</span> / 20</div>
-            <input type="file" name="photos" id="photos" accept="image/*" multiple required onchange="updatePhotoCount(this)">
-        </label>
-        <button type="submit" class="next-btn" style="width:100%; margin:14px 0 0 0; font-size:17px;">
-            사진 등록하고 다음
-        </button>
+        <div class="photo-list-preview">
+            <label class="photo-upload-box">
+                <input type="file" name="front" accept="image/*" required onchange="previewImg(this, 'front_preview')">
+                <img th:src="@{${car.frontViewUrl}}" id="front_preview" class="upload-img" alt="전면" src="/img/car-front.png">
+                <div class="upload-label">전면</div>
+            </label>
+            <label class="photo-upload-box">
+                <input type="file" name="left" accept="image/*" required onchange="previewImg(this, 'left_preview')">
+                <img th:src="@{${car.leftSideUrl}}" id="left_preview" class="upload-img" alt="좌측" src="/img/car-left.png">
+                <div class="upload-label">좌측</div>
+            </label>
+            <label class="photo-upload-box">
+                <input type="file" name="right" accept="image/*" required onchange="previewImg(this, 'right_preview')">
+                <img th:src="@{${car.rightSideUrl}}" id="right_preview" class="upload-img" alt="우측" src="/img/car-right.png">
+                <div class="upload-label">우측</div>
+            </label>
+            <label class="photo-upload-box">
+                <input type="file" name="rear" accept="image/*" required onchange="previewImg(this, 'rear_preview')">
+                <img th:src="@{${car.rearViewUrl}}" id="rear_preview" class="upload-img" alt="후면" src="/img/car-back.png">
+                <div class="upload-label">후면</div>
+            </label>
+            <label class="photo-upload-box">
+                <input type="file" name="driver" accept="image/*" required onchange="previewImg(this, 'driver_preview')">
+                <img th:src="@{${car.driverSeatUrl}}" id="driver_preview" class="upload-img" alt="운전석" src="/img/car-dash.png">
+                <div class="upload-label">운전석</div>
+            </label>
+            <label class="photo-upload-box">
+                <input type="file" name="back" accept="image/*" required onchange="previewImg(this, 'back_preview')">
+                <img th:src="@{${car.backSeatUrl}}" id="back_preview" class="upload-img" alt="뒷자석" src="/img/car-back.png">
+                <div class="upload-label">뒷자석</div>
+            </label>
+        </div>
+        <button type="submit" class="next-btn">사진 등록하고 다음</button>
     </form>
 </div>
 <script>
-    function updatePhotoCount(input) {
-      document.getElementById("photo-count").innerText = input.files.length;
+    // 미리보기
+    function previewImg(input, targetId) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById(targetId).src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
     }
+    // 6개 파일 모두 체크
     function validatePhotoCount() {
-      const files = document.getElementById('photos').files;
-      if (files.length < 5) {
-        alert('사진은 5장 이상 업로드해야 합니다!');
-        return false;
-      }
-      return true;
+        const names = ['front','left','right','rear','driver','back'];
+        for (let i = 0; i < names.length; i++) {
+            if (document.querySelector('input[name="'+names[i]+'"]').files.length === 0) {
+                alert('모든 사진을 업로드해야 합니다.');
+                return false;
+            }
+        }
+        return true;
     }
 </script>
 </body>

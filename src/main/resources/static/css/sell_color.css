@@ -1,0 +1,91 @@
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: linear-gradient(120deg, #fbeee6 0%, #f6f9fc 100%);
+  margin: 0;
+  padding: 0;
+}
+
+.color-container {
+  max-width: 500px;
+  margin: 54px auto 0;
+  background: #fff;
+  border-radius: 22px;
+  box-shadow: 0 4px 24px rgba(214,40,40,0.07), 0 1.5px 3px rgba(90,90,90,0.09);
+  padding: 44px 36px 40px;
+  animation: pop-in 0.9s cubic-bezier(.43,1.18,.59,.98);
+}
+
+@keyframes pop-in {
+  0% { opacity: 0; transform: translateY(40px) scale(0.96);}
+  100% { opacity: 1; transform: translateY(0) scale(1);}
+}
+
+.color-title {
+  font-size: 27px;
+  font-weight: 700;
+  margin-bottom: 26px;
+  letter-spacing: -1px;
+  text-align: center;
+  color: #d62828;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.palette-icon {
+  width: 33px;
+  height: 33px;
+  vertical-align: middle;
+}
+
+.color-form-group {
+  margin-bottom: 28px;
+}
+
+.color-label {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
+  color: #282828;
+  letter-spacing: -0.5px;
+}
+
+.color-select {
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 8px;
+  border: 1.5px solid #d2d3dc;
+  font-size: 16px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  background: #fcfcfd;
+  outline: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.color-select:focus, .color-select.focus {
+  border-color: #d62828;
+  box-shadow: 0 0 0 2.5px rgba(214,40,40,0.15);
+}
+
+.next-btn {
+  width: 100%;
+  margin-top: 18px;
+  font-size: 18px;
+  padding: 13px;
+  background: linear-gradient(90deg, #d62828 40%, #f77f00 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  box-shadow: 0 4px 16px rgba(214, 40, 40, 0.13);
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.15s, box-shadow 0.15s;
+}
+.next-btn:hover {
+  background: linear-gradient(90deg, #f77f00 30%, #d62828 90%);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 22px rgba(214, 40, 40, 0.20);
+}
+

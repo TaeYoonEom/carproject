@@ -1,0 +1,88 @@
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: #f7f8fa;
+  margin: 0;
+  padding: 0;
+}
+
+.option-container {
+  max-width: 460px;
+  margin: 50px auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.11);
+  padding: 40px 32px 36px 32px;
+  animation: fadeIn 0.7s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+.option-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #d62828;
+  margin-bottom: 28px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.option-group {
+  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+}
+
+.option-label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #24292f;
+  margin-bottom: 7px;
+}
+
+select {
+  font-size: 15px;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 12px;
+  transition: border 0.2s, box-shadow 0.2s;
+  background: #f5f6fa;
+  outline: none;
+}
+
+select:focus {
+  border-color: #d62828;
+  box-shadow: 0 0 0 2px rgba(214,40,40,0.07);
+  background: #fff9f6;
+}
+
+.next-btn {
+  width: 100%;
+  background: linear-gradient(90deg,#d62828,#ee6262 95%);
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 9px;
+  padding: 13px 0 12px 0;
+  margin-top: 18px;
+  letter-spacing: 2px;
+  box-shadow: 0 2px 8px rgba(214,40,40,0.08);
+  cursor: pointer;
+  transition: background 0.18s, transform 0.15s;
+}
+
+.next-btn:hover {
+  background: linear-gradient(90deg,#ee6262,#d62828 95%);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 24px rgba(214,40,40,0.13);
+}
+
+@media (max-width: 600px) {
+  .option-container {
+    padding: 16px 5vw;
+    max-width: 99vw;
+  }
+}

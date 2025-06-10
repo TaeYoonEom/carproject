@@ -1,0 +1,22 @@
+<!-- 팔레트 + 자동차 조합 일러스트 SVG (예시) -->
+<svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- 팔레트 바디 -->
+    <ellipse cx="28" cy="32" rx="22" ry="18" fill="#f6ede9" stroke="#c0bab2" stroke-width="2"/>
+    <!-- 팔레트 구멍 -->
+    <ellipse cx="18.5" cy="40" rx="4.5" ry="3" fill="#fff" stroke="#c0bab2"/>
+    <!-- 팔레트 위 색점 -->
+    <circle cx="37" cy="23" r="2.3" fill="#F34E4E"/>
+    <circle cx="27" cy="22" r="2.3" fill="#53A6F2"/>
+    <circle cx="35" cy="31" r="2.3" fill="#F2C84B"/>
+    <circle cx="29" cy="36" r="2.3" fill="#58C17B"/>
+    <!-- 귀여운 자동차 앞모습 -->
+    <rect x="14" y="8" width="28" height="16" rx="6" fill="#57a8f3" stroke="#36485d" stroke-width="2"/>
+    <rect x="20" y="12" width="16" height="8" rx="3" fill="#fff"/>
+    <ellipse cx="19" cy="25" rx="4" ry="2" fill="#36485d"/>
+    <ellipse cx="37" cy="25" rx="4" ry="2" fill="#36485d"/>
+    <!-- 바퀴 -->
+    <ellipse cx="18" cy="23" rx="2.5" ry="2.5" fill="#292b38"/>
+    <ellipse cx="38" cy="23" rx="2.5" ry="2.5" fill="#292b38"/>
+    <!-- 반짝임 효과 -->
+    <ellipse cx="24" cy="11.5" rx="2" ry="0.7" fill="#fff" opacity="0.5"/>
+</svg>

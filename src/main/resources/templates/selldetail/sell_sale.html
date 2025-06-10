@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>차량 판매 정보 입력</title>
+  <link rel="stylesheet" th:href="@{/css/sell_sale.css}">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="sale-container">
+  <div class="sale-title">차량 판매 정보 입력</div>
+  <form th:action="@{/sell/detail/sale/save}" method="post">
+    <input type="hidden" name="carId" th:value="${carId}" />
+
+    <!-- 출고 일정 -->
+    <div class="sale-group">
+      <label class="sale-label">출고 일정</label>
+      <input type="date" name="deliveryOption" class="sale-input" required>
+    </div>
+    <!-- 차량 등급 -->
+    <div class="sale-group">
+      <label class="sale-label">차량 등급</label>
+      <select name="carGrade" class="sale-select" required>
+        <option value="">선택</option>
+        <option value="신차">신차</option>
+        <option value="중고">중고</option>
+      </select>
+    </div>
+    <!-- 판매 유형 -->
+    <div class="sale-group">
+      <label class="sale-label">판매 유형</label>
+      <select name="saleType" class="sale-select" required>
+        <option value="">선택</option>
+        <option value="위탁">위탁</option>
+        <option value="직거래">직거래</option>
+      </select>
+    </div>
+    <!-- 판매 방식 -->
+    <div class="sale-group">
+      <label class="sale-label">판매 방식</label>
+      <select name="saleMethod" class="sale-select" required>
+        <option value="">선택</option>
+        <option value="일반">일반</option>
+        <option value="렌트">렌트</option>
+        <option value="리스">리스</option>
+      </select>
+    </div>
+
+    <button type="submit" class="next-btn">판매 정보 저장</button>
+  </form>
+</div>
+</body>
+</html>

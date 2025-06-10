@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>차량 옵션 선택</title>
+  <link rel="stylesheet" th:href="@{/css/sell_option.css}">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="option-container">
+  <div class="option-title">차량 추가 옵션 선택</div>
+  <form th:action="@{/sell/detail/option/save}" method="post">
+    <input type="hidden" name="carId" th:value="${carId}" />
+
+    <!-- 구동방식 -->
+    <div class="option-group">
+      <label class="option-label">구동방식</label>
+      <select name="driveType" required>
+        <option value="">선택</option>
+        <option value="2WD">2WD</option>
+        <option value="4WD">4WD</option>
+        <option value="AWD">AWD</option>
+        <option value="FR">FR</option>
+        <option value="FF">FF</option>
+        <option value="MR">MR</option>
+        <!-- 필요시 추가 -->
+      </select>
+    </div>
+
+    <!-- 차종 -->
+    <div class="option-group">
+      <label class="option-label">차종</label>
+      <select name="carType" required>
+        <option value="">선택</option>
+        <option value="경차">경차</option>
+        <option value="소형차">소형차</option>
+        <option value="준중형차">준중형차</option>
+        <option value="중형차">중형차</option>
+        <option value="대형차">대형차</option>
+        <option value="스포츠카">스포츠카</option>
+        <option value="SUV">SUV</option>
+        <option value="RV">RV</option>
+        <option value="승합차">승합차</option>
+        <option value="화물차">화물차</option>
+        <option value="기타">기타</option>
+      </select>
+    </div>
+
+    <!-- 연료 -->
+    <div class="option-group">
+      <label class="option-label">연료</label>
+      <select name="fuelType" id="fuelType" required onchange="checkEco()">
+        <option value="">선택</option>
+        <option value="가솔린">가솔린</option>
+        <option value="디젤">디젤</option>
+        <option value="LPG(일반인 구입)">LPG(일반인 구입)</option>
+        <option value="LPG">LPG</option>
+        <option value="가솔린+전기">가솔린+전기</option>
+        <option value="디젤+전기">디젤+전기</option>
+        <option value="LPG+전기">LPG+전기</option>
+        <option value="가솔린+LPG">가솔린+LPG</option>
+        <option value="가솔린+CNG">가솔린+CNG</option>
+        <option value="전기">전기</option>
+        <option value="수소">수소</option>
+        <option value="LNG">LNG</option>
+        <option value="CNG">CNG</option>
+        <option value="기타">기타</option>
+      </select>
+      <!-- isEcoFriendly 값 자동 체크 -->
+      <input type="hidden" name="isEcoFriendly" id="isEcoFriendly" value="0">
+    </div>
+
+    <!-- 변속기 -->
+    <div class="option-group">
+      <label class="option-label">변속기</label>
+      <select name="transmission" required>
+        <option value="">선택</option>
+        <option value="오토">오토</option>
+        <option value="수동">수동</option>
+        <option value="세미오토">세미오토</option>
+        <option value="CVT">CVT</option>
+        <option value="기타">기타</option>
+      </select>
+    </div>
+    <button type="submit" class="next-btn">다음</button>
+  </form>
+</div>
+<script>
+  function checkEco() {
+    // 친환경 연료 선택시 isEcoFriendly = 1
+    const ecoFuels = ["가솔린+전기", "디젤+전기", "LPG+전기", "전기", "수소"];
+    const fuel = document.getElementById('fuelType').value;
+    document.getElementById('isEcoFriendly').value = ecoFuels.includes(fuel) ? 1 : 0;
+  }
+</script>
+</body>
+</html>

@@ -4,62 +4,77 @@
   <meta charset="UTF-8">
   <title>차량 색상 선택</title>
   <link rel="stylesheet" th:href="@{/css/sell_color.css}">
-  <style>
-    body { font-family: 'Noto Sans KR', sans-serif; background: #fafafa; }
-    .color-container { max-width: 500px; margin: 40px auto; background: #fff; border-radius: 14px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); padding: 40px 32px; }
-    .color-title { font-size: 23px; font-weight: bold; margin-bottom: 18px; }
-    .color-form-group { margin-bottom: 22px; }
-    .color-label { font-size: 16px; font-weight: 500; margin-bottom: 7px; display: block; }
-    select { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 15px; }
-    .next-btn { width: 100%; margin-top: 18px; font-size: 17px; padding: 12px; background: #d62828; color: #fff; border: none; border-radius: 8px; font-weight: bold; }
-    .next-btn:hover { background: #b71f1f; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <div class="color-container">
-  <div class="color-title">차량 색상 선택</div>
+  <div class="color-title">
+    <img src="/img/palette.svg" alt="색상 선택" class="palette-icon"> 차량 색상 선택
+  </div>
   <form th:action="@{/sell/detail/color/save}" method="post">
     <input type="hidden" name="carId" th:value="${carId}"/>
+    <!-- 외부 색상 -->
     <div class="color-form-group">
       <label class="color-label">외부 색상</label>
-      <select name="exteriorColor" required>
+      <select name="exteriorColor" class="color-select" required>
         <option value="">선택</option>
-        <option value="화이트">화이트</option>
-        <option value="블랙">블랙</option>
-        <option value="실버">실버</option>
-        <option value="그레이">그레이</option>
-        <option value="레드">레드</option>
-        <option value="블루">블루</option>
-        <option value="베이지">베이지</option>
-        <!-- 더 추가 가능 -->
+        <option value="화이트" th:selected="${color != null and color.exteriorColor == '화이트'}">화이트</option>
+        <option value="블랙" th:selected="${color != null and color.exteriorColor == '블랙'}">블랙</option>
+        <option value="실버" th:selected="${color != null and color.exteriorColor == '실버'}">실버</option>
+        <option value="그레이" th:selected="${color != null and color.exteriorColor == '그레이'}">그레이</option>
+        <option value="레드" th:selected="${color != null and color.exteriorColor == '레드'}">레드</option>
+        <option value="블루" th:selected="${color != null and color.exteriorColor == '블루'}">블루</option>
+        <option value="베이지" th:selected="${color != null and color.exteriorColor == '베이지'}">베이지</option>
+        <option value="브라운" th:selected="${color != null and color.exteriorColor == '브라운'}">브라운</option>
+        <option value="골드" th:selected="${color != null and color.exteriorColor == '골드'}">골드</option>
+        <option value="카키" th:selected="${color != null and color.exteriorColor == '카키'}">카키</option>
+        <option value="그린" th:selected="${color != null and color.exteriorColor == '그린'}">그린</option>
+        <option value="오렌지" th:selected="${color != null and color.exteriorColor == '오렌지'}">오렌지</option>
+        <option value="옐로우" th:selected="${color != null and color.exteriorColor == '옐로우'}">옐로우</option>
+        <option value="보라" th:selected="${color != null and color.exteriorColor == '보라'}">보라</option>
+        <option value="핑크" th:selected="${color != null and color.exteriorColor == '핑크'}">핑크</option>
       </select>
     </div>
+    <!-- 내부 색상 -->
     <div class="color-form-group">
       <label class="color-label">내부 색상</label>
-      <select name="interiorColor" required>
+      <select name="interiorColor" class="color-select" required>
         <option value="">선택</option>
-        <option value="블랙">블랙</option>
-        <option value="그레이">그레이</option>
-        <option value="베이지">베이지</option>
-        <option value="브라운">브라운</option>
-        <option value="레드">레드</option>
-        <!-- 더 추가 가능 -->
+        <option value="블랙" th:selected="${color != null and color.interiorColor == '블랙'}">블랙</option>
+        <option value="그레이" th:selected="${color != null and color.interiorColor == '그레이'}">그레이</option>
+        <option value="베이지" th:selected="${color != null and color.interiorColor == '베이지'}">베이지</option>
+        <option value="브라운" th:selected="${color != null and color.interiorColor == '브라운'}">브라운</option>
+        <option value="화이트" th:selected="${color != null and color.interiorColor == '화이트'}">화이트</option>
+        <option value="네이비" th:selected="${color != null and color.interiorColor == '네이비'}">네이비</option>
+        <option value="레드" th:selected="${color != null and color.interiorColor == '레드'}">레드</option>
+        <option value="카키" th:selected="${color != null and color.interiorColor == '카키'}">카키</option>
       </select>
     </div>
+    <!-- 시트 색상 -->
     <div class="color-form-group">
       <label class="color-label">시트 색상</label>
-      <select name="seatColor" required>
+      <select name="seatColor" class="color-select" required>
         <option value="">선택</option>
-        <option value="블랙">블랙</option>
-        <option value="그레이">그레이</option>
-        <option value="베이지">베이지</option>
-        <option value="브라운">브라운</option>
-        <option value="화이트">화이트</option>
-        <!-- 더 추가 가능 -->
+        <option value="블랙" th:selected="${color != null and color.seatColor == '블랙'}">블랙</option>
+        <option value="그레이" th:selected="${color != null and color.seatColor == '그레이'}">그레이</option>
+        <option value="베이지" th:selected="${color != null and color.seatColor == '베이지'}">베이지</option>
+        <option value="브라운" th:selected="${color != null and color.seatColor == '브라운'}">브라운</option>
+        <option value="화이트" th:selected="${color != null and color.seatColor == '화이트'}">화이트</option>
+        <option value="레드" th:selected="${color != null and color.seatColor == '레드'}">레드</option>
+        <option value="오렌지" th:selected="${color != null and color.seatColor == '오렌지'}">오렌지</option>
+        <option value="블루" th:selected="${color != null and color.seatColor == '블루'}">블루</option>
       </select>
     </div>
-    <button type="submit" class="next-btn">다음</button>
+
+    <button type="submit" class="next-btn">차량 옵션 선택</button>
   </form>
 </div>
+<script>
+  // 드롭다운 포커스 효과
+  document.querySelectorAll('.color-select').forEach(select => {
+    select.addEventListener('focus', e => e.target.classList.add('focus'));
+    select.addEventListener('blur', e => e.target.classList.remove('focus'));
+  });
+</script>
 </body>
 </html>

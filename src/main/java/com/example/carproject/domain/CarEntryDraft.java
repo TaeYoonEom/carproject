@@ -71,5 +71,37 @@ public class CarEntryDraft {
     @Column(name = "seat_color")
     private String seatColor;
 
+    @Column(name = "drive_type")
+    private String driveType;
+
+    @Column(name = "car_type")
+    private String carType;
+
+    @Column(name = "fuel_type")
+    private String fuelType;
+
+    @Column(name = "transmission")
+    private String transmission;
+
+    @Column(name = "is_eco_friendly")
+    private Boolean isEcoFriendly;
+    // 출고 일정
+    @Column(name = "delivery_option")
+    private String deliveryOption;
+
+    // 차량 등급 (신차/중고)
+    @Column(name = "car_grade")
+    private String carGrade;
+
+    // 판매 유형 (위탁/직거래)
+    @Column(name = "sale_type")
+    private String saleType;
+
+    // 판매 방식 (일반/렌트/리스)
+    @Column(name = "sale_method")
+    private String saleMethod;
+
+
+
 
 }

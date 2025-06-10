@@ -4,116 +4,21 @@
   <meta charset="UTF-8">
   <title>차량 상세 정보</title>
   <link rel="stylesheet" th:href="@{/css/car_detail.css}">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Noto Sans KR', sans-serif;
-      background-color: #fafafa;
-      margin: 0; padding: 0;
-    }
-    .detail-container {
-      max-width: 500px;
-      margin: 40px auto;
-      padding: 30px;
-      background: #fff;
-      border-radius: 14px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.10);
-    }
-    .detail-title {
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 25px;
-      color: #d62828;
-      text-align: center;
-    }
-    .detail-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .detail-list li {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid #eee;
-      font-size: 16px;
-    }
-    .go-back {
-      display: block;
-      margin-top: 32px;
-      text-align: center;
-      background: #d62828;
-      color: white;
-      padding: 14px 0;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 18px;
-    }
-    .go-back:hover { background: #b71f1f; }
-
-    /* 시세 박스 */
-    .estimate-box {
-      background: #fcfcfc;
-      border-radius: 12px;
-      padding: 36px 12px 24px;
-      margin: 35px 0 0 0;
-      box-shadow: 0 2px 10px rgba(180,0,0,0.06);
-      text-align: center;
-    }
-    .estimate-label {
-      font-size: 18px;
-      font-weight: 600;
-      color: #444;
-      margin-bottom: 8px;
-    }
-    .model-info {
-      font-size: 13px;
-      color: #aaa;
-      margin-bottom: 18px;
-    }
-    .estimate-main {
-      font-size: 30px;
-      font-weight: bold;
-      color: #d62828;
-      margin-bottom: 16px;
-    }
-    .estimate-bar-wrap {
-      width: 90%;
-      height: 8px;
-      background: #eee;
-      border-radius: 6px;
-      margin: 20px auto 0;
-      position: relative;
-    }
-    .estimate-bar {
-      height: 8px;
-      border-radius: 6px;
-      background: #d62828;
-      position: absolute;
-      left: 0;
-      top: 0;
-    }
-    .estimate-guide {
-      font-size: 13px;
-      color: #888;
-      margin-top: 16px;
-      margin-bottom: 0;
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <div class="detail-container">
-  <div class="detail-title">차량 상세 정보</div>
+  <div class="detail-title">
+    <img src="/img/car-detail-icon.svg" alt="" class="car-detail-icon">
+    차량 상세 정보
+  </div>
   <ul class="detail-list">
-    <li><strong>차량 번호</strong> <span th:text="${car.carNumber}"></span></li>
-    <li><strong>소유자명</strong> <span th:text="${car.ownerName}"></span></li>
-    <li><strong>모델명</strong> <span th:text="${car.modelName}"></span></li>
-    <li><strong>연식</strong> <span th:text="${#temporals.format(car.manufactureDate, 'yyyy-MM')}"></span></li>
-    <li><strong>주행거리</strong> <span th:text="${car.mileage} + ' km'"></span></li>
-    <li><strong>거래 지역</strong> <span th:text="${car.region}"></span></li>
+    <li><span class="item-label">차량 번호</span> <span th:text="${car.carNumber}"></span></li>
+    <li><span class="item-label">소유자명</span> <span th:text="${car.ownerName}"></span></li>
+    <li><span class="item-label">모델명</span> <span th:text="${car.modelName}"></span></li>
+    <li><span class="item-label">연식</span> <span th:text="${#temporals.format(car.manufactureDate, 'yyyy-MM')}"></span></li>
+    <li><span class="item-label">주행거리</span> <span th:text="${car.mileage} + ' km'"></span></li>
+    <li><span class="item-label">거래 지역</span> <span th:text="${car.region}"></span></li>
   </ul>
 
   <!-- 시세 안내 박스 -->
@@ -121,23 +26,22 @@
     <div class="estimate-label">이 차의 시세는</div>
     <div class="model-info" th:text="${car.modelName}"></div>
     <div class="estimate-main">
-      <span th:text="${minPrice}"></span> ~ <span th:text="${maxPrice}"></span> 만원
+      <span th:text="${minPrice}"></span> ~ <span th:text="${maxPrice}"></span> <span class="price-unit">만원</span>
     </div>
-
-    <!-- 시세 바 (간단한 비율 시각화) -->
     <div class="estimate-bar-wrap">
       <div class="estimate-bar"
-           th:style="'width:' + (${estimatedPrice} - ${minPrice}) * 100 / (${maxPrice} - ${minPrice}) + '%; background:#d62828;'">
+           th:style="'width:' + (${estimatedPrice} - ${minPrice}) * 100 / (${maxPrice} - ${minPrice}) + '%;'">
       </div>
     </div>
     <div class="estimate-guide">입력된 연식과 주행거리 기준</div>
   </div>
-  <!-- 다음 단계로 이동 버튼 -->
+
+  <!-- 사진 등록 이동 버튼 -->
   <a class="next-btn"
      th:href="@{|/sell/detail/photo?carId=${car.id}|}">
+    <img src="/img/camera.svg" alt="" class="btn-icon">
     내 차 사진 등록하기
   </a>
-
 </div>
 </body>
 </html>

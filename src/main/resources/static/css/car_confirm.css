@@ -1,0 +1,93 @@
+body {
+  background: #faf8f6;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+.confirm-container {
+  max-width: 780px;
+  margin: 38px auto;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 18px rgba(180,60,60,0.11);
+  padding: 34px 30px 44px 30px;
+}
+.confirm-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #d62828;
+  margin-bottom: 34px;
+  text-align: center;
+}
+.confirm-table-box {
+  margin-bottom: 30px;
+}
+.confirm-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+  background: #fcfcfc;
+}
+.confirm-table th, .confirm-table td {
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 16px;
+  border-bottom: 1px solid #ececec;
+}
+.confirm-table th {
+  color: #ba2222;
+  background: #f6f2f3;
+  font-weight: 700;
+  width: 120px;
+}
+.confirm-table td {
+  color: #222;
+}
+.photo-preview-wrap {
+  margin-top: 25px;
+}
+.photo-preview-label {
+  font-size: 18px;
+  font-weight: 600;
+  color: #d62828;
+  margin-bottom: 15px;
+  text-align: left;
+}
+.photo-preview-list {
+  display: flex;
+  gap: 14px;
+  margin-top: 7px;
+  flex-wrap: wrap;
+}
+.photo-img {
+  width: 96px;
+  height: 68px;
+  object-fit: cover;
+  border-radius: 9px;
+  border: 1.5px solid #f3e1e1;
+  background: #fff9f9;
+}
+.btn-main, .btn-next {
+  display: inline-block;
+  margin: 0 14px;
+  padding: 13px 30px;
+  border-radius: 9px;
+  font-weight: 700;
+  font-size: 17px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.btn-main {
+  background: #fff;
+  color: #d62828;
+  border: 2px solid #d62828;
+}
+.btn-main:hover {
+  background: #ffe8e8;
+}
+.btn-next {
+  background: linear-gradient(90deg, #d62828 10%, #fa872b 100%);
+  color: #fff;
+  border: none;
+}
+.btn-next:hover {
+  background: linear-gradient(90deg, #ba2222 10%, #e26904 100%);
+}

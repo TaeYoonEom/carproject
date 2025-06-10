@@ -1,0 +1,67 @@
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: linear-gradient(135deg, #f8fafc 0%, #fbeee6 100%);
+  margin: 0;
+  padding: 0;
+}
+.sale-container {
+  max-width: 430px;
+  margin: 46px auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(190,100,40,0.10);
+  padding: 38px 32px;
+}
+.sale-title {
+  font-size: 25px;
+  font-weight: bold;
+  color: #da4934;
+  text-align: center;
+  margin-bottom: 32px;
+  letter-spacing: -1px;
+}
+.sale-group {
+  margin-bottom: 25px;
+}
+.sale-label {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
+  color: #222;
+}
+.sale-input, .sale-select {
+  width: 100%;
+  padding: 12px 13px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
+  background: #f8fafc;
+  margin-top: 5px;
+  transition: border 0.2s;
+  box-sizing: border-box;
+}
+.sale-input:focus, .sale-select:focus {
+  outline: none;
+  border: 1.7px solid #fe7c3f;
+  background: #fff7ee;
+}
+.next-btn {
+  width: 100%;
+  margin-top: 20px;
+  font-size: 18px;
+  padding: 15px;
+  background: linear-gradient(90deg, #d62828 50%, #fe7c3f 100%);
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  font-weight: bold;
+  letter-spacing: 1.2px;
+  box-shadow: 0 2px 10px rgba(254, 124, 63, 0.07);
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+.next-btn:hover {
+  background: linear-gradient(90deg, #b71f1f 50%, #ffad4c 100%);
+  box-shadow: 0 4px 24px rgba(220,55,55,0.14);
+}

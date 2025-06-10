@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>차량 등록 정보 확인</title>
+  <link rel="stylesheet" th:href="@{/css/car_confirm.css}">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="confirm-container">
+  <div class="confirm-title">차량 등록 정보 확인</div>
+  <div class="confirm-table-box">
+    <table class="confirm-table">
+      <tbody>
+      <tr>
+        <th>차량번호</th>
+        <td th:text="${car.carNumber}">-</td>
+        <th>모델명</th>
+        <td th:text="${car.modelName}">-</td>
+      </tr>
+      <tr>
+        <th>소유자명</th>
+        <td th:text="${car.ownerName}">-</td>
+        <th>연식</th>
+        <td th:text="${#temporals.format(car.manufactureDate, 'yyyy-MM')}">-</td>
+      </tr>
+      <tr>
+        <th>주행거리</th>
+        <td th:text="${car.mileage} + ' km'">-</td>
+        <th>지역</th>
+        <td th:text="${car.region}">-</td>
+      </tr>
+      <tr>
+        <th>외부 색상</th>
+        <td th:text="${car.exteriorColor}">-</td>
+        <th>내부 색상</th>
+        <td th:text="${car.interiorColor}">-</td>
+      </tr>
+      <tr>
+        <th>시트 색상</th>
+        <td th:text="${car.seatColor}">-</td>
+        <th>구동방식</th>
+        <td th:text="${car.driveType}">-</td>
+      </tr>
+      <tr>
+        <th>차종</th>
+        <td th:text="${car.carType}">-</td>
+        <th>연료</th>
+        <td th:text="${car.fuelType}">-</td>
+      </tr>
+      <tr>
+        <th>변속기</th>
+        <td th:text="${car.transmission}">-</td>
+        <th>친환경 차량</th>
+        <td th:text="${car.isEcoFriendly} ? '예' : '아니오'">-</td>
+      </tr>
+      <tr>
+        <th>출고 일정</th>
+        <td th:text="${car.deliveryOption}">-</td>
+        <th>차량 등급</th>
+        <td th:text="${car.carGrade}">-</td>
+      </tr>
+      <tr>
+        <th>판매 유형</th>
+        <td th:text="${car.saleType}">-</td>
+        <th>판매 방식</th>
+        <td th:text="${car.saleMethod}">-</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="photo-preview-wrap">
+    <div class="photo-preview-label">등록 사진 미리보기</div>
+    <div class="photo-preview-list">
+      <img th:src="@{${car.frontViewUrl}}" alt="전면" class="photo-img">
+      <img th:src="@{${car.leftSideUrl}}" alt="좌측" class="photo-img">
+      <img th:src="@{${car.rightSideUrl}}" alt="우측" class="photo-img">
+      <img th:src="@{${car.rearViewUrl}}" alt="후면" class="photo-img">
+      <img th:src="@{${car.driverSeatUrl}}" alt="운전석" class="photo-img">
+      <img th:src="@{${car.backSeatUrl}}" alt="뒷자석" class="photo-img">
+    </div>
+  </div>
+  <div style="text-align:center; margin-top:30px;">
+    <a href="/" class="btn-main">홈으로</a>
+    <a th:href="@{|/sell/detail/complete?carId=${car.id}|}" class="btn-next">등록 완료</a>
+  </div>
+</div>
+</body>
+</html>

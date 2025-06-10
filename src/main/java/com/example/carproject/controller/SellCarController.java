@@ -168,56 +168,50 @@ public class SellCarController {
     }
 
     @PostMapping("/sell/detail/photo/upload")
-    public String uploadCarPhotos(@RequestParam("photos") List<MultipartFile> photos,
-                                  @RequestParam("carId") Long carId,
-                                  Model model) throws IOException {
-        // 실제 저장 경로 (IDE에서는 user.dir이 프로젝트 루트)
-        String saveDir = System.getProperty("user.dir") +
+    public String uploadCarPhotos(@RequestParam("carId") Long carId,
+                                  @RequestParam("front") MultipartFile front,
+                                  @RequestParam("left") MultipartFile left,
+                                  @RequestParam("right") MultipartFile right,
+                                  @RequestParam("rear") MultipartFile rear,
+                                  @RequestParam("driver") MultipartFile driver,
+                                  @RequestParam("back") MultipartFile back) throws IOException {
+
+        // 1. 파일 저장 경로
+        String basePath = System.getProperty("user.dir") +
                 "/src/main/resources/static/img/entry_car_img/";
 
-        String[] typeNames = {"front", "left", "right", "rear", "driver", "back"};
-        String[] urlFields = {"setFrontViewUrl", "setLeftSideUrl", "setRightSideUrl", "setRearViewUrl", "setDriverSeatUrl", "setBackSeatUrl"};
+        // 2. 파일명 규칙
+        String[] positions = {"front", "left", "right", "rear", "driver", "back"};
+        MultipartFile[] files = {front, left, right, rear, driver, back};
+        String[] dbUrls = new String[6];
 
-        CarEntryDraft draft = carEntryDraftRepository.findById(carId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 차량 정보가 없습니다."));
-
-        // 최대 6장만 처리
-        for (int i = 0; i < Math.min(photos.size(), 6); i++) {
-            MultipartFile photo = photos.get(i);
-            if (photo.isEmpty()) continue;
-
-            // 확장자 추출
-            String ext = "";
-            String originalName = photo.getOriginalFilename();
-            int dot = originalName.lastIndexOf('.');
-            if (dot > -1) ext = originalName.substring(dot);
-
-            String saveName = String.format("entry_car_%d_%s%s", carId, typeNames[i], ext);
-            String savePath = saveDir + saveName;
-
-            // 폴더 없으면 생성
-            new File(saveDir).mkdirs();
-
-            // 실제 저장
-            photo.transferTo(new File(savePath));
-
-            // DB에는 웹 경로로 저장
-            String url = "/img/entry_car_img/" + saveName;
-            switch (typeNames[i]) {
-                case "front": draft.setFrontViewUrl(url); break;
-                case "left": draft.setLeftSideUrl(url); break;
-                case "right": draft.setRightSideUrl(url); break;
-                case "rear": draft.setRearViewUrl(url); break;
-                case "driver": draft.setDriverSeatUrl(url); break;
-                case "back": draft.setBackSeatUrl(url); break;
+        for (int i = 0; i < positions.length; i++) {
+            MultipartFile file = files[i];
+            if (file != null && !file.isEmpty()) {
+                String fileName = String.format("entry_car_%d_%s.jpg", carId, positions[i]);
+                File dest = new File(basePath + fileName);
+                dest.getParentFile().mkdirs();
+                file.transferTo(dest);
+                dbUrls[i] = "/img/entry_car_img/" + fileName;
             }
         }
+
+        // 3. DB에 URL 저장
+        CarEntryDraft draft = carEntryDraftRepository.findById(carId)
+                .orElseThrow(() -> new IllegalArgumentException("차량 정보를 찾을 수 없습니다."));
+        draft.setFrontViewUrl(dbUrls[0]);
+        draft.setLeftSideUrl(dbUrls[1]);
+        draft.setRightSideUrl(dbUrls[2]);
+        draft.setRearViewUrl(dbUrls[3]);
+        draft.setDriverSeatUrl(dbUrls[4]);
+        draft.setBackSeatUrl(dbUrls[5]);
         carEntryDraftRepository.save(draft);
 
-        // 다음 단계(사진 미리보기, 차량 사진 확인/수정 페이지)로 이동
-        return "redirect:/sell/detail/photo/preview?carId=" + carId;
+        // 다음 페이지로 이동 (예시: 색상 선택)
+        return "redirect:/sell/detail/color?carId=" + carId;
     }
-//    @PostMapping("/sell/detail/photo/confirm")
+
+    //    @PostMapping("/sell/detail/photo/confirm")
 //    public String confirmPhotos(@RequestParam("carId") Long carId) {
 //        // carId로 엔트리 검증 및 다음 단계로 이동
 //        return "redirect:/sell/detail/nextstep?carId=" + carId;
@@ -230,11 +224,13 @@ public class SellCarController {
         return "selldetail/sell_photo_preview";
     }
 
-    // 색상 선택 페이지 보여주기
     @GetMapping("/sell/detail/color")
     public String showColorForm(@RequestParam("carId") Long carId, Model model) {
-        model.addAttribute("carId", carId);
-        return "selldetail/sell_color";
+        CarEntryDraft carEntryDraft = carEntryDraftRepository.findById(carId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 차량 정보가 없습니다."));
+        model.addAttribute("color", carEntryDraft);   // <== 색상 포함 draft 전체 전달
+        model.addAttribute("carId", carId);           // <== id도 같이 전달
+        return "selldetail/sell_color";              // 색상 선택 페이지(Thymeleaf 템플릿) 이름
     }
 
     // 색상 저장 처리
@@ -253,8 +249,69 @@ public class SellCarController {
         // 다음 단계로 이동 (ex. 옵션 선택 페이지)
         return "redirect:/sell/detail/option?carId=" + carId;
     }
+    @PostMapping("/sell/detail/option/save")
+    public String saveOption(
+            @RequestParam("carId") Long carId,
+            @RequestParam("driveType") String driveType,
+            @RequestParam("carType") String carType,
+            @RequestParam("fuelType") String fuelType,
+            @RequestParam("transmission") String transmission,
+            @RequestParam(value = "isEcoFriendly", required = false, defaultValue = "0") int isEcoFriendly
+    ) {
+        CarEntryDraft draft = carEntryDraftRepository.findById(carId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 차량 정보가 없습니다."));
+        draft.setDriveType(driveType);
+        draft.setCarType(carType);
+        draft.setFuelType(fuelType);
+        draft.setTransmission(transmission);
+        draft.setIsEcoFriendly(isEcoFriendly == 1);
+        carEntryDraftRepository.save(draft);
 
+        return "redirect:/sell/detail/sale?carId=" + carId; // 다음 페이지로 이동
 
+    }
+    @GetMapping("/sell/detail/option")
+    public String showOptionForm(@RequestParam("carId") Long carId, Model model) {
+        CarEntryDraft carEntryDraft = carEntryDraftRepository.findById(carId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 차량 정보가 없습니다."));
+        model.addAttribute("option", carEntryDraft); // draft 전체 or 필요한 속성 전달
+        model.addAttribute("carId", carId);
+        return "selldetail/sell_option"; // 파일명과 반드시 일치
+    }
+    @GetMapping("/sell/detail/sale")
+    public String showSaleForm(@RequestParam("carId") Long carId, Model model) {
+        CarEntryDraft carEntryDraft = carEntryDraftRepository.findById(carId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 차량 정보가 없습니다."));
+        model.addAttribute("carId", carId);
+        return "selldetail/sell_sale";
+    }
+
+    @PostMapping("/sell/detail/sale/save")
+    public String saveSaleInfo(
+            @RequestParam("carId") Long carId,
+            @RequestParam("deliveryOption") String deliveryOption,
+            @RequestParam("carGrade") String carGrade,
+            @RequestParam("saleType") String saleType,
+            @RequestParam("saleMethod") String saleMethod
+    ) {
+        CarEntryDraft draft = carEntryDraftRepository.findById(carId)
+                .orElseThrow(() -> new IllegalArgumentException("차량 정보 없음"));
+        draft.setDeliveryOption(deliveryOption);
+        draft.setCarGrade(carGrade);
+        draft.setSaleType(saleType);
+        draft.setSaleMethod(saleMethod);
+        carEntryDraftRepository.save(draft);
+
+        // 다음 단계 또는 완료 페이지로 리다이렉트
+        return "redirect:/sell/detail/confirm?carId=" + carId;
+    }
+    @GetMapping("/sell/detail/confirm")
+    public String confirmCarEntry(@RequestParam("carId") Long carId, Model model) {
+        CarEntryDraft car = carEntryDraftRepository.findById(carId)
+                .orElseThrow(() -> new IllegalArgumentException("차량 정보를 찾을 수 없습니다."));
+        model.addAttribute("car", car);
+        return "selldetail/car_confirm";
+    }
 
 
 
