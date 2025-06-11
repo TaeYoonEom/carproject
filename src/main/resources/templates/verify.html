@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원정보 수정 - 인증</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #fff;
+        }
+        .container {
+            max-width: 500px;
+            margin: 40px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        h2 {
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+        .tab-select {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .tab-select span {
+            flex: 1;
+            padding: 10px 0;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .tab-select .active {
+            color: red;
+            border-bottom: 2px solid red;
+        }
+        .tab-select .inactive {
+            color: #ccc;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            margin: 20px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+        }
+        .btn, .btn-red {
+            width: 48%;
+            padding: 12px 0;
+            border-radius: 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+        .btn {
+            background-color: #fff;
+            border: 1px solid #ccc;
+        }
+        .btn-red {
+            background: #d32f2f;
+            color: white;
+        }
+        .error {
+            color: red;
+            margin-bottom: 10px;
+        }
+        .footer {
+            margin-top: 40px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* ✅ 탭별 콘텐츠 구역 */
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        .no-sns-message {
+            margin-top: 40px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>회원정보수정</h2>
+    <p><strong>회원확인</strong></p>
+    <p><span th:text="${loginId}">사용자</span> 님의 정보를 안전하게 보호하기 위해 계정을 다시 한번 확인합니다.</p>
+
+    <!-- ✅ 탭 선택 -->
+    <div class="tab-select">
+        <span id="tab-sns" class="inactive">SNS 계정으로 확인</span>
+        <span id="tab-encar" class="active">엔카 계정 확인</span>
+    </div>
+
+    <!-- ✅ SNS 확인 탭 내용 -->
+    <div id="content-sns" class="tab-content">
+        <p class="no-sns-message">연결된 SNS 계정이 없습니다.</p>
+    </div>
+
+    <!-- ✅ 엔카 계정 확인 탭 내용 -->
+    <div id="content-encar" class="tab-content active">
+        <form method="post" th:action="@{/mypage/verify}">
+            <input type="password" id="password" name="password" placeholder="비밀번호" required>
+
+            <div th:if="${error}" class="error">[[${error}]]</div>
+
+            <div class="button-group">
+                <a href="/mypage" class="btn">취소</a>
+                <button type="submit" class="btn-red">확인</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="footer">© Encar 1599-5455</div>
+</div>
+
+<script>
+    const tabSns = document.getElementById("tab-sns");
+    const tabEncar = document.getElementById("tab-encar");
+    const contentSns = document.getElementById("content-sns");
+    const contentEncar = document.getElementById("content-encar");
+
+    tabSns.addEventListener("click", () => {
+        tabSns.classList.add("active");
+        tabSns.classList.remove("inactive");
+        tabEncar.classList.remove("active");
+        tabEncar.classList.add("inactive");
+
+        contentSns.classList.add("active");
+        contentEncar.classList.remove("active");
+    });
+
+    tabEncar.addEventListener("click", () => {
+        tabEncar.classList.add("active");
+        tabEncar.classList.remove("inactive");
+        tabSns.classList.remove("active");
+        tabSns.classList.add("inactive");
+
+        contentEncar.classList.add("active");
+        contentSns.classList.remove("active");
+    });
+</script>
+</body>
+</html>
