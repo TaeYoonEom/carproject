@@ -1,10 +1,12 @@
 package com.example.carproject.buy.service;
 
 import com.example.carproject.buy.domain.CarSale;
+import com.example.carproject.buy.dto.CarCardDto;
 import com.example.carproject.buy.repository.CarSaleRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CarSaleService {
@@ -25,5 +27,12 @@ public class CarSaleService {
     public List<CarSale> findByCarType(String carType) {
         return carSaleRepository.findByCarType(carType);
     }
+    public List<CarCardDto> getCarCardDtos() {
+        return carSaleRepository.findAll().stream()
+                .map(CarCardDto::new)
+                .collect(Collectors.toList());
+    }
+
+
 
 }

@@ -296,12 +296,9 @@
             <div class="encar-grid">
                 <article class="encar-card" th:each="car :  ${carList.subList(0, 8)}">
                     <!-- 차량 이미지: carName으로 이미지 경로 지정 -->
-                    <img class="encar-img" th:src="@{'/img/' + ${car.carName} + '.jpg'}" alt="차량 이미지">
+                    <img class="encar-img" th:src="@{'/img/car_image/' + ${car.carId} + '_front.jpg'}" alt="차량 이미지">
 
                     <div class="encar-info">
-                        <!-- 상태 뱃지: 소유중일 경우만 표시
-                        <span class="badge-hot" th:if="${car.ownershipStatus == '소유중'}">판매중</span>-->
-
                         <!-- 차량 제목 -->
                         <div class="encar-title" th:text="${car.carName}">차량명</div>
 

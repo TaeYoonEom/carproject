@@ -1,6 +1,7 @@
 package com.example.carproject.buy.controller;
 
 import com.example.carproject.buy.domain.CarSale;
+import com.example.carproject.buy.dto.CarCardDto;
 import com.example.carproject.buy.service.CarSaleService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,11 +22,11 @@ public class KoreanController {
     // 차량 목록 전체 + 우대/일반 구분해서 전달
     @GetMapping("/korean")
     public String showKoreanCars(Model model) {
-        // 전체 차량 목록 가져오기
-        List<CarSale> carList = carSaleService.getAllCars();
+        List<CarCardDto> carCardDtoList = carSaleService.getCarCardDtos(); // DTO 리스트
 
-        model.addAttribute("carList", carList);
+        model.addAttribute("carList", carCardDtoList); // ✅ 이거 하나만
 
         return "buy/korean_page";
     }
+
 }

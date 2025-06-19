@@ -1,15 +1,16 @@
-package com.example.carproject.buy.domain;
+package com.example.carproject.importcar.domain;
 
 import com.example.carproject.domain.AllCarSale;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
-public class CarSale {
+public class ImportCarSale {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,20 +37,16 @@ public class CarSale {
 
     private String carGrade;
     private int capacity;
-
     private String saleType;
-
     private String fuelType;
 
     @Column(length = 50)
     private String transmission;
 
     @Column(length = 50)
-    private String carType;
+    private String carType;  // 수입
 
-    // AllCarSale 연결 추가
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "car_id", referencedColumnName = "car_id")
+    @OneToOne
+    @JoinColumn(name = "all_car_sale_id")   // FK → all_car_sale.car_id
     private AllCarSale allCarSale;
-
 }
