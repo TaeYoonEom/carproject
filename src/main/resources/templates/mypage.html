@@ -1268,52 +1268,56 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const mypageButtons = document.querySelectorAll(".mypage-btn");
-        const sidebarLinks = document.querySelectorAll('.sidebar-link, .sidebar-category[data-target]');
-        const contentSections = document.querySelectorAll('.mypage-main > div');
+        const sidebarLinks = document.querySelectorAll(".sidebar-link, .sidebar-category[data-target]");
+        const contentSections = document.querySelectorAll(".mypage-main > div");
 
         // ✅ 상단 버튼 클릭 이벤트
         mypageButtons.forEach(btn => {
           btn.addEventListener("click", function (e) {
-            const isHome = this.getAttribute("href") === "/mypage";
+            const text = this.textContent.trim();
+            const href = this.getAttribute("href") || "#";
+            const isHome = href === "/mypage";
+
+            // 홈은 기본 이동
             if (isHome) return;
 
+            // 회원정보관리 → 별도 페이지로 이동
             if (text === "회원정보관리") {
-                window.location.href = "/mypage/verify";
-                return;
+              e.preventDefault();                  // ✅ 기본 이동 취소(중복 방지)
+              window.location.href = "/mypage/verify";
+              return;
             }
 
+            // SPA 전환(내차 구매/판매/결제/쿠폰/수출시세)
             e.preventDefault();
 
-            // 상단 버튼 스타일 초기화
+            // 상단 버튼 active 처리
             mypageButtons.forEach(b => b.classList.remove("active"));
             this.classList.add("active");
 
-            const text = this.textContent.trim();
-
-            // 클릭된 상단 탭에 따라 콘텐츠 전환
+            // 탭→섹션 매핑
             const tabToContentMap = {
               "내차 구매": "interested-cars-section",
               "내차 판매": "sell-car-section",
               "결제 관리": "payment-history-section",
               "쿠폰/포인트": "coupon-history-section",
-              "수출시세": "export-price-section",
-              "회원정보관리": "member-info-section"
+              "수출시세": "export-price-section"
+              // "회원정보관리": "member-info-section"  // ← 별도 페이지로 이동하므로 여기선 불필요
             };
 
             const targetId = tabToContentMap[text];
-            if (targetId) {
-              // 모든 콘텐츠 숨기고 타겟만 보이기
-              contentSections.forEach(section => section.classList.add("hidden"));
-              const targetSection = document.getElementById(targetId);
-              if (targetSection) targetSection.classList.remove("hidden");
+            if (!targetId) return;
 
-              // 사이드바 링크 초기화 및 해당 항목에 active 부여
-              sidebarLinks.forEach(link => link.classList.remove("active"));
-              const sidebarLink = document.querySelector(`.sidebar-link[data-target="${targetId}"]`);
-              if (sidebarLink) sidebarLink.classList.add("active");
-            }
+            // 콘텐츠 전환
+            contentSections.forEach(section => section.classList.add("hidden"));
+            document.getElementById(targetId)?.classList.remove("hidden");
+
+            // 사이드바 active 연동
+            sidebarLinks.forEach(link => link.classList.remove("active"));
+            document.querySelector(`.sidebar-link[data-target="${targetId}"]`)?.classList.add("active");
           });
         });
+
 
 
         // ✅ 사이드바 클릭 이벤트

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="ko"
+      layout:decorate="~{base}">
+
+<head>
+  <title th:text="${car.carName} + ' 상세정보'">차량 상세</title>
+  <link rel="stylesheet" href="/css/car_detail_page.css" layout:fragment="style"/>
+</head>
+
+<body>
+<div layout:fragment="content">
+
+  <!-- 브레드크럼/헤더 -->
+  <div class="detail-breadcrumb">
+    <a href="/">홈</a> &gt;
+    <a th:href="@{${categoryPath}}" th:text="${categoryName}">국산차</a>
+    <span th:text="${car.carName}">모델명</span>
+  </div>
+
+  <!-- 상단 요약 영역 -->
+  <section class="detail-hero">
+    <!-- 좌: 이미지 갤러리 -->
+    <div class="gallery">
+      <div class="gallery-main">
+        <img id="mainImage" th:src="@{${mainImage}}" alt="대표 이미지">
+      </div>
+      <div class="thumbs">
+        <img th:each="img: ${images}"
+             th:src="@{${img}}"
+             alt="썸네일"
+             class="thumb"
+             onclick="swapImage(this)">
+      </div>
+    </div>
+
+    <!-- 우: 요약/가격/버튼 -->
+    <aside class="summary-card">
+      <h1 class="title" th:text="${car.carName}">제조사 모델 등급</h1>
+
+      <div class="price-line">
+        <span class="price" th:text="${#numbers.formatInteger(car.price,1,'COMMA')} + ' 원'">가격</span>
+        <span class="badge" th:if="${car.ownershipStatus == '소유중'}">판매중</span>
+        <span class="badge gray" th:if="${car.ownershipStatus != '소유중'}" th:text="${car.ownershipStatus}">상태</span>
+      </div>
+
+      <ul class="specs">
+        <li><b>연식</b><span th:text="${car.year} + '년'">2022년</span></li>
+        <li><b>주행거리</b><span th:text="${#numbers.formatInteger(car.mileage,1,'COMMA')} + ' km'">35,000 km</span></li>
+        <li><b>연료</b><span th:text="${car.fuelType}">가솔린</span></li>
+        <li><b>변속기</b><span th:text="${car.transmission}">오토</span></li>
+        <li><b>구동</b><span th:text="${car.driveType}">2WD</span></li>
+        <li><b>색상(외/내)</b>
+          <span th:text="${car.exteriorColor} + ' / ' + ${car.interiorColor}">화이트/블랙</span>
+        </li>
+        <li><b>지역</b><span th:text="${car.saleLocation}">서울</span></li>
+      </ul>
+
+      <div class="cta-row">
+        <a class="btn red" href="#contact">구매문의</a>
+        <button class="btn outline" onclick="scrollToEl('#inspection')">성능기록부</button>
+        <button class="btn outline" onclick="scrollToEl('#insurance')">보험이력</button>
+      </div>
+
+      <div class="meta">
+        <span th:if="${car.sellerType}" th:text="'판매자: ' + ${car.sellerType}">판매자: 개인</span>
+        <span th:if="${car.createdAt}" th:text="'등록일: ' + ${#temporals.format(car.createdAt,'yyyy.MM.dd')}">등록일</span>
+        <span th:if="${car.carNumber}" th:text="'차량번호: ' + ${car.carNumber}">차량번호</span>
+      </div>
+    </aside>
+  </section>
+
+  <!-- 탭 영역 -->
+  <section class="detail-tabs">
+    <div class="tab-buttons">
+      <button class="tab-btn active" data-target="tab-basic">기본정보</button>
+      <button class="tab-btn" data-target="tab-option">옵션</button>
+      <button class="tab-btn" data-target="tab-inspection" id="inspection">성능기록부</button>
+      <button class="tab-btn" data-target="tab-insurance" id="insurance">보험이력</button>
+      <button class="tab-btn" data-target="tab-price">시세/가격비교</button>
+    </div>
+
+    <div class="tab-panels">
+      <!-- 기본정보 -->
+      <div id="tab-basic" class="tab-panel">
+        <table class="kv">
+          <tr><th>차명</th><td th:text="${car.carName}">차명</td></tr>
+          <tr><th>연식</th><td th:text="${car.year} + '년'">연식</td></tr>
+          <tr><th>주행거리</th><td th:text="${#numbers.formatInteger(car.mileage,1,'COMMA')} + ' km'">주행</td></tr>
+          <tr><th>연료</th><td th:text="${car.fuelType}">연료</td></tr>
+          <tr><th>배기량</th><td th:text="${car.capacity} + ' cc'">배기량</td></tr>
+          <tr><th>구동/변속</th><td th:text="${car.driveType} + ' / ' + ${car.transmission}">구동/변속</td></tr>
+          <tr><th>소유 상태</th><td th:text="${car.ownershipStatus}">소유중</td></tr>
+          <tr><th>판매 방식</th><td th:text="${car.saleType}">일반</td></tr>
+          <tr><th>판매 지역</th><td th:text="${car.saleLocation}">지역</td></tr>
+        </table>
+      </div>
+
+      <!-- 옵션 -->
+      <div id="tab-option" class="tab-panel hidden">
+        <ul class="option-grid">
+          <li th:each="opt : ${options}" th:text="${opt}">옵션</li>
+          <li th:if="${#lists.isEmpty(options)}" class="muted">등록된 옵션 정보가 없습니다.</li>
+        </ul>
+      </div>
+
+      <!-- 성능기록부(이미지 또는 항목 테이블) -->
+      <div id="tab-inspection" class="tab-panel hidden">
+        <div th:if="${inspectionImage}">
+          <img th:src="@{${inspectionImage}}" alt="성능기록부" class="doc-img">
+        </div>
+        <table class="kv" th:if="${inspection}">
+          <tr th:each="e: ${inspection}">
+            <th th:text="${e.key}">항목</th>
+            <td th:text="${e.value}">내용</td>
+          </tr>
+        </table>
+        <div th:if="${inspectionImage == null and inspection == null}" class="muted">성능기록부 정보가 없습니다.</div>
+      </div>
+
+      <!-- 보험이력 -->
+      <div id="tab-insurance" class="tab-panel hidden">
+        <table class="kv" th:if="${insurance}">
+          <tr><th>사고/수리</th><td th:text="${insurance.accidents} + '건'">0건</td></tr>
+          <tr><th>전손/침수</th><td th:text="${insurance.totalLoss} + ' / ' + ${insurance.flood}">-</td></tr>
+          <tr><th>내/외판 교환</th><td th:text="${insurance.panels} + ' 부위'">-</td></tr>
+          <tr><th>보험사고이력(비용)</th><td th:text="${#numbers.formatInteger(insurance.cost,1,'COMMA')} + ' 원'">0원</td></tr>
+        </table>
+        <div th:if="${insurance == null}" class="muted">보험이력 정보가 없습니다.</div>
+      </div>
+
+      <!-- 시세/가격비교 -->
+      <div id="tab-price" class="tab-panel hidden">
+        <div class="price-chart">
+          <!-- 필요 시 차트 영역(후에 JS로 채움) -->
+          <div class="muted">유사 차량 시세 차트 영역 (추가 예정)</div>
+        </div>
+        <table class="compare-table" th:if="${comparables}">
+          <thead>
+          <tr><th>차량</th><th>연식</th><th>주행</th><th>가격</th><th>지역</th></tr>
+          </thead>
+          <tbody>
+          <tr th:each="c : ${comparables}">
+            <td th:text="${c.carName}">차량</td>
+            <td th:text="${c.year}">연식</td>
+            <td th:text="${#numbers.formatInteger(c.mileage,1,'COMMA')} + ' km'">주행</td>
+            <td th:text="${#numbers.formatInteger(c.price,1,'COMMA')} + ' 원'">가격</td>
+            <td th:text="${c.saleLocation}">지역</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 우측(고정) 판매자/문의 -->
+    <aside class="seller-card" id="contact">
+      <h3>판매자 정보</h3>
+      <p th:text="${seller.name} ?: '판매자 미등록'">홍길동</p>
+      <p th:if="${seller.phone}"><b>연락처</b> <span th:text="${seller.phone}">010-0000-0000</span></p>
+      <p th:if="${seller.store}"><b>상사</b> <span th:text="${seller.store}">엔카모터스</span></p>
+      <a class="btn full" th:href="'tel:' + ${seller.phone}">전화하기</a>
+      <a class="btn outline full" href="#">채팅문의</a>
+    </aside>
+  </section>
+
+  <!-- 하단 유의사항 -->
+  <section class="notice">
+    <p>※ 실제 차량 상태 및 서류 확인 후 거래를 진행해 주세요.</p>
+  </section>
+
+</div>
+
+<script>
+  // 썸네일 클릭 시 메인이미지 교체
+  function swapImage(el) {
+    const main = document.getElementById('mainImage');
+    main.src = el.src;
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    main.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+
+  // 탭 전환
+  document.addEventListener('DOMContentLoaded', () => {
+    const tabs = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.tab-panel');
+    tabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabs.forEach(b=>b.classList.remove('active'));
+        panels.forEach(p=>p.classList.add('hidden'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.target).classList.remove('hidden');
+      });
+    });
+  });
+
+  // 스크롤 이동
+  function scrollToEl(sel){ document.querySelector(sel)?.scrollIntoView({behavior:'smooth'}); }
+</script>
+
+</body>
+</html>
