@@ -21,22 +21,31 @@
 
   <!-- 상단 요약 영역 -->
   <section class="detail-hero">
-    <!-- 좌: 이미지 갤러리 -->
-    <div class="gallery">
-      <div class="gallery-main">
-        <img id="mainImage" th:src="@{${mainImage}}" alt="대표 이미지">
-      </div>
-      <div class="thumbs">
-        <img th:each="img: ${images}"
-             th:src="@{${img}}"
-             alt="썸네일"
-             class="thumb"
-             onclick="swapImage(this)">
+    <!-- 좌: 메인 이미지 -->
+    <div class="gallery-main">
+      <img id="mainImage"
+           th:if="${mainImage}"
+           th:src="@{${mainImage}}"
+           alt="대표 이미지">
+      <div th:if="${mainImage == null}" class="no-image">
+        이미지가 등록되지 않았습니다.
       </div>
     </div>
 
-    <!-- 우: 요약/가격/버튼 -->
-    <aside class="summary-card">
+    <!-- 우: 세로 썸네일 -->
+    <div class="side-thumbs"
+         th:if="${images != null and !#lists.isEmpty(images)}">
+      <img th:each="img : ${images}"
+           th:if="${img != mainImage}"
+           th:src="@{${img}}"
+           th:attr="data-src=${img}"
+           alt="썸네일"
+           class="thumb-vert">
+    </div>
+
+
+    <!-- 아래: 요약 카드 (두 칼럼 전체 폭) -->
+    <aside class="summary-card wide">
       <h1 class="title" th:text="${car.carName}">제조사 모델 등급</h1>
 
       <div class="price-line">
@@ -70,6 +79,7 @@
       </div>
     </aside>
   </section>
+
 
   <!-- 탭 영역 -->
   <section class="detail-tabs">
@@ -156,13 +166,46 @@
     <!-- 우측(고정) 판매자/문의 -->
     <aside class="seller-card" id="contact">
       <h3>판매자 정보</h3>
-      <p th:text="${seller.name} ?: '판매자 미등록'">홍길동</p>
-      <p th:if="${seller.phone}"><b>연락처</b> <span th:text="${seller.phone}">010-0000-0000</span></p>
-      <p th:if="${seller.store}"><b>상사</b> <span th:text="${seller.store}">엔카모터스</span></p>
-      <a class="btn full" th:href="'tel:' + ${seller.phone}">전화하기</a>
+
+      <!-- 이름: seller가 있고 name이 비어있지 않을 때 표시, 없으면 '판매자 미등록' -->
+      <p th:text="${(seller != null and !#strings.isEmpty(seller.name)) ? seller.name : '판매자 미등록'}">
+        판매자 미등록
+      </p>
+
+      <!-- 연락처 -->
+      <p th:if="${seller != null and !#strings.isEmpty(seller.phone)}">
+        <b>연락처</b> <span th:text="${seller.phone}">010-0000-0000</span>
+      </p>
+
+      <!-- 이메일 -->
+      <p th:if="${seller != null and !#strings.isEmpty(seller.email)}">
+        <b>이메일</b> <span th:text="${seller.email}">-</span>
+      </p>
+
+      <!-- 주소 (is_address_public일 때만 서버에서 세팅했으니 null 체크만) -->
+      <p th:if="${seller != null and !#strings.isEmpty(seller.address)}">
+        <b>주소</b> <span th:text="${seller.address}">-</span>
+      </p>
+
+      <!-- 가입일 -->
+      <p th:if="${seller != null and seller.joinedAt != null}">
+        <b>가입일</b> <span th:text="${#temporals.format(seller.joinedAt,'yyyy.MM.dd')}">-</span>
+      </p>
+
+      <!-- 전화 버튼 -->
+      <a class="btn full"
+         th:if="${seller != null and !#strings.isEmpty(seller.phone)}"
+         th:href="'tel:' + ${seller.phone}">
+        전화하기
+      </a>
       <a class="btn outline full" href="#">채팅문의</a>
     </aside>
   </section>
+
+  <!-- 이미지 라이트박스 모달 (전역) -->
+  <div id="imageModal" class="img-modal" style="display:none;">
+    <img id="modalImg" alt="큰 이미지">
+  </div>
 
   <!-- 하단 유의사항 -->
   <section class="notice">
@@ -172,17 +215,54 @@
 </div>
 
 <script>
-  // 썸네일 클릭 시 메인이미지 교체
-  function swapImage(el) {
+  // 전역 스왑 함수 (필요 시 다른 곳에서도 호출 가능)
+  window.swapImage = function (src) {
     const main = document.getElementById('mainImage');
-    main.src = el.src;
-    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
-    el.classList.add('active');
-    main.scrollIntoView({behavior:'smooth', block:'center'});
-  }
+    if (!main || !src) return;
+    main.src = src;
 
-  // 탭 전환
+    // active 표시
+    document.querySelectorAll('.thumb-vert').forEach(t => t.classList.remove('active'));
+    const match = [...document.querySelectorAll('.thumb-vert')]
+      .find(t => t.getAttribute('src') === src || t.dataset.src === src);
+    if (match) match.classList.add('active');
+
+    // 메인으로 스크롤
+    main.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
   document.addEventListener('DOMContentLoaded', () => {
+    const main    = document.getElementById('mainImage');
+    const thumbs  = document.querySelector('.side-thumbs');
+    const modal   = document.getElementById('imageModal');
+    const modalImg= document.getElementById('modalImg');
+
+    // 썸네일 클릭: 이벤트 위임 (인라인 onclick 불필요)
+    if (thumbs) {
+      thumbs.addEventListener('click', (e) => {
+        const imgEl = e.target.closest('.thumb-vert');
+        if (!imgEl) return;
+        const src = imgEl.getAttribute('src') || imgEl.dataset.src;
+        window.swapImage(src);
+      });
+    }
+
+    // 메인 클릭 → 라이트박스
+    if (main && modal && modalImg) {
+      main.style.cursor = 'zoom-in';
+      main.addEventListener('click', () => {
+        modalImg.src = main.src;
+        modal.style.display = 'flex';
+      });
+
+      // 모달 닫기
+      modal.addEventListener('click', () => modal.style.display = 'none');
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') modal.style.display = 'none';
+      });
+    }
+
+    // 탭 전환 (기존 로직)
     const tabs = document.querySelectorAll('.tab-btn');
     const panels = document.querySelectorAll('.tab-panel');
     tabs.forEach(btn => {
@@ -195,9 +275,10 @@
     });
   });
 
-  // 스크롤 이동
+  // 스크롤 이동 (기존)
   function scrollToEl(sel){ document.querySelector(sel)?.scrollIntoView({behavior:'smooth'}); }
 </script>
+
 
 </body>
 </html>
