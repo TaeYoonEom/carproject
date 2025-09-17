@@ -201,3 +201,26 @@ details summary{ list-style:none; padding-left:0; }
     .page-wrapper{padding: 0 20px;} /* 좌·우 안전패딩 */
 }
 
+/* ===== 링크는 항상 검정, 방문/활성 상관없이 ===== */
+a.encar-title,
+a.cell-link,
+a.cell-link .encar-title {
+  color: #000 !important;
+  text-decoration: none;
+}
+
+/* 호버/포커스 시 밑줄만 */
+a.encar-title:hover,
+a.cell-link:hover .encar-title,
+a.encar-title:focus-visible,
+a.cell-link:focus-visible .encar-title {
+  text-decoration: underline;
+}
+
+/* 브라우저 기본 :visited 색상도 무력화 */
+a.encar-title:visited,
+a.cell-link:visited,
+a.cell-link:visited .encar-title {
+  color: #000 !important;
+}
+
