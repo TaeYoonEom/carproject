@@ -17,7 +17,6 @@ public class CarSaleService {
         this.carSaleRepository = carSaleRepository;
     }
 
-
     // ✅ 전체 차량 조회
     public List<CarSale> getAllCars() {
         return carSaleRepository.findAll();
@@ -33,6 +32,8 @@ public class CarSaleService {
                 .collect(Collectors.toList());
     }
 
-
+    public long getAllCount() {
+        return carSaleRepository.count();
+    }
 
 }

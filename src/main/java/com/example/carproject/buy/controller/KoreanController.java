@@ -24,8 +24,10 @@ public class KoreanController {
     public String showKoreanCars(Model model) {
         List<CarCardDto> carCardDtoList = carSaleService.getCarCardDtos(); // DTO 리스트
 
-        model.addAttribute("carList", carCardDtoList); // ✅ 이거 하나만
+        long totalCount = carSaleService.getAllCount();
 
+        model.addAttribute("carList", carCardDtoList);
+        model.addAttribute("totalCount", totalCount);
         return "buy/korean_page";
     }
 

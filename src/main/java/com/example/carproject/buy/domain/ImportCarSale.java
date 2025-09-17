@@ -46,7 +46,7 @@ public class ImportCarSale {
     @Column(length = 50)
     private String carType;  // 수입
 
-    @OneToOne
-    @JoinColumn(name = "all_car_sale_id")   // FK → all_car_sale.car_id
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "car_id", referencedColumnName = "car_id") // 🔁 중요 포인트
     private AllCarSale allCarSale;
 }

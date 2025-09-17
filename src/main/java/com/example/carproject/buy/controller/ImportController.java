@@ -1,6 +1,6 @@
 package com.example.carproject.buy.controller;
 
-import com.example.carproject.importcar.domain.ImportCarSale;
+import com.example.carproject.buy.dto.ImportCarCardDto;
 import com.example.carproject.buy.service.ImportCarSaleService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,8 +19,11 @@ public class ImportController {
 
     @GetMapping("/import")
     public String showImportCars(Model model) {
-        List<ImportCarSale> carList = importCarSaleService.getAllImportCars();
+        List<ImportCarCardDto> carList = importCarSaleService.getCardDtos();
+        long totalCount = importCarSaleService.getAllCount();
+
         model.addAttribute("carList", carList);
+        model.addAttribute("totalCount", totalCount);
         return "buy/import_page";
     }
 

@@ -10,9 +10,6 @@ import java.util.List;
 public interface CarSaleRepository extends JpaRepository<CarSale, Integer> {
     List<CarSale> findByCarType(String carType);
 
-    // ✅ 수입차 필터링
-    List<CarSale> findBySaleType(String saleType);
+    long countByCarType(String carType); //총 국산차 개수
 
-    // ✅ 전기/하이브리드 등 포함 검색
-    List<CarSale> findByFuelTypeContaining(String fuelType);
 }
