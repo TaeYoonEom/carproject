@@ -16,143 +16,182 @@
     <!-- === 기본 HTML 골격 === -->
     <div class="page-wrapper">
         <!-- 좌측 필터 영역 -->
-        <aside class="sidebar-left">
+        <aside class="sidebar-left encar-filters">
             <div class="filter-header">
-                <h4>전기친환경차</h4>
-                <span class="allcount">
-                대
-                </span>
-                선택초기화 최근검색조건
+                <div class="header-top">
+                    <span class="label">전기차 검색</span>
+                </div>
+                <div class="count-reset">
+                    <span class="allcount">
+                      <strong th:text="${#numbers.formatInteger(totalCount, 1, 'COMMA')}">0</strong>대
+                    </span>
+                    <button type="button" class="btn-reset" aria-label="선택 초기화">
+                        <span class="ico-rotate" aria-hidden="true">↻</span>
+                        선택 초기화
+                    </button>
+                </div>
+                <div class="recent-search">
+                    <button type="button" class="btn-recent">
+                      <span class="ico-search" aria-hidden="true">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <circle cx="11" cy="11" r="7" stroke="#9aa1a7" stroke-width="2"/>
+                          <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="#9aa1a7" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                      </span>
+                        최근 검색 조건
+                    </button>
+                </div>
             </div>
 
             <!-- 차종 -->
             <details class="filter-group" open>
                 <summary>차종</summary>
                 <ul class="filter-list">
-                    <li><label><input type="checkbox"> 경차</label></li>
-                    <li><label><input type="checkbox"> 소형차</label></li>
-                    <li><label><input type="checkbox"> 준중형차</label></li>
-                    <li><label><input type="checkbox"> 중형차</label></li>
-                    <li><label><input type="checkbox"> 대형차</label></li>
-                    <li><label><input type="checkbox"> 스포츠카</label></li>
-                    <li><label><input type="checkbox"> SUV</label></li>
-                    <li><label><input type="checkbox"> RV</label></li>
-                    <li><label><input type="checkbox"> 경승합차</label></li>
-                    <li><label><input type="checkbox"> 승합차</label></li>
-                    <li><label><input type="checkbox"> 화물차</label></li>
-                    <li><label><input type="checkbox"> 기타</label></li>
+                    <li><label><input type="checkbox" name="ct" value="KE"> 경차</label></li>
+                    <li><label><input type="checkbox" name="ct" value="SM"> 소형차</label></li>
+                    <li><label><input type="checkbox" name="ct" value="JM"> 준중형차</label></li>
+                    <li><label><input type="checkbox" name="ct" value="MD"> 중형차</label></li>
+                    <li><label><input type="checkbox" name="ct" value="LG"> 대형차</label></li>
+                    <li><label><input type="checkbox" name="ct" value="SC"> 스포츠카</label></li>
+                    <li><label><input type="checkbox" name="ct" value="SUV"> SUV</label></li>
+                    <li><label><input type="checkbox" name="ct" value="RV"> RV</label></li>
+                    <li><label><input type="checkbox" name="ct" value="VN"> 승합차</label></li>
+                    <li><label><input type="checkbox" name="ct" value="TR"> 화물차</label></li>
+                    <li><label><input type="checkbox" name="ct" value="ET"> 기타</label></li>
                 </ul>
             </details>
 
             <!-- 제조사 / 모델 / 등급 -->
-            <details class="filter-group">
-                <summary>제조사 / 모델 / 등급</summary>
-                <ul class="filter-list">
-                    <label><input type="checkbox"> 현대</label>
-                    <label><input type="checkbox"> 기아</label>
-                    <label><input type="checkbox"> 제네시스</label>
+            <details class="filter-group" open>
+                <summary>제조사/모델/등급</summary>
+                <ul class="filter-list with-count">
+                    <li>
+                        <label><input type="checkbox" name="brand" value="현대"> 현대</label>
+
+                    </li>
+                    <li>
+                        <label><input type="checkbox" name="brand" value="제네시스"> 제네시스</label>
+
+                    </li>
+                    <li>
+                        <label><input type="checkbox" name="brand" value="기아"> 기아</label>
+
+                    </li>
+                    <!-- 필요 브랜드 계속... -->
                 </ul>
             </details>
 
             <!-- 연식 -->
             <details class="filter-group" open>
                 <summary>연식</summary>
-                <div class="filter-list" style="display: flex; flex-direction: column; gap: 8px;">
-                    <!-- 시작 연월 -->
-                    <div>
-                        <select name="start_year">
-                            <option>년</option>
-                            <option>2025년</option>
-                            <option>2024년</option>
-                            <option>2023년</option>
-                            <option>2022년</option>
-                            <option>2021년</option>
-                            <option>2020년</option>
-                            <option>2019년</option>
-                            <option>2018년</option>
-                            <option>2017년</option>
-                            <option>2016년</option>
-                            <option>2015년</option>
-                            <option>2014년</option>
-                            <option>2013년</option>
-                            <option>2012년</option>
-                            <option>2011년</option>
-                        </select>
-                        <select name="start_month">
-                            <option>월</option>
-                            <option>1월</option>
-                            <option>2월</option>
-                            <option>3월</option>
-                            <option>4월</option>
-                            <option>5월</option>
-                            <option>6월</option>
-                            <option>7월</option>
-                            <option>8월</option>
-                            <option>9월</option>
-                            <option>10월</option>
-                            <option>11월</option>
-                            <option>12월</option>
-                        </select>
-                        <span>부터</span>
-                    </div>
+                <div class="range-rows">
+                    <div class="range-row">
+                        <div class="selects">
+                            <select name="year_from_y">
+                                <option value="">년</option>
 
-                    <!-- 종료 연월 -->
-                    <div>
-                        <select name="end_year">
-                            <option>년</option>
-                            <option>2025년</option>
-                            <option>2024년</option>
-                            <option>2023년</option>
-                            <option>2022년</option>
-                            <option>2021년</option>
-                            <option>2020년</option>
-                            <option>2019년</option>
-                            <option>2018년</option>
-                            <option>2017년</option>
-                            <option>2016년</option>
-                            <option>2015년</option>
-                            <option>2014년</option>
-                            <option>2013년</option>
-                            <option>2012년</option>
-                            <option>2011년</option>
-                        </select>
-                        <select name="end_month">
-                            <option>월</option>
-                            <option>1월</option>
-                            <option>2월</option>
-                            <option>3월</option>
-                            <option>4월</option>
-                            <option>5월</option>
-                            <option>6월</option>
-                            <option>7월</option>
-                            <option>8월</option>
-                            <option>9월</option>
-                            <option>10월</option>
-                            <option>11월</option>
-                            <option>12월</option>
-                        </select>
-                        <span>까지</span>
+                            </select>
+                            <select name="year_from_m">
+                                <option value="">월</option>
+
+                            </select>
+                        </div>
+                        <span class="suffix">부터</span>
                     </div>
+                    <div class="range-row">
+                        <div class="selects">
+                            <select name="year_to_y">
+                                <option value="">년</option>
+
+                            </select>
+                            <select name="year_to_m">
+                                <option value="">월</option>
+
+                            </select>
+                        </div>
+                        <span class="suffix">까지</span>
+                    </div>
+                    <button type="button" class="btn-interval">구간선택 열기</button>
                 </div>
             </details>
 
-
             <!-- 주행거리 -->
-            <details class="filter-group">
+            <details class="filter-group" open>
                 <summary>주행거리</summary>
-                <ul class="filter-list">
-                    <input type="number" placeholder="최소 km"> ~
-                    <input type="number" placeholder="최대 km">
-                </ul>
+                <div class="range-rows">
+                    <div class="range-row">
+                        <div class="selects">
+                            <select name="mile_from">
+                                <option value="">선택</option>
+                                <option value="0">0km</option>
+                                <option value="10000">1만</option>
+                                <option value="30000">3만</option>
+                                <option value="50000">5만</option>
+                                <option value="100000">10만</option>
+                            </select>
+                        </div>
+                        <span class="suffix">부터</span>
+                    </div>
+                    <div class="range-row">
+                        <div class="selects">
+                            <select name="mile_to">
+                                <option value="">선택</option>
+                                <option value="30000">3만</option>
+                                <option value="50000">5만</option>
+                                <option value="100000">10만</option>
+                                <option value="150000">15만</option>
+                                <option value="200000">20만</option>
+                            </select>
+                        </div>
+                        <span class="suffix">까지</span>
+                    </div>
+                    <button type="button" class="btn-interval">구간선택 열기</button>
+                </div>
             </details>
 
             <!-- 가격 -->
-            <details class="filter-group">
+            <details class="filter-group" open>
                 <summary>가격</summary>
-                <ul class="filter-list">
-                    <input type="number" placeholder="최소 만원"> ~
-                    <input type="number" placeholder="최대 만원">
-                </ul>
+                <div class="range-rows">
+                    <div class="range-row">
+                        <div class="selects">
+                            <select name="price_from">
+                                <option value="">선택</option>
+                                <option value="0">0만원</option>
+                                <option value="500">500</option>
+                                <option value="1000">1,000</option>
+                                <option value="2000">2,000</option>
+                                <option value="3000">3,000</option>
+                            </select>
+                        </div>
+                        <span class="suffix">부터</span>
+                    </div>
+                    <div class="range-row">
+                        <div class="selects">
+                            <select name="price_to">
+                                <option value="">선택</option>
+                                <option value="1000">1,000</option>
+                                <option value="2000">2,000</option>
+                                <option value="3000">3,000</option>
+                                <option value="5000">5,000</option>
+                                <option value="10000">10,000</option>
+                            </select>
+                        </div>
+                        <span class="suffix">까지</span>
+                    </div>
+
+                    <label class="manual">
+                        <input type="checkbox" id="price-direct"> 직접입력
+                    </label>
+
+                    <div class="manual-inputs" hidden>
+                        <input type="number" name="price_from_input" placeholder="최소 만원">
+                        <span class="tilde">~</span>
+                        <input type="number" name="price_to_input" placeholder="최대 만원">
+                    </div>
+
+                    <button type="button" class="btn-interval">구간선택 열기</button>
+                </div>
             </details>
 
             <!-- 지역 -->
@@ -200,7 +239,6 @@
                 <ul class="filter-list">
                     <li><label><input type="checkbox"> 개인</label></li>
                     <li><label><input type="checkbox"> 딜러</label></li>
-                    <li><label><input type="checkbox"> 브랜드인증</label></li>
                     <li><label><input type="checkbox"> 리스렌트제휴</label></li>
                 </ul>
             </details>
@@ -246,11 +284,15 @@
                     <li><label><input type="checkbox"> 가솔린</label></li>
                     <li><label><input type="checkbox"> 디젤</label></li>
                     <li><label><input type="checkbox"> LPG(일반인 구입)</label></li>
+                    <li><label><input type="checkbox"> LPG</label></li>
                     <li><label><input type="checkbox"> 가솔린+전기</label></li>
-                    <li><label><input type="checkbox"> 디젤+전기</label></li>
+                    <li><label><input type="checkbox"> LPG+전기</label></li>
                     <li><label><input type="checkbox"> 가솔린+LPG</label></li>
+                    <li><label><input type="checkbox"> 가솔린+CNG</label></li>
                     <li><label><input type="checkbox"> 전기</label></li>
-                    <li><label><input type="checkbox"> 기타</label></li>
+                    <li><label><input type="checkbox"> 수소</label></li>
+                    <li><label><input type="checkbox"> LNG</label></li>
+                    <li><label><input type="checkbox"> CNG</label></li>
                 </ul>
             </details>
 
@@ -294,14 +336,10 @@
         <main class="content">
             <div class="section-title">사진우대</div>
             <div class="encar-grid">
-                <article class="encar-card" th:each="car :  ${carList.subList(0, 8)}">
-                    <!-- 차량 이미지: carName으로 이미지 경로 지정 -->
-                    <img class="encar-img" th:src="@{'/img/' + ${car.carName} + '.jpg'}" alt="차량 이미지">
+                <article class="encar-card" th:each="car, stat : ${carList}" th:if="${stat.index} < 8">
+                    <img class="encar-img" th:src="${car.imageUrl} ?: @{/img/common/noimage.png}" th:alt="${car.carName}">
 
                     <div class="encar-info">
-                        <!-- 상태 뱃지: 소유중일 경우만 표시
-                        <span class="badge-hot" th:if="${car.ownershipStatus == '소유중'}">판매중</span>-->
-
                         <!-- 차량 제목 -->
                         <div class="encar-title" th:text="${car.carName}">차량명</div>
 
@@ -330,7 +368,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="car : ${carList}">
-                    <td><img class="thumb" th:src="@{'/img/' + ${car.carName} + '.jpg'}" th:alt="${car.carName}"></td>
+                    <td><img class="thumb" th:src="${car.imageUrl} ?: @{/img/common/noimage.png}" th:alt="${car.carName}"></td>
                     <td>
                         <div class="encar-title" th:text="${car.carName}">차량명</div>
                         <div class="encar-category"
@@ -347,7 +385,35 @@
             </table>
 
             <!-- 일반등록 영역 -->
-            <div class="section-title">일반등록</div>
+            <div class="section-title">일반등록
+                <div class="list-header">
+                    <div class="sort-options">
+                        <a th:href="@{/cars(sort='recent')}"
+                           th:classappend="${sort == 'recent'} ? 'active' : ''">최근 등록일순</a>
+                        <a th:href="@{/cars(sort='priceAsc')}"
+                           th:classappend="${sort == 'priceAsc'} ? 'active' : ''">낮은 가격순</a>
+                        <a th:href="@{/cars(sort='priceDesc')}"
+                           th:classappend="${sort == 'priceDesc'} ? 'active' : ''">높은 가격순</a>
+                        <a th:href="@{/cars(sort='mileageAsc')}"
+                           th:classappend="${sort == 'mileageAsc'} ? 'active' : ''">낮은 주행거리순</a>
+                        <a th:href="@{/cars(sort='mileageDesc')}"
+                           th:classappend="${sort == 'mileageDesc'} ? 'active' : ''">높은 주행거리순</a>
+                        <a th:href="@{/cars(sort='yearDesc')}"
+                           th:classappend="${sort == 'yearDesc'} ? 'active' : ''">최근연식순</a>
+                    </div>
+
+                    <div class="page-size">
+                        <select onchange="location.href=this.value">
+                            <option th:value="@{/cars(pageSize=20)}"
+                                    th:selected="${pageSize==20}">20개씩 보기</option>
+                            <option th:value="@{/cars(pageSize=50)}"
+                                    th:selected="${pageSize==50}">50개씩 보기</option>
+                            <option th:value="@{/cars(pageSize=100)}"
+                                    th:selected="${pageSize==100}">100개씩 보기</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
             <table class="premium-table">
                 <thead>
                 <tr>
@@ -358,7 +424,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="car : ${carList}">
-                    <td><img class="thumb" th:src="@{'/img/' + ${car.carName} + '.jpg'}" th:alt="${car.carName}"></td>
+                    <td><img class="thumb" th:src="${car.imageUrl} ?: @{/img/common/noimage.png}" th:alt="${car.carName}"></td>
                     <td>
                         <div class="encar-title" th:text="${car.carName}">차량명</div>
                         <div class="encar-category"
@@ -368,7 +434,7 @@
                             <span class="tag">1인소유</span>
                         </div>
                     </td>
-                    <<td class="encar-price"
+                    <td class="encar-price"
                          th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'">가격</td>
                 </tr>
                 </tbody>
@@ -377,7 +443,18 @@
 
         <!-- 📦 우측 배너 영역 -->
         <aside class="sidebar-right">
-            <div class="widget">이차어때? 모카</div>
+            <div class="widget">
+                <ul class="service-list">
+                    <li>
+                        <span class="icon blue">₩</span>
+                        보험료 조회
+                    </li>
+                    <li>
+                        <span class="icon gold">₩</span>
+                        대출한도 조회
+                    </li>
+                </ul>
+            </div>
         </aside>
     </div>
 </div>
