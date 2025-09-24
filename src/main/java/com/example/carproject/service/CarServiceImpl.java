@@ -15,21 +15,9 @@ public class CarServiceImpl implements CarService {
 
     private final JdbcTemplate jdbc;
 
-    public CarServiceImpl(JdbcTemplate jdbc) {
-        this.jdbc = jdbc;
-    }
+    public CarServiceImpl(JdbcTemplate jdbc) { this.jdbc = jdbc; }
 
-    /* =======================
-        카테고리 판단 (임시 규칙 그대로 유지)
-       ======================= */
-    private Category categoryOf(Long carId) {
-        int id = carId == null ? 0 : carId.intValue();
-        if (1 <= id && id <= 15) return Category.KOREAN;
-        if (16 <= id && id <= 30) return Category.EV;
-        if (31 <= id && id <= 45) return Category.FOREIGN;
-        return Category.UNKNOWN;
-    }
-    enum Category {
+    private enum Category {
         KOREAN("국산차", "/korean"),
         EV("전기차", "/ev"),
         FOREIGN("수입차", "/foreign"),
@@ -38,31 +26,13 @@ public class CarServiceImpl implements CarService {
         Category(String n, String p){ this.name=n; this.path=p; }
     }
 
-    /* =======================
-        차량 상세 (임시 샘플 – 추후 DB 연동)
-       ======================= */
-    @Override
-    public CarDto getCarDetail(Long carId) {
+    /** ✅ all_car_sale 테이블을 기준으로 카테고리 판별 */
+    private Category categoryOf(Long carId) {
         final String sql = """
-        SELECT
-            car_id,
-            car_name,
-            year,
-            mileage,
-            price,
-            fuel_type,
-            transmission,
-            drive_type,
-            exterior_color,
-            interior_color,
-            sale_location,
-            ownership_status,
-            seller_type,
-            car_number,
-            capacity,
-            sale_type,
-            created_at
-        FROM car_sale
+        SELECT 
+          CAST(origin AS SIGNED)            AS origin,
+          CAST(is_eco_friendly AS SIGNED)   AS eco
+        FROM all_car_sale
         WHERE car_id = ?
         LIMIT 1
     """;
@@ -72,30 +42,84 @@ public class CarServiceImpl implements CarService {
             ps.setLong(1, carId);
             return ps;
         }, rs -> {
-            if (!rs.next()) {
-                throw new NoSuchElementException("car_sale not found. car_id=" + carId);
+            if (!rs.next()) return Category.UNKNOWN;
+
+            Integer origin = rs.getObject("origin", Integer.class);
+            Integer eco    = rs.getObject("eco", Integer.class);
+
+            if (eco != null && eco == 1) return Category.EV; // ⚡ EV 우선
+            if (origin != null) {
+                if (1 <= origin && origin <= 30)  return Category.KOREAN;
+                if (31 <= origin && origin <= 45) return Category.FOREIGN;
             }
-            CarDto dto = new CarDto();
-            dto.setCarId(rs.getLong("car_id"));
-            dto.setCarName(rs.getString("car_name"));
-            dto.setYear((Integer) rs.getObject("year"));                 // INT → Integer
-            dto.setMileage((Integer) rs.getObject("mileage"));           // INT → Integer
-            dto.setPrice((Integer) rs.getObject("price"));               // INT → Integer
-            dto.setFuelType(rs.getString("fuel_type"));
-            dto.setTransmission(rs.getString("transmission"));
-            dto.setDriveType(rs.getString("drive_type"));
-            dto.setExteriorColor(rs.getString("exterior_color"));
-            dto.setInteriorColor(rs.getString("interior_color"));
-            dto.setSaleLocation(rs.getString("sale_location"));
-            dto.setOwnershipStatus(rs.getString("ownership_status"));    // ENUM → String
-            dto.setSellerType(rs.getString("seller_type"));              // ENUM → String
-            dto.setCarNumber(rs.getString("car_number"));
-            dto.setCapacity((Integer) rs.getObject("capacity"));         // cc (nullable)
-            dto.setSaleType(rs.getString("sale_type"));                  // 예: 일반/리스/렌트…
-            var ts = rs.getTimestamp("created_at");
-            dto.setCreatedAt(ts != null ? ts.toLocalDateTime() : null);
-            return dto;
+            return Category.UNKNOWN;
         });
+    }
+
+    @Override public String getCategoryName(Long carId) { return categoryOf(carId).name; }
+    @Override public String getCategoryPath(Long carId) { return categoryOf(carId).path; }
+
+
+    // 타입 안전 정수 변환
+    private static Integer toInt(Object o) {
+        if (o == null) return null;
+        if (o instanceof Number n) return n.intValue();
+        if (o instanceof String s && !s.isBlank()) return Integer.valueOf(s.trim());
+        return null;
+    }
+
+    // 공통 매퍼
+    private CarDto mapCarRow(java.sql.ResultSet rs) throws java.sql.SQLException {
+        CarDto dto = new CarDto();
+        dto.setCarId(rs.getLong("car_id"));
+        dto.setCarName(rs.getString("car_name"));
+        dto.setYear(toInt(rs.getObject("year")));
+        dto.setMileage(toInt(rs.getObject("mileage")));
+        dto.setPrice(toInt(rs.getObject("price")));
+        dto.setFuelType(rs.getString("fuel_type"));
+        dto.setTransmission(rs.getString("transmission"));
+        dto.setDriveType(rs.getString("drive_type"));
+        dto.setExteriorColor(rs.getString("exterior_color"));
+        dto.setInteriorColor(rs.getString("interior_color"));
+        dto.setSaleLocation(rs.getString("sale_location"));
+        dto.setOwnershipStatus(rs.getString("ownership_status"));
+        dto.setSellerType(rs.getString("seller_type"));
+        dto.setCarNumber(rs.getString("car_number"));
+        dto.setCapacity(toInt(rs.getObject("capacity")));
+        dto.setSaleType(rs.getString("sale_type"));
+        var ts = rs.getTimestamp("created_at");
+        dto.setCreatedAt(ts != null ? ts.toLocalDateTime() : null);
+        return dto;
+    }
+
+    @Override
+    public CarDto getCarDetail(Long carId) {
+        final String SELECT_COMMON = """
+        SELECT
+            car_id, car_name, year, mileage, price, fuel_type, transmission, drive_type,
+            exterior_color, interior_color, sale_location, ownership_status, seller_type,
+            car_number, capacity, sale_type, created_at
+        FROM %s
+        WHERE car_id = ?
+        LIMIT 1
+    """;
+
+        // 1) 우선 car_sale
+        List<CarDto> kr = jdbc.query(SELECT_COMMON.formatted("car_sale"),
+                ps -> ps.setLong(1, carId), (rs, n) -> mapCarRow(rs));
+        if (!kr.isEmpty()) return kr.get(0);
+
+        // 2) 다음 import_car_sale
+        List<CarDto> im = jdbc.query(SELECT_COMMON.formatted("import_car_sale"),
+                ps -> ps.setLong(1, carId), (rs, n) -> mapCarRow(rs));
+        if (!im.isEmpty()) return im.get(0);
+
+        // 3) 마지막 안전망 all_car_sale
+        List<CarDto> all = jdbc.query(SELECT_COMMON.formatted("all_car_sale"),
+                ps -> ps.setLong(1, carId), (rs, n) -> mapCarRow(rs));
+        if (!all.isEmpty()) return all.get(0);
+
+        throw new NoSuchElementException("car not found in car_sale/import_car_sale/all_car_sale. car_id=" + carId);
     }
 
 
@@ -277,7 +301,11 @@ public class CarServiceImpl implements CarService {
         final String sql = """
         SELECT m.name, m.phone, m.email, m.address, m.is_address_public, m.joined_at
           FROM member m
-          JOIN car_sale s ON s.member_id = m.member_id
+          JOIN (
+                SELECT member_id, car_id FROM car_sale
+                UNION ALL
+                SELECT member_id, car_id FROM import_car_sale
+          ) s ON s.member_id = m.member_id
          WHERE s.car_id = ?
          LIMIT 1
     """;
@@ -299,10 +327,4 @@ public class CarServiceImpl implements CarService {
         return list.isEmpty() ? null : list.get(0);
     }
 
-
-
-
-
-    @Override public String getCategoryName(Long carId) { return categoryOf(carId).name; }
-    @Override public String getCategoryPath(Long carId) { return categoryOf(carId).path; }
 }

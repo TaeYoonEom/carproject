@@ -336,23 +336,20 @@
         <main class="content">
             <div class="section-title">사진우대</div>
             <div class="encar-grid">
-                <article class="encar-card" th:each="car, stat : ${carList}" th:if="${stat.index} < 8">
-                    <img class="encar-img" th:src="${car.imageUrl} ?: @{/img/common/noimage.png}" th:alt="${car.carName}">
-
-                    <div class="encar-info">
-                        <!-- 차량 제목 -->
-                        <div class="encar-title" th:text="${car.carName}">차량명</div>
-
-                        <!-- 차량 정보: 연식 | 주행거리 | 구동방식 | 지역 -->
-                        <div class="encar-category"
-                             th:utext="${car.year} + '년 | ' + ${car.mileage} + 'km<br>' + ${car.driveType} + ' | ' + ${car.saleLocation}">
+                <!-- 카드(사진우대) -->
+                <article class="encar-card" th:each="car, stat : ${carList}" th:if="${stat.index} < 8"
+                         th:with="cid=${car.carId}">
+                    <a th:href="@{/cars/{id}(id=${cid})}" class="encar-card-link" style="display:block">
+                        <img class="encar-img" th:src="${car.imageUrl} ?: @{/img/common/noimage.png}" th:alt="${car.carName}">
+                        <div class="encar-info">
+                            <div class="encar-title" th:text="${car.carName}">차량명</div>
+                            <div class="encar-category"
+                                 th:utext="${car.year} + '년 | ' + ${car.mileage} + 'km<br>' + ${car.driveType} + ' | ' + ${car.saleLocation}">
+                            </div>
+                            <div class="encar-price"
+                                 th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'"></div>
                         </div>
-
-                        <!-- 가격 (숫자 포맷 + 만원 단위) -->
-                        <div class="encar-price"
-                             th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'">
-                        </div>
-                    </div>
+                    </a>
                 </article>
             </div>
 
@@ -367,8 +364,12 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="car : ${carList}">
-                    <td><img class="thumb" th:src="${car.imageUrl} ?: @{/img/common/noimage.png}" th:alt="${car.carName}"></td>
+                <tr th:each="car : ${carList}"
+                    th:with="cid=${car.carId}"
+                    th:onclick="|location.href='@{/cars/{id}(id=${cid})}'|"
+                    style="cursor:pointer;">
+                    <td><img class="thumb" th:src="${car.imageUrl} ?: @{/img/common/noimage.png}"
+                             th:alt="${car.carName}"></td>
                     <td>
                         <div class="encar-title" th:text="${car.carName}">차량명</div>
                         <div class="encar-category"
@@ -423,8 +424,12 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="car : ${carList}">
-                    <td><img class="thumb" th:src="${car.imageUrl} ?: @{/img/common/noimage.png}" th:alt="${car.carName}"></td>
+                <tr th:each="car : ${carList}"
+                    th:with="cid=${car.carId}"
+                    th:onclick="|location.href='@{/cars/{id}(id=${cid})}'|"
+                    style="cursor:pointer;">
+                    <td><img class="thumb" th:src="${car.imageUrl} ?: @{/img/common/noimage.png}"
+                             th:alt="${car.carName}"></td>
                     <td>
                         <div class="encar-title" th:text="${car.carName}">차량명</div>
                         <div class="encar-category"
@@ -435,7 +440,7 @@
                         </div>
                     </td>
                     <td class="encar-price"
-                         th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'">가격</td>
+                        th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'">가격</td>
                 </tr>
                 </tbody>
             </table>

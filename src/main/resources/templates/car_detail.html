@@ -34,14 +34,24 @@
 
     <!-- 우: 세로 썸네일 -->
     <div class="side-thumbs"
-         th:if="${images != null and !#lists.isEmpty(images)}">
+         th:if="${(mainImage != null) or (images != null and !#lists.isEmpty(images))}">
+
+      <!-- ① 메인 이미지 썸네일(항상 맨 위에) -->
+      <img th:if="${mainImage}"
+           th:src="@{${mainImage}}"
+           th:attr="data-src=${mainImage}"
+           alt="썸네일(메인)"
+           class="thumb-vert active">
+
+      <!-- ② 나머지 썸네일들(메인과 중복 제외) -->
       <img th:each="img : ${images}"
-           th:if="${img != mainImage}"
+           th:if="${img != null and img != mainImage}"
            th:src="@{${img}}"
            th:attr="data-src=${img}"
            alt="썸네일"
            class="thumb-vert">
     </div>
+
 
 
     <!-- 아래: 요약 카드 (두 칼럼 전체 폭) -->

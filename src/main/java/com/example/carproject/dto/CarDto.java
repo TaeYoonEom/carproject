@@ -9,17 +9,22 @@ public class CarDto {
     private String carName;
     private Integer year;
     private Integer mileage;
-    private Integer price;          // 원 단위
+    private Integer price;
     private String fuelType;
     private String transmission;
     private String driveType;
     private String exteriorColor;
     private String interiorColor;
     private String saleLocation;
-    private String ownershipStatus; // 소유중/판매완료 등
-    private String sellerType;      // 개인/딜러
+    private String ownershipStatus;
+    private String sellerType;
     private String carNumber;
-    private String saleType;        // 일반/리스/렌트 (옵션)
-    private Integer capacity;       // 배기량(cc) (옵션)
+    private String saleType;
+    private Integer capacity;
     private LocalDateTime createdAt;
+
+    // ✅ 카테고리 추가
+    private String categoryName; // 국산차 / 수입차 / 전기차
+    private String categoryPath; // /korean /foreign /ev
 }
+

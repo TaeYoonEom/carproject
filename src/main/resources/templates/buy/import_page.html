@@ -327,26 +327,23 @@
         <main class="content">
             <div class="section-title">사진우대</div>
             <div class="encar-grid">
-                <article class="encar-card" th:each="car :  ${carList.subList(0, 8)}">
-                    <!-- 차량 이미지: carName으로 이미지 경로 지정 -->
-                    <img class="encar-img" th:src="${car.frontViewUrl} ?: '/img/default.jpg'" th:alt="${car.carName}">
-
-                    <div class="encar-info">
-                        <!-- 차량 제목 -->
-                        <div class="encar-title" th:text="${car.carName}">차량명</div>
-
-                        <!-- 차량 정보: 연식 | 주행거리 | 구동방식 | 지역 -->
-                        <div class="encar-category"
-                             th:utext="${car.year} + '년 | ' + ${car.mileage} + 'km<br>' + ${car.driveType} + ' | ' + ${car.saleLocation}">
+                <!-- 카드(사진우대) -->
+                <article class="encar-card" th:each="car, stat : ${carList}" th:if="${stat.index} < 8"
+                         th:with="cid=${car.car != null and car.car.carId != null ? car.car.carId : (car.carId != null ? car.carId : 0)}">
+                    <a th:href="@{/cars/{id}(id=${cid})}" class="encar-card-link" style="display:block">
+                        <img class="encar-img" th:src="${car.frontViewUrl} ?: '/img/default.jpg'" th:alt="${car.carName}">
+                        <div class="encar-info">
+                            <div class="encar-title" th:text="${car.carName}">차량명</div>
+                            <div class="encar-category"
+                                 th:utext="${car.year} + '년 | ' + ${car.mileage} + 'km<br>' + ${car.driveType} + ' | ' + ${car.saleLocation}">
+                            </div>
+                            <div class="encar-price"
+                                 th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'"></div>
                         </div>
-
-                        <!-- 가격 (숫자 포맷 + 만원 단위) -->
-                        <div class="encar-price"
-                             th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'">
-                        </div>
-                    </div>
+                    </a>
                 </article>
             </div>
+
 
             <!-- 우대등록 영역 -->
             <div class="section-title">우대등록</div>
@@ -359,17 +356,14 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="car, stat : ${carList}"
-                    th:if="${stat.index} < 8">
-                    <!-- ✅ DB 대표 이미지 URL 사용 -->
+                <tr th:each="car, stat : ${carList}" th:if="${stat.index} < 8">
                     <td>
-                        <img class="thumb"
-                             th:src="${car.frontViewUrl} ?: '/img/default_thumb.jpg'"
-                             th:alt="${car.carName}">
+                        <a th:href="@{/cars/{id}(id=${car.carId})}">
+                            <img class="thumb" th:src="${car.frontViewUrl} ?: '/img/default_thumb.jpg'" th:alt="${car.carName}">
+                        </a>
                     </td>
-
                     <td>
-                        <div class="encar-title" th:text="${car.carName}">차량명</div>
+                        <a th:href="@{/cars/{id}(id=${car.carId})}" class="encar-title" th:text="${car.carName}">차량명</a>
                         <div class="encar-category"
                              th:text="${car.year} + '년 | ' + ${car.mileage} + 'km | ' + ${car.saleLocation}">
                             정보
@@ -379,14 +373,11 @@
                             <span class="tag">1인소유</span>
                         </div>
                     </td>
-
                     <td class="encar-price"
-                        th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'">
-                        가격
-                    </td>
+                        th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'">가격</td>
                 </tr>
-
                 </tbody>
+
             </table>
 
             <!-- 일반등록 영역 -->
@@ -429,32 +420,25 @@
                 </thead>
                 <tbody>
                 <tr th:each="car : ${carList}">
-                    <!-- ✅ DB에서 가져온 frontViewUrl 사용 -->
                     <td>
-                        <img class="thumb"
-                             th:src="${car.frontViewUrl} ?: '/img/default_thumb.jpg'"
-                             th:alt="${car.carName}">
+                        <a th:href="@{/cars/{id}(id=${car.carId})}">
+                            <img class="thumb" th:src="${car.frontViewUrl} ?: '/img/default_thumb.jpg'" th:alt="${car.carName}">
+                        </a>
                     </td>
-
                     <td>
-                        <div class="encar-title" th:text="${car.carName}">차량명</div>
+                        <a th:href="@{/cars/{id}(id=${car.carId})}" class="encar-title" th:text="${car.carName}">차량명</a>
                         <div class="encar-category"
-                             th:text="${car.year} + '년 | ' + ${car.mileage} + 'km | ' + ${car.saleLocation}">
-                            정보
-                        </div>
+                             th:text="${car.year} + '년 | ' + ${car.mileage} + 'km | ' + ${car.saleLocation}">정보</div>
                         <div class="encar-tag">
                             <span class="tag" th:if="${car.ownershipStatus == '소유중'}">무사고</span>
                             <span class="tag">1인소유</span>
                         </div>
                     </td>
-
-                    <!-- ✅ 오타 수정: <<td → <td> -->
                     <td class="encar-price"
-                        th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'">
-                        가격
-                    </td>
+                        th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'">가격</td>
                 </tr>
                 </tbody>
+
             </table>
         </main>
 

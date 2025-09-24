@@ -268,3 +268,21 @@ a.cell-link:focus-visible .encar-title { text-decoration: underline; }
 a.encar-title:visited,
 a.cell-link:visited,
 a.cell-link:visited .encar-title { color: #000 !important; }
+
+/* 카드 전체를 링크로 감싼 경우(수입차 페이지) 글씨색 고정 */
+.encar-card { color: #111; } /* 기준 텍스트 색 */
+a.encar-card-link,
+a.encar-card-link:visited {
+  color: inherit !important;       /* 부모(.encar-card)의 색을 물려받음 */
+  text-decoration: none;
+  display: block;                  /* 이미 block이면 중복 OK */
+}
+
+/* 링크 안의 내부 요소들도 부모 색을 쓰도록(혹시 다른 스타일이 이기면) */
+a.encar-card-link * { color: inherit !important; }
+
+/* 호버 시 타이틀만 밑줄 */
+a.encar-card-link:hover .encar-title,
+a.encar-card-link:focus-visible .encar-title {
+  text-decoration: underline;
+}
