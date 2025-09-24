@@ -124,3 +124,19 @@
 
 /* 썸네일 active 테두리 */
 .thumb-vert.active{ outline:2px solid #8a2be2; }
+
+.tab-panel.hidden {
+  display: none;
+}
+.tab-panel.active {
+  display: block; /* 반드시 추가 */
+}
+
+.tab-btn.active {
+  font-weight: bold;
+  border-bottom: 2px solid #000;
+}
+
+.detail-tabs { position: relative; }
+.tab-buttons, .tab-panels { position: relative; z-index: 2; }
+.seller-card { position: sticky; z-index: 1; } /* 탭보다 아래로 */

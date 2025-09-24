@@ -84,11 +84,11 @@
   <!-- 탭 영역 -->
   <section class="detail-tabs">
     <div class="tab-buttons">
-      <button class="tab-btn active" data-target="tab-basic">기본정보</button>
-      <button class="tab-btn" data-target="tab-option">옵션</button>
-      <button class="tab-btn" data-target="tab-inspection" id="inspection">성능기록부</button>
-      <button class="tab-btn" data-target="tab-insurance" id="insurance">보험이력</button>
-      <button class="tab-btn" data-target="tab-price">시세/가격비교</button>
+      <button type="button" class="tab-btn active" data-target="tab-basic">기본정보</button>
+      <button type="button" class="tab-btn"         data-target="tab-option">옵션</button>
+      <button type="button" class="tab-btn"         data-target="tab-inspection">성능기록부</button>
+      <button type="button" class="tab-btn"         data-target="tab-insurance">보험이력</button>
+      <button type="button" class="tab-btn"         data-target="tab-price">시세/가격비교</button>
     </div>
 
     <div class="tab-panels">
@@ -107,13 +107,55 @@
         </table>
       </div>
 
-      <!-- 옵션 -->
+      <!-- 옵션 (옵션 탭에서만 보임) -->
       <div id="tab-option" class="tab-panel hidden">
-        <ul class="option-grid">
-          <li th:each="opt : ${options}" th:text="${opt}">옵션</li>
-          <li th:if="${#lists.isEmpty(options)}" class="muted">등록된 옵션 정보가 없습니다.</li>
-        </ul>
+
+        <!-- 주요옵션: 상위 9개만 -->
+        <section id="mainOptions"
+                 class="main-options"
+                 th:if="${options != null and !#lists.isEmpty(options)}">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <h3 style="margin:0;">주요옵션</h3>
+            <a href="#tab-option" style="color:#4b4bff;text-decoration:underline;">옵션 설명 보기</a>
+          </div>
+
+          <ul style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;list-style:none;padding-left:0;">
+            <li th:each="opt,iter : ${options}"
+                th:if="${iter.index < 9}"
+                th:text="${opt}"
+                style="display:flex;align-items:center;gap:8px;border:1px solid #eee;border-radius:10px;padding:10px;background:#fff;">
+              옵션
+            </li>
+          </ul>
+
+          <!-- 전체옵션 열기 버튼 (옵션 10개 이상일 때만 노출) -->
+          <button type="button"
+                  id="btnShowAllOptions"
+                  class="btn outline"
+                  style="margin-top:14px;"
+                  th:if="${#lists.size(options) > 9}"
+                  th:text="${#lists.size(options)} + '개 옵션 모두보기'">
+            옵션 모두보기
+          </button>
+        </section>
+
+        <!-- 전체 옵션 목록 + 접기 버튼: 처음엔 숨김 -->
+        <div id="allOptionsWrap" class="hidden" th:if="${options != null}">
+          <ul class="option-grid">
+            <li th:each="opt : ${options}" th:text="${opt}">옵션</li>
+          </ul>
+          <button type="button" id="btnHideAllOptions" class="btn outline" style="margin-top:14px;">
+            옵션 접기
+          </button>
+        </div>
+
+        <!-- 옵션이 아예 없을 때 -->
+        <div th:if="${options == null or #lists.isEmpty(options)}" class="muted">
+          등록된 옵션 정보가 없습니다.
+        </div>
       </div>
+
+
 
       <!-- 성능기록부(이미지 또는 항목 테이블) -->
       <div id="tab-inspection" class="tab-panel hidden">
@@ -214,30 +256,33 @@
 
 </div>
 
+
+</body>
+</html>
+
 <script>
-  // 전역 스왑 함수 (필요 시 다른 곳에서도 호출 가능)
+  /* =========================
+     이미지 스왑 / 라이트박스
+  ========================== */
   window.swapImage = function (src) {
     const main = document.getElementById('mainImage');
     if (!main || !src) return;
     main.src = src;
 
-    // active 표시
     document.querySelectorAll('.thumb-vert').forEach(t => t.classList.remove('active'));
     const match = [...document.querySelectorAll('.thumb-vert')]
       .find(t => t.getAttribute('src') === src || t.dataset.src === src);
     if (match) match.classList.add('active');
 
-    // 메인으로 스크롤
     main.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const main    = document.getElementById('mainImage');
-    const thumbs  = document.querySelector('.side-thumbs');
-    const modal   = document.getElementById('imageModal');
-    const modalImg= document.getElementById('modalImg');
+  function initImages() {
+    const main     = document.getElementById('mainImage');
+    const thumbs   = document.querySelector('.side-thumbs');
+    const modal    = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImg');
 
-    // 썸네일 클릭: 이벤트 위임 (인라인 onclick 불필요)
     if (thumbs) {
       thumbs.addEventListener('click', (e) => {
         const imgEl = e.target.closest('.thumb-vert');
@@ -247,38 +292,129 @@
       });
     }
 
-    // 메인 클릭 → 라이트박스
     if (main && modal && modalImg) {
       main.style.cursor = 'zoom-in';
       main.addEventListener('click', () => {
         modalImg.src = main.src;
         modal.style.display = 'flex';
       });
-
-      // 모달 닫기
       modal.addEventListener('click', () => modal.style.display = 'none');
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') modal.style.display = 'none';
       });
     }
+  }
 
-    // 탭 전환 (기존 로직)
-    const tabs = document.querySelectorAll('.tab-btn');
-    const panels = document.querySelectorAll('.tab-panel');
-    tabs.forEach(btn => {
-      btn.addEventListener('click', () => {
-        tabs.forEach(b=>b.classList.remove('active'));
-        panels.forEach(p=>p.classList.add('hidden'));
-        btn.classList.add('active');
-        document.getElementById(btn.dataset.target).classList.remove('hidden');
+  /* =========================
+     탭 전환 (이벤트 위임)
+  ========================== */
+  function initTabs() {
+    const container   = document.querySelector('.detail-tabs');
+    if (!container) return;
+
+    const buttonsWrap = container.querySelector('.tab-buttons');
+    const panels      = Array.from(container.querySelectorAll('.tab-panel'));
+
+    if (buttonsWrap && getComputedStyle(buttonsWrap).position === 'static') {
+      buttonsWrap.style.position = 'relative';
+      buttonsWrap.style.zIndex = '10';
+    }
+
+    function showTab(targetId) {
+      if (!targetId) return;
+      const tabs = Array.from(container.querySelectorAll('.tab-btn'));
+
+      tabs.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => {
+        p.classList.add('hidden');
+        p.classList.remove('active');
+        p.style.display = 'none';
       });
-    });
-  });
 
-  // 스크롤 이동 (기존)
-  function scrollToEl(sel){ document.querySelector(sel)?.scrollIntoView({behavior:'smooth'}); }
+      const btn   = tabs.find(b => b.dataset.target === targetId);
+      const panel = container.querySelector('#' + targetId);
+      if (btn)   btn.classList.add('active');
+      if (panel) { panel.classList.remove('hidden'); panel.classList.add('active'); panel.style.display = 'block'; }
+
+      // 옵션 탭으로 들어올 때는 '요약(9개)' 상태로 리셋
+      if (targetId === 'tab-option') resetOptionView();
+    }
+
+    if (buttonsWrap) {
+      buttonsWrap.addEventListener('click', (e) => {
+        const btn = e.target.closest('.tab-btn');
+        if (!btn) return;
+        e.preventDefault();
+        showTab(btn.dataset.target);
+      }, { passive:false });
+    }
+
+    const first = container.querySelector('.tab-btn.active') || container.querySelector('.tab-btn');
+    if (first && first.dataset.target) showTab(first.dataset.target);
+
+    if (location.hash) {
+      const id = location.hash.slice(1);
+      if (container.querySelector('#' + id)) showTab(id);
+    }
+
+    // 전역 호출 필요 시
+    window.showTab = showTab;
+  }
+
+  /* =========================
+     옵션 모두보기 / 접기
+  ========================== */
+  function resetOptionView() {
+    const mainSection = document.getElementById('mainOptions');
+    const fullWrap    = document.getElementById('allOptionsWrap');
+    const showBtn     = document.getElementById('btnShowAllOptions');
+    const hideBtn     = document.getElementById('btnHideAllOptions');
+
+    if (mainSection) mainSection.classList.remove('hidden');
+    if (fullWrap)    fullWrap.classList.add('hidden');
+    if (showBtn)     showBtn.style.display = '';     // 보이기 (조건에 따라 자동 노출)
+    if (hideBtn)     hideBtn.style.display = '';     // 기본 보이되, fullWrap이 숨겨져 있으니 영향 없음
+  }
+
+  function initOptionToggle() {
+    const showBtn  = document.getElementById('btnShowAllOptions');
+    const hideBtn  = document.getElementById('btnHideAllOptions');
+    const mainSec  = document.getElementById('mainOptions');
+    const fullWrap = document.getElementById('allOptionsWrap');
+
+    if (showBtn && mainSec && fullWrap) {
+      showBtn.addEventListener('click', () => {
+        mainSec.classList.add('hidden');     // 요약 숨김
+        fullWrap.classList.remove('hidden'); // 전체 보임
+      });
+    }
+    if (hideBtn && mainSec && fullWrap) {
+      hideBtn.addEventListener('click', () => {
+        fullWrap.classList.add('hidden');    // 전체 숨김
+        mainSec.classList.remove('hidden');  // 요약 보임
+      });
+    }
+  }
+
+  /* =========================
+     스크롤 유틸 (버튼에서 사용)
+  ========================== */
+  function scrollToEl(sel) {
+    document.querySelector(sel)?.scrollIntoView({ behavior: 'smooth' });
+  }
+  window.scrollToEl = scrollToEl;
+
+  /* =========================
+     초기화
+  ========================== */
+  function initDetailPage() {
+    initImages();
+    initTabs();
+    initOptionToggle();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDetailPage, { once: true });
+  } else {
+    initDetailPage();
+  }
 </script>
-
-
-</body>
-</html>

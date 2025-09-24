@@ -98,9 +98,6 @@ public class CarServiceImpl implements CarService {
         });
     }
 
-    /* =======================
-        이미지: DB에서 조회
-       ======================= */
 
     // 대표 이미지: DB에서만. 없으면 null 반환
     @Override
@@ -173,7 +170,93 @@ public class CarServiceImpl implements CarService {
     /* =======================
         기타(그대로 유지: 샘플 데이터)
        ======================= */
-    @Override public List<String> getOptions(Long carId) { return List.of("내비게이션", "스마트키", "후방카메라"); }
+    @Override
+    public List<String> getOptions(Long carId) {
+        List<String> options = new ArrayList<>();
+
+        // 1) 외관/내장 옵션
+        String sqlExterior = "SELECT * FROM car_option_exterior WHERE car_id = ? ORDER BY uploaded_at DESC LIMIT 1";
+        jdbc.query(sqlExterior, rs -> {
+            if (rs.getInt("sunroof") == 1) options.add("선루프");
+            if (rs.getInt("hid_led_headlamp") == 1) options.add("헤드램프(HID, LED)");
+            if (rs.getInt("power_trunk") == 1) options.add("파워 전동 트렁크");
+            if (rs.getInt("ghost_door_closing") == 1) options.add("고스트 도어 클로징");
+            if (rs.getInt("auto_side_mirror") == 1) options.add("전동접이 사이드 미러");
+            if (rs.getInt("aluminum_wheel") == 1) options.add("알루미늄 휠");
+            if (rs.getInt("roof_rack") == 1) options.add("루프랙");
+            if (rs.getInt("heated_steering_wheel") == 1) options.add("열선 스티어링 휠");
+            if (rs.getInt("adjustable_steering_wheel") == 1) options.add("전동 조절 스티어링 휠");
+            if (rs.getInt("paddle_shift") == 1) options.add("패들 시프트");
+            if (rs.getInt("steering_remote") == 1) options.add("스티어링 휠 리모컨");
+            if (rs.getInt("ecm_mirror") == 1) options.add("ECM 룸미러");
+            if (rs.getInt("hi_pass") == 1) options.add("하이패스");
+            if (rs.getInt("power_doorlock") == 1) options.add("파워 도어록");
+            if (rs.getInt("power_steering") == 1) options.add("파워 스티어링 휠");
+            if (rs.getInt("power_window") == 1) options.add("파워 윈도우");
+        }, carId);
+
+        // 2) 편의 옵션
+        String sqlConv = "SELECT * FROM car_option_convenience WHERE car_id = ? ORDER BY uploaded_at DESC LIMIT 1";
+        jdbc.query(sqlConv, rs -> {
+            if (rs.getInt("massage_seat") == 1) options.add("마사지 시트");
+            if (rs.getInt("ventilated_seat") == 1) options.add("통풍 시트");
+            if (rs.getInt("memory_seat") == 1) options.add("메모리 시트");
+            if (rs.getInt("heated_seat") == 1) options.add("열선 시트");
+            if (rs.getInt("power_seat") == 1) options.add("전동 시트");
+            if (rs.getInt("fabric_seat") == 1) options.add("직물 시트");
+            if (rs.getInt("aux_port") == 1) options.add("AUX 단자");
+            if (rs.getInt("usb_port") == 1) options.add("USB 단자");
+            if (rs.getInt("cd_player") == 1) options.add("CD 플레이어");
+            if (rs.getInt("bluetooth") == 1) options.add("블루투스");
+            if (rs.getInt("av_monitor_rear") == 1) options.add("후석 AV 모니터");
+            if (rs.getInt("av_monitor_front") == 1) options.add("전석 AV 모니터");
+            if (rs.getInt("navigation") == 1) options.add("내비게이션");
+            if (rs.getInt("curtain") == 1) options.add("커튼");
+            if (rs.getInt("auto_light") == 1) options.add("자동 라이트");
+            if (rs.getInt("hud") == 1) options.add("HUD");
+            if (rs.getInt("epb") == 1) options.add("전자식 파킹 브레이크(EPB)");
+            if (rs.getInt("cruise_control") == 1) options.add("크루즈 컨트롤");
+            if (rs.getInt("auto_aircon") == 1) options.add("자동 에어컨");
+            if (rs.getInt("smart_key") == 1) options.add("스마트 키");
+            if (rs.getInt("remote_key") == 1) options.add("리모트 키");
+            if (rs.getInt("rain_sensor") == 1) options.add("레인 센서");
+        }, carId);
+
+        // 3) 안전 옵션
+        String sqlSafety = "SELECT * FROM car_option_safety WHERE car_id = ? ORDER BY uploaded_at DESC LIMIT 1";
+        jdbc.query(sqlSafety, rs -> {
+            if (rs.getInt("airbag_front") == 1) options.add("앞 에어백");
+            if (rs.getInt("airbag_side") == 1) options.add("사이드 에어백");
+            if (rs.getInt("airbag_curtain") == 1) options.add("커튼 에어백");
+            if (rs.getInt("abs") == 1) options.add("ABS");
+            if (rs.getInt("tcs") == 1) options.add("TCS");
+            if (rs.getInt("esc") == 1) options.add("ESC");
+            if (rs.getInt("tpms") == 1) options.add("TPMS");
+            if (rs.getInt("ldws") == 1) options.add("LDWS(차선 이탈 경고)");
+            if (rs.getInt("ecs") == 1) options.add("ECS(전자제어 서스펜션)");
+            if (rs.getInt("parking_sensor") == 1) options.add("주차 감지 센서");
+            if (rs.getInt("rear_warning") == 1) options.add("후방 경고");
+            if (rs.getInt("rear_camera") == 1) options.add("후방 카메라");
+            if (rs.getInt("around_view") == 1) options.add("어라운드 뷰");
+        }, carId);
+
+        // 4) 시트 옵션
+        String sqlSeat = "SELECT * FROM car_option_seat WHERE car_id = ? ORDER BY uploaded_at DESC LIMIT 1";
+        jdbc.query(sqlSeat, rs -> {
+            if (rs.getInt("family_seat") == 1) options.add("패밀리 시트");
+            if (rs.getInt("power_seat_front") == 1) options.add("앞좌석 전동 시트");
+            if (rs.getInt("power_seat_rear") == 1) options.add("뒷좌석 전동 시트");
+            if (rs.getInt("heated_seat_front") == 1) options.add("앞좌석 열선 시트");
+            if (rs.getInt("heated_seat_rear") == 1) options.add("뒷좌석 열선 시트");
+            if (rs.getInt("memory_seat") == 1) options.add("메모리 시트");
+            if (rs.getInt("ventilated_seat_front") == 1) options.add("앞좌석 통풍 시트");
+            if (rs.getInt("ventilated_seat_rear") == 1) options.add("뒷좌석 통풍 시트");
+            if (rs.getInt("massage_seat") == 1) options.add("마사지 시트");
+        }, carId);
+
+        return options;
+    }
+
 
     @Override public Map<String, String> getInspectionMap(Long carId) {
         return Map.of("엔진오일","정상","브레이크","정상","타이어","70% 이상");
@@ -215,6 +298,8 @@ public class CarServiceImpl implements CarService {
 
         return list.isEmpty() ? null : list.get(0);
     }
+
+
 
 
 
