@@ -10,10 +10,13 @@
     <link rel="stylesheet" href="/css/cate_gory.css" layout:fragment="style"/>
 </head>
 
+<!-- ✅ Spring Security 사용 시 CSRF 메타 -->
+<meta name="_csrf" th:content="${_csrf.token}">
+<meta name="_csrf_header" th:content="${_csrf.headerName}">
+
 <body>
 <div layout:fragment="content">
 
-    <!-- === 기본 HTML 골격 === -->
     <div class="page-wrapper">
         <!-- 좌측 필터 영역 -->
         <aside class="sidebar-left encar-filters">
@@ -80,11 +83,9 @@
                         <div class="selects">
                             <select name="year_from_y">
                                 <option value="">년</option>
-
                             </select>
                             <select name="year_from_m">
                                 <option value="">월</option>
-
                             </select>
                         </div>
                         <span class="suffix">부터</span>
@@ -93,11 +94,9 @@
                         <div class="selects">
                             <select name="year_to_y">
                                 <option value="">년</option>
-
                             </select>
                             <select name="year_to_m">
                                 <option value="">월</option>
-
                             </select>
                         </div>
                         <span class="suffix">까지</span>
@@ -299,21 +298,6 @@
                 </ul>
             </details>
 
-            <!-- 옵션 -->
-            <details class="filter-group">
-                <summary>옵션</summary>
-                <ul class="filter-list">
-                    <li><label><input type="checkbox"> 선푸르</label></li>
-                    <li><label><input type="checkbox"> 내비게이션</label></li>
-                    <li><label><input type="checkbox"> 스마트키</label></li>
-                    <li><label><input type="checkbox"> 헤드램프(HID)</label></li>
-                    <li><label><input type="checkbox"> 후방 카메라</label></li>
-                    <li><label><input type="checkbox"> 가죽시트</label></li>
-                    <li><label><input type="checkbox"> 에어백(동승석)</label></li>
-                    <li><label><input type="checkbox"> 에어백(사이드)</label></li>
-                </ul>
-            </details>
-
             <!-- 차량번호 / 판매자 이름 -->
             <details class="filter-group">
                 <summary>차량번호 / 판매자 이름</summary>
@@ -328,9 +312,27 @@
             <div class="section-title">사진우대</div>
             <div class="encar-grid">
                 <!-- 카드(사진우대) -->
-                <article class="encar-card" th:each="car, stat : ${carList}" th:if="${stat.index} < 8"
-                         th:with="cid=${car.car != null and car.car.carId != null ? car.car.carId : (car.carId != null ? car.carId : 0)}">
-                    <a th:href="@{/cars/{id}(id=${cid})}" class="encar-card-link" style="display:block">
+                <article class="encar-card"
+                         th:each="car, stat : ${carList}"
+                         th:if="${stat.index} < 8"
+                         th:with="
+                           cidRaw=${car.carId != null ? car.carId : (car.car != null and car.car.carId != null ? car.car.carId : 0)},
+                           cidInt=${T(java.lang.Integer).valueOf(cidRaw)}
+                         ">
+                    <!-- ✅ 하트 버튼 (카드 오른쪽 위) -->
+                    <button type="button"
+                            class="wish-btn"
+                            th:data-car-id="${cidInt}"
+                            th:classappend="${wishSet != null and wishSet.contains(cidInt)} ? ' on' : ''"
+                            aria-label="찜하기" title="찜하기">
+                        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                            <path d="M12 21c-.3 0-.6-.1-.8-.3C9 19 3 14.6 3 9.4 3 6.5 5.3 4 8.1 4c1.6 0 3.1.8 3.9 2.1C12.8 4.8 14.3 4 15.9 4 18.7 4 21 6.5 21 9.4c0 5.2-6 9.6-8.2 11.3-.2.2-.5.3-.8.3z"
+                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+
+                    <!-- 카드 링크(이미지+정보) -->
+                    <a th:href="@{/cars/{id}(id=${cidInt})}" class="encar-card-link" style="display:block">
                         <img class="encar-img" th:src="${car.frontViewUrl} ?: '/img/default.jpg'" th:alt="${car.carName}">
                         <div class="encar-info">
                             <div class="encar-title" th:text="${car.carName}">차량명</div>
@@ -344,89 +346,37 @@
                 </article>
             </div>
 
-
             <!-- 우대등록 영역 -->
             <div class="section-title">우대등록</div>
             <table class="premium-table">
                 <thead>
-                <tr>
-                    <th>사진</th>
-                    <th>차량정보</th>
-                    <th>가격</th>
-                </tr>
+                <tr><th>사진</th><th>차량정보</th><th>가격</th></tr>
                 </thead>
                 <tbody>
-                <tr th:each="car, stat : ${carList}" th:if="${stat.index} < 8">
-                    <td>
-                        <a th:href="@{/cars/{id}(id=${car.carId})}">
+                <tr th:each="car, stat : ${carList}"
+                    th:if="${stat.index} < 8"
+                    th:with="
+                      cidRaw=${car.carId != null ? car.carId : (car.car != null and car.car.carId != null ? car.car.carId : 0)},
+                      cidInt=${T(java.lang.Integer).valueOf(cidRaw)}
+                    ">
+                    <td class="thumb-cell">
+                        <!-- ✅ 하트 버튼(표 썸네일 위) -->
+                        <button type="button"
+                                class="wish-btn small"
+                                th:data-car-id="${cidInt}"
+                                th:classappend="${wishSet != null and wishSet.contains(cidInt)} ? ' on' : ''"
+                                aria-label="찜하기" title="찜하기">
+                            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                                <path d="M12 21c-.3 0-.6-.1-.8-.3C9 19 3 14.6 3 9.4 3 6.5 5.3 4 8.1 4c1.6 0 3.1.8 3.9 2.1C12.8 4.8 14.3 4 15.9 4 18.7 4 21 6.5 21 9.4c0 5.2-6 9.6-8.2 11.3-.2.2-.5.3-.8.3z"
+                                      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <a th:href="@{/cars/{id}(id=${cidInt})}">
                             <img class="thumb" th:src="${car.frontViewUrl} ?: '/img/default_thumb.jpg'" th:alt="${car.carName}">
                         </a>
                     </td>
                     <td>
-                        <a th:href="@{/cars/{id}(id=${car.carId})}" class="encar-title" th:text="${car.carName}">차량명</a>
-                        <div class="encar-category"
-                             th:text="${car.year} + '년 | ' + ${car.mileage} + 'km | ' + ${car.saleLocation}">
-                            정보
-                        </div>
-                        <div class="encar-tag">
-                            <span class="tag" th:if="${car.ownershipStatus == '소유중'}">무사고</span>
-                            <span class="tag">1인소유</span>
-                        </div>
-                    </td>
-                    <td class="encar-price"
-                        th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'">가격</td>
-                </tr>
-                </tbody>
-
-            </table>
-
-            <!-- 일반등록 영역 -->
-            <div class="section-title">일반등록
-                <div class="list-header">
-                    <div class="sort-options">
-                        <a th:href="@{/cars(sort='recent')}"
-                           th:classappend="${sort == 'recent'} ? 'active' : ''">최근 등록일순</a>
-                        <a th:href="@{/cars(sort='priceAsc')}"
-                           th:classappend="${sort == 'priceAsc'} ? 'active' : ''">낮은 가격순</a>
-                        <a th:href="@{/cars(sort='priceDesc')}"
-                           th:classappend="${sort == 'priceDesc'} ? 'active' : ''">높은 가격순</a>
-                        <a th:href="@{/cars(sort='mileageAsc')}"
-                           th:classappend="${sort == 'mileageAsc'} ? 'active' : ''">낮은 주행거리순</a>
-                        <a th:href="@{/cars(sort='mileageDesc')}"
-                           th:classappend="${sort == 'mileageDesc'} ? 'active' : ''">높은 주행거리순</a>
-                        <a th:href="@{/cars(sort='yearDesc')}"
-                           th:classappend="${sort == 'yearDesc'} ? 'active' : ''">최근연식순</a>
-                    </div>
-
-                    <div class="page-size">
-                        <select onchange="location.href=this.value">
-                            <option th:value="@{/cars(pageSize=20)}"
-                                    th:selected="${pageSize==20}">20개씩 보기</option>
-                            <option th:value="@{/cars(pageSize=50)}"
-                                    th:selected="${pageSize==50}">50개씩 보기</option>
-                            <option th:value="@{/cars(pageSize=100)}"
-                                    th:selected="${pageSize==100}">100개씩 보기</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <table class="premium-table">
-                <thead>
-                <tr>
-                    <th>사진</th>
-                    <th>차량정보</th>
-                    <th>가격</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="car : ${carList}">
-                    <td>
-                        <a th:href="@{/cars/{id}(id=${car.carId})}">
-                            <img class="thumb" th:src="${car.frontViewUrl} ?: '/img/default_thumb.jpg'" th:alt="${car.carName}">
-                        </a>
-                    </td>
-                    <td>
-                        <a th:href="@{/cars/{id}(id=${car.carId})}" class="encar-title" th:text="${car.carName}">차량명</a>
+                        <a th:href="@{/cars/{id}(id=${cidInt})}" class="encar-title" th:text="${car.carName}">차량명</a>
                         <div class="encar-category"
                              th:text="${car.year} + '년 | ' + ${car.mileage} + 'km | ' + ${car.saleLocation}">정보</div>
                         <div class="encar-tag">
@@ -438,7 +388,69 @@
                         th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'">가격</td>
                 </tr>
                 </tbody>
+            </table>
 
+            <!-- 일반등록 영역 -->
+            <div class="section-title">일반등록
+                <div class="list-header">
+                    <div class="sort-options">
+                        <a th:href="@{/cars(sort='recent')}"      th:classappend="${sort == 'recent'} ? 'active' : ''">최근 등록일순</a>
+                        <a th:href="@{/cars(sort='priceAsc')}"    th:classappend="${sort == 'priceAsc'} ? 'active' : ''">낮은 가격순</a>
+                        <a th:href="@{/cars(sort='priceDesc')}"   th:classappend="${sort == 'priceDesc'} ? 'active' : ''">높은 가격순</a>
+                        <a th:href="@{/cars(sort='mileageAsc')}"  th:classappend="${sort == 'mileageAsc'} ? 'active' : ''">낮은 주행거리순</a>
+                        <a th:href="@{/cars(sort='mileageDesc')}" th:classappend="${sort == 'mileageDesc'} ? 'active' : ''">높은 주행거리순</a>
+                        <a th:href="@{/cars(sort='yearDesc')}"    th:classappend="${sort == 'yearDesc'} ? 'active' : ''">최근연식순</a>
+                    </div>
+
+                    <div class="page-size">
+                        <select onchange="location.href=this.value">
+                            <option th:value="@{/cars(pageSize=20)}"  th:selected="${pageSize==20}">20개씩 보기</option>
+                            <option th:value="@{/cars(pageSize=50)}"  th:selected="${pageSize==50}">50개씩 보기</option>
+                            <option th:value="@{/cars(pageSize=100)}" th:selected="${pageSize==100}">100개씩 보기</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <table class="premium-table">
+                <thead>
+                <tr><th>사진</th><th>차량정보</th><th>가격</th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="car : ${carList}"
+                    th:with="
+                      cidRaw=${car.carId != null ? car.carId : (car.car != null and car.car.carId != null ? car.car.carId : 0)},
+                      cidInt=${T(java.lang.Integer).valueOf(cidRaw)}
+                    ">
+                    <td class="thumb-cell">
+                        <!-- ✅ 하트 버튼 -->
+                        <button type="button"
+                                class="wish-btn small"
+                                th:data-car-id="${cidInt}"
+                                th:classappend="${wishSet != null and wishSet.contains(cidInt)} ? ' on' : ''"
+                                aria-label="찜하기" title="찜하기">
+                            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                                <path d="M12 21c-.3 0-.6-.1-.8-.3C9 19 3 14.6 3 9.4 3 6.5 5.3 4 8.1 4c1.6 0 3.1.8 3.9 2.1C12.8 4.8 14.3 4 15.9 4 18.7 4 21 6.5 21 9.4c0 5.2-6 9.6-8.2 11.3-.2.2-.5.3-.8.3z"
+                                      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <a th:href="@{/cars/{id}(id=${cidInt})}">
+                            <img class="thumb" th:src="${car.frontViewUrl} ?: '/img/default_thumb.jpg'" th:alt="${car.carName}">
+                        </a>
+                    </td>
+                    <td>
+                        <a th:href="@{/cars/{id}(id=${cidInt})}" class="encar-title" th:text="${car.carName}">차량명</a>
+                        <div class="encar-category"
+                             th:text="${car.year} + '년 | ' + ${car.mileage} + 'km | ' + ${car.saleLocation}">정보</div>
+                        <div class="encar-tag">
+                            <span class="tag" th:if="${car.ownershipStatus == '소유중'}">무사고</span>
+                            <span class="tag">1인소유</span>
+                        </div>
+                    </td>
+                    <td class="encar-price"
+                        th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'">가격</td>
+                </tr>
+                </tbody>
             </table>
         </main>
 
@@ -446,14 +458,8 @@
         <aside class="sidebar-right">
             <div class="widget">
                 <ul class="service-list">
-                    <li>
-                        <span class="icon blue">₩</span>
-                        보험료 조회
-                    </li>
-                    <li>
-                        <span class="icon gold">₩</span>
-                        대출한도 조회
-                    </li>
+                    <li><span class="icon blue">₩</span>보험료 조회</li>
+                    <li><span class="icon gold">₩</span>대출한도 조회</li>
                 </ul>
             </div>
         </aside>
@@ -468,13 +474,78 @@
 </html>
 
 <script>
+    // 메뉴 active
     document.addEventListener("DOMContentLoaded", function () {
-    const path = window.location.pathname;
-    const links = document.querySelectorAll('.menu-left a, .menu-right a');
-    links.forEach(link => {
-    if (link.getAttribute('data-path') === path) {
-    link.classList.add('active');
-    }
+      const path = window.location.pathname;
+      const links = document.querySelectorAll('.menu-left a, .menu-right a');
+      links.forEach(link => {
+        if (link.getAttribute('data-path') === path) link.classList.add('active');
+      });
     });
+
+    // CSRF 헤더 구성
+    function csrfHeaders(base = {}) {
+      const token  = document.querySelector('meta[name="_csrf"]')?.content;
+      const header = document.querySelector('meta[name="_csrf_header"]')?.content;
+      if (token && header) base[header] = token;
+      return base;
+    }
+
+    // 로그인 페이지 이동 유틸
+    function goLogin() {
+      const here = window.location.pathname + window.location.search;
+      window.location.href = '/login?redirect=' + encodeURIComponent(here);
+    }
+
+    // 찜 토글
+    let wishBusy = false;
+    document.addEventListener('click', async (e) => {
+      const btn = e.target.closest('.wish-btn');
+      if (!btn) return;
+
+      e.preventDefault();
+      e.stopPropagation(); // 카드/링크 클릭으로 안 넘어가게
+
+      if (wishBusy) return;
+      wishBusy = true;
+
+      const carId = Number(btn.dataset.carId);
+      const prevOn = btn.classList.contains('on');
+      btn.classList.toggle('on', !prevOn); // 낙관적 토글
+
+      try {
+        const res = await fetch('/api/wish/toggle', {
+          method: 'POST',
+          headers: csrfHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ carId })
+        });
+
+        if (res.status === 401) {
+          btn.classList.toggle('on', prevOn);
+          alert('로그인이 필요합니다.');
+          goLogin();
+          return;
+        }
+        if (res.status === 403) {
+          btn.classList.toggle('on', prevOn);
+          alert('요청이 거부되었습니다(CSRF). 다시 로그인해주세요.');
+          goLogin();
+          return;
+        }
+
+        const data = await res.json();
+        if (!data.ok) {
+          btn.classList.toggle('on', prevOn);
+          alert('처리 중 오류가 발생했습니다.');
+        } else {
+          btn.classList.toggle('on', !!data.liked); // 서버 상태로 확정
+        }
+      } catch (err) {
+        console.error(err);
+        btn.classList.toggle('on', prevOn);
+        alert('네트워크 오류가 발생했습니다.');
+      } finally {
+        wishBusy = false;
+      }
     });
 </script>

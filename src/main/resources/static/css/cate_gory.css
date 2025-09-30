@@ -176,6 +176,8 @@ details[open] > summary::after{
   gap: 10px; justify-items: center;
 }
 .encar-card {
+  position: relative;   /* ✅ 추가 */
+  overflow: visible;
   width: 180px; border: 1px solid #ddd; border-radius: 6px; background: #fff;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden;
 }
@@ -205,6 +207,10 @@ details[open] > summary::after{
 .encar-tag .tag {
   display: inline-block; font-size: 11px; padding: 3px 6px;
   background: #f1f1f1; border-radius: 4px; margin-right: 5px;
+}
+/* 표의 썸네일 셀을 기준 컨테이너로 */
+.premium-table td.thumb-cell {
+  position: relative;    /* ✅ 추가 */
 }
 
 /* 우측 배너 */
@@ -286,3 +292,24 @@ a.encar-card-link:hover .encar-title,
 a.encar-card-link:focus-visible .encar-title {
   text-decoration: underline;
 }
+
+/* cate_gory.css 맨 아래 쪽에 추가 */
+.wish-btn{
+  position:absolute; top:8px; right:8px;
+  width:36px; height:36px; border-radius:9999px;
+  background:rgba(255,255,255,0.95);
+  border:1px solid #e5e7eb; box-shadow:0 1px 3px rgba(0,0,0,.08);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; padding:0;
+  color:#9aa1a7;   /* 아이콘 색 */
+  z-index: 10000;            /* ✅ 추가 */
+}
+.wish-btn.small{ width:28px; height:28px; top:6px; right:6px; }
+.wish-btn:hover{ background:#fff; }
+.wish-btn.on{ color:#ff4d6d; border-color:#ffccd5; background:#fff; }
+.wish-btn:focus{ outline:none; box-shadow:0 0 0 2px rgba(255,77,109,.2); }
+/* 기본: 선만 */
+.wish-btn svg path { stroke: currentColor; fill: transparent; }
+
+/* on 상태: 채움 */
+.wish-btn.on svg path { fill: currentColor; }

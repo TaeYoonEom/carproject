@@ -19,6 +19,10 @@ public class CustomUserDetails implements UserDetails {
         return member;
     }
 
+    public Integer getId() {
+        return member.getMemberId();
+    }
+
     // ✅ HTML에서 ${#authentication.principal.name} 으로 접근할 수 있게 추가
     public String getName() {
         return member.getName();
