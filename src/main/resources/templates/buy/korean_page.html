@@ -390,9 +390,9 @@
                 <tr th:each="car, stat : ${carList}"
                     th:if="${stat.index} < 8"
                     th:with="
-          cidRaw=${car.car != null && car.car.carId != null ? car.car.carId : (car.carId != null ? car.carId : 0)},
-          cidInt=${T(java.lang.Integer).valueOf(cidRaw)}
-        ">
+                  cidRaw=${car.car != null && car.car.carId != null ? car.car.carId : (car.carId != null ? car.carId : 0)},
+                  cidInt=${T(java.lang.Integer).valueOf(cidRaw)}
+                ">
                     <td class="thumb-cell">
                         <!-- 하트 버튼 -->
                         <button type="button"
@@ -441,9 +441,9 @@
                 <tbody>
                 <tr th:each="car : ${carList}"
                     th:with="
-          cidRaw=${car.car != null && car.car.carId != null ? car.car.carId : (car.carId != null ? car.carId : 0)},
-          cidInt=${T(java.lang.Integer).valueOf(cidRaw)}
-        ">
+                  cidRaw=${car.car != null && car.car.carId != null ? car.car.carId : (car.carId != null ? car.carId : 0)},
+                  cidInt=${T(java.lang.Integer).valueOf(cidRaw)}
+                ">
                     <td class="thumb-cell">
                         <button type="button"
                                 class="wish-btn small"

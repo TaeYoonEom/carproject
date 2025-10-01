@@ -188,14 +188,42 @@
             <!-- 국산/수입차 콘텐츠 -->
             <div id="tab-normal" class="vehicle-tab-content">
                 <section class="car-status">
-                    <!-- ✅ 내차 구매 -->
-                    <div class="car-box">
-                        <h4>내차 구매</h4>
-                        <ul style="font-size: 13px; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 6px;">
-                            <li> 찜한 차량 <span style="float: right;">더보기 &gt;</span></li>
-                        </ul>
-                        <p class="no-data"><span style="color: orange;">찜한 차량</span>이 없습니다.</p>
+                    <!-- ✅ 찜한 차량 미니리스트 (car-box로 변경) -->
+                    <div class="car-box car-box--wish">
+                        <!-- 헤더 -->
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ddd; padding-bottom:6px; margin-bottom:8px;">
+                            <div>
+                                • 찜한 차량
+                                <span th:if="${wishCount != null}" style="color:red;">
+        총 <span th:text="${wishCount}">0</span>대
+      </span>
+                            </div>
+                            <a href="/mypage#wish" style="color:#666; text-decoration:none;">더보기 &gt;</a>
+                        </div>
+
+                        <!-- 비었을 때 -->
+                        <p class="no-data" th:if="${wishCount == null or wishCount == 0}">
+                            <span style="color: orange;">찜한 차량</span>이 없습니다.
+                        </p>
+
+                        <!-- 목록 (박스 내부 스크롤) -->
+                        <div th:if="${wishCount > 0}" class="wish-mini">
+                            <div class="wish-mini-grid">
+                                <a th:each="w : ${wishMini}"
+                                   th:href="@{/cars/{id}(id=${w.id})}"
+                                   class="wish-mini-card">
+                                    <div class="thumb">
+                                        <img th:src="${w.frontViewUrl} ?: @{/img/common/noimage.png}" alt="">
+                                    </div>
+                                    <div class="txt">
+                                        <div class="name" th:text="${w.carName}">차량명</div>
+                                        <div class="price" th:text="${#numbers.formatInteger(w.price/10000, 1, 'COMMA')} + '만원'">0만원</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
                     </div>
+
 
                     <!-- ✅ 내차 판매 -->
                     <div class="car-box">

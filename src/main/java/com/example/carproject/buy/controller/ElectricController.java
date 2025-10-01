@@ -30,6 +30,7 @@ public class ElectricController {
         model.addAttribute("totalCount", result.getTotalElements());
         model.addAttribute("page", result);
 
+        // ✅ wishSet은 GlobalWishModelAdvice가 자동 주입 -> 여기서 넣지 않음
         return "buy/electric_page";
     }
 }
