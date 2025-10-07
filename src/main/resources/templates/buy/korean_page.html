@@ -49,18 +49,51 @@
             <!-- 차종 -->
             <details class="filter-group" open>
                 <summary>차종</summary>
-                <ul class="filter-list">
-                    <li><label><input type="checkbox" name="ct" value="KE"> 경차</label></li>
-                    <li><label><input type="checkbox" name="ct" value="SM"> 소형차</label></li>
-                    <li><label><input type="checkbox" name="ct" value="JM"> 준중형차</label></li>
-                    <li><label><input type="checkbox" name="ct" value="MD"> 중형차</label></li>
-                    <li><label><input type="checkbox" name="ct" value="LG"> 대형차</label></li>
-                    <li><label><input type="checkbox" name="ct" value="SC"> 스포츠카</label></li>
-                    <li><label><input type="checkbox" name="ct" value="SUV"> SUV</label></li>
-                    <li><label><input type="checkbox" name="ct" value="RV"> RV</label></li>
-                    <li><label><input type="checkbox" name="ct" value="VN"> 승합차</label></li>
-                    <li><label><input type="checkbox" name="ct" value="TR"> 화물차</label></li>
-                    <li><label><input type="checkbox" name="ct" value="ET"> 기타</label></li>
+                <ul class="filter-list with-count">
+                    <li data-ct="KE">
+                        <label><input type="checkbox" name="ct" value="KE"> 경차</label>
+                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['KE']?:0),1,'COMMA')}">0</span>
+                    </li>
+                    <li data-ct="SM">
+                        <label><input type="checkbox" name="ct" value="SM"> 소형차</label>
+                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['SM']?:0),1,'COMMA')}">0</span>
+                    </li>
+                    <li data-ct="JM">
+                        <label><input type="checkbox" name="ct" value="JM"> 준중형차</label>
+                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['JM']?:0),1,'COMMA')}">0</span>
+                    </li>
+                    <li data-ct="MD">
+                        <label><input type="checkbox" name="ct" value="MD"> 중형차</label>
+                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['MD']?:0),1,'COMMA')}">0</span>
+                    </li>
+                    <li data-ct="LG">
+                        <label><input type="checkbox" name="ct" value="LG"> 대형차</label>
+                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['LG']?:0),1,'COMMA')}">0</span>
+                    </li>
+                    <li data-ct="SC">
+                        <label><input type="checkbox" name="ct" value="SC"> 스포츠카</label>
+                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['SC']?:0),1,'COMMA')}">0</span>
+                    </li>
+                    <li data-ct="SUV">
+                        <label><input type="checkbox" name="ct" value="SUV"> SUV</label>
+                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['SUV']?:0),1,'COMMA')}">0</span>
+                    </li>
+                    <li data-ct="RV">
+                        <label><input type="checkbox" name="ct" value="RV"> RV</label>
+                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['RV']?:0),1,'COMMA')}">0</span>
+                    </li>
+                    <li data-ct="VN">
+                        <label><input type="checkbox" name="ct" value="VN"> 승합차</label>
+                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['VN']?:0),1,'COMMA')}">0</span>
+                    </li>
+                    <li data-ct="TR">
+                        <label><input type="checkbox" name="ct" value="TR"> 화물차</label>
+                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['TR']?:0),1,'COMMA')}">0</span>
+                    </li>
+                    <li data-ct="ET">
+                        <label><input type="checkbox" name="ct" value="ET"> 기타</label>
+                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['ET']?:0),1,'COMMA')}">0</span>
+                    </li>
                 </ul>
             </details>
 
@@ -90,11 +123,11 @@
                 <div class="range-rows">
                     <div class="range-row">
                         <div class="selects">
-                            <select name="year_from_y">
+                            <select name="year_from_y" id="year_from_y">
                                 <option value="">년</option>
 
                             </select>
-                            <select name="year_from_m">
+                            <select name="year_from_m" id="year_from_m">
                                 <option value="">월</option>
 
                             </select>
@@ -103,11 +136,11 @@
                     </div>
                     <div class="range-row">
                         <div class="selects">
-                            <select name="year_to_y">
+                            <select name="year_to_y" id="year_to_y">
                                 <option value="">년</option>
 
                             </select>
-                            <select name="year_to_m">
+                            <select name="year_to_m" id="year_to_m">
                                 <option value="">월</option>
 
                             </select>
@@ -508,8 +541,10 @@
     ⓒ 2025 N카. All rights reserved.
 </div>
 
-</body>
-</html>
-
+<script defer src="/js/base.js"></script>
+<script defer src="/js/wishlist.js"></script>
 
 <script src="/js/korean-filter.js" defer></script>
+<script defer src="/js/year-month.js"></script>
+</body>
+</html>

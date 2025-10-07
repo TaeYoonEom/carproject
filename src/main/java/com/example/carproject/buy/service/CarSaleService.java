@@ -36,4 +36,11 @@ public class CarSaleService {
         return carSaleRepository.count();
     }
 
+    // ✅ 🔥 새로 추가 (차종 필터 결과용 변환)
+    public List<CarCardDto> toCardDtos(List<CarSale> cars) {
+        if (cars == null || cars.isEmpty()) return List.of();
+        return cars.stream()
+                .map(CarCardDto::new)
+                .collect(Collectors.toList());
+    }
 }

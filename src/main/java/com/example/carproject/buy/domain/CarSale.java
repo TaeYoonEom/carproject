@@ -40,7 +40,7 @@ public class CarSale {
     private String fuelType;
 
     @Column(length = 50)
-    private String transmission;
+    private String transmission; //변속기
 
     @Column(columnDefinition = "ENUM('개인', '딜러', '리스렌트제휴')")
     private String sellerType;
