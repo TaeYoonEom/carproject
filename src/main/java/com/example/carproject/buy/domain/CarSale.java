@@ -14,14 +14,12 @@ public class CarSale {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int carId;
-
     private int memberId;
     private String carName;
     private String carNumber;
 
     @Column(columnDefinition = "ENUM('소유중', '판매완료', '등록중')")
     private String ownershipStatus;
-
     private String ownerName;
     private String deliveryOption;
     private String exteriorColor;
@@ -34,18 +32,21 @@ public class CarSale {
     private int year;
     private LocalDateTime createdAt;
 
+    @Column(length = 50)
+    private String carType;
     private String carGrade;
-    private int capacity;
-
+    private int capacity; //인승
     private String saleType;
-
     private String fuelType;
 
     @Column(length = 50)
     private String transmission;
 
-    @Column(length = 50)
-    private String carType;
+    @Column(columnDefinition = "ENUM('개인', '딜러', '리스렌트제휴')")
+    private String sellerType;
+
+    @Column(columnDefinition = "ENUM('일반', '렌트', '리스')")
+    private String saleMethod;
 
     // AllCarSale 연결 추가
     @OneToOne(fetch = FetchType.LAZY)

@@ -141,11 +141,93 @@ details[open] > summary::after{
   margin: 10px 2px; padding: 0; list-style: none;
   display: grid; gap: 6px;
 }
-.filter-list.columns-2 { grid-template-columns: 1fr 1fr; }
+/* === 필터 리스트: 마커 및 기본 여백 완전 제거 (우선순위↑) === */
+.encar-filters .filter-list,
+.encar-filters .filter-list li {
+  list-style: none !important;
+  margin: 0;
+  padding: 0;
+}
+.encar-filters .filter-list li::marker { content: ''; }
 
-.filter-list.with-count li { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-.filter-list .count { color: #9aa1a7; font-variant-numeric: tabular-nums; }
-.filter-list.with-count .count { min-width: 56px; text-align: right; white-space: nowrap; }
+/* 라벨: 텍스트가 사라지거나 줄여지지 않도록 강제 정렬/색상 지정 */
+.encar-filters .filter-list label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  line-height: 1.2;
+  color: #111;           /* ✅ 텍스트 색 보장 */
+  max-width: 100%;
+}
+
+/* 체크박스 커스텀: (기존 너가 추가한 블록 유지하되, 스코프 확실히) */
+.encar-filters .filter-list input[type="checkbox"],
+.encar-filters .manual input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  border: 1.5px solid #D3D7DD;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  position: relative;
+  transition: background .15s ease, border-color .15s ease, box-shadow .15s ease, transform .05s ease;
+  flex: 0 0 24px; /* 텍스트가 체크박스에 눌리지 않도록 */
+}
+
+.encar-filters .filter-list input[type="checkbox"]::before,
+.encar-filters .manual input[type="checkbox"]::before {
+  content: "";
+  width: 7px;
+  height: 9px;
+  border-right: 2.5px solid transparent;
+  border-bottom: 2.5px solid transparent;
+  transform: rotate(45deg) scale(0);
+  transform-origin: center;
+  transition: transform .12s ease;
+}
+
+.encar-filters .filter-list input[type="checkbox"]:hover,
+.encar-filters .manual input[type="checkbox"]):hover { border-color:#B6BCC6; }
+.encar-filters .filter-list input[type="checkbox"]:active,
+.encar-filters .manual input[type="checkbox"]):active { transform:scale(0.97); }
+
+.encar-filters .filter-list input[type="checkbox"]:checked,
+.encar-filters .manual input[type="checkbox"]:checked {
+  background:#111;
+  border-color:#111;
+  box-shadow:0 1px 0 rgba(0,0,0,.06), inset 0 0 0 1px rgba(255,255,255,.02);
+}
+.encar-filters .filter-list input[type="checkbox"]:checked::before,
+.encar-filters .manual input[type="checkbox"]:checked::before {
+  border-right-color:#fff;
+  border-bottom-color:#fff;
+  transform: rotate(45deg) scale(1);
+}
+
+.encar-filters .filter-list input[type="checkbox"]:focus-visible,
+.encar-filters .manual input[type="checkbox"]:focus-visible {
+  outline:none;
+  box-shadow:0 0 0 3px rgba(17,17,17,.15);
+}
+
+/* 비활성화 */
+.encar-filters .filter-list input[type="checkbox"]:disabled,
+.encar-filters .manual input[type="checkbox"]:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+/* 2열 리스트일 때 라벨 줄바꿈 깔끔하게 */
+.filter-list.columns-2 label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 /* 범위 선택 행 */
 .range-rows { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
