@@ -1,11 +1,22 @@
+// MypageController.java
 package com.example.carproject.controller;
 
 import com.example.carproject.domain.Member;
+import com.example.carproject.domain.CarEntryDraft;
 import com.example.carproject.repository.MemberRepository;
+import com.example.carproject.repository.CarEntryDraftRepository;
 import com.example.carproject.buy.repository.AllCarSaleRepository;
 import com.example.carproject.buy.repository.WishMini;
 import com.example.carproject.service.WishlistService;
 import com.example.carproject.service.WishlistService.WishCarDto;
+
+// ✅ 쿠폰/포인트 서비스 & DTO
+import com.example.carproject.service.CouponPointService;
+import com.example.carproject.dto.CouponSummary;
+import com.example.carproject.dto.CouponRow;
+import com.example.carproject.dto.PointSummary;
+import com.example.carproject.dto.PointRow;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -22,12 +33,22 @@ public class MypageController {
     private final AllCarSaleRepository allCarSaleRepository;
     private final WishlistService wishlistService;
 
+    // ✅ 추가: 판매 등록 조회용
+    private final CarEntryDraftRepository carEntryDraftRepository;
+
+    // ✅ 추가: 쿠폰/포인트 서비스
+    private final CouponPointService couponPointService;
+
     public MypageController(MemberRepository memberRepository,
                             AllCarSaleRepository allCarSaleRepository,
-                            WishlistService wishlistService) {
+                            WishlistService wishlistService,
+                            CarEntryDraftRepository carEntryDraftRepository,   // ✅ 주입
+                            CouponPointService couponPointService) {
         this.memberRepository = memberRepository;
         this.allCarSaleRepository = allCarSaleRepository;
         this.wishlistService = wishlistService;
+        this.carEntryDraftRepository = carEntryDraftRepository;               // ✅ 주입
+        this.couponPointService = couponPointService;
     }
 
     @GetMapping("/mypage")
@@ -38,24 +59,55 @@ public class MypageController {
 
         // 1) 회원 조회
         Member member = resolveMember(authentication);
-
-        // 2) 찜 미니 리스트(전체) - 3열 그리드, 9개 초과 시 뷰에서 내부 스크롤
         Integer memberId = member.getMemberId();
+
+        // 2) 찜
         List<WishMini> wishMini = allCarSaleRepository.findWishAll(memberId);
 
-        // 3) 테이블 렌더링용 찜 목록 + 개수 (WishlistService 사용)
+        // 3) 찜 테이블
         List<WishCarDto> wishlistCars = wishlistService.myWishlistCars(memberId);
         int wishCount = wishlistService.count(memberId);
 
-        // (옵션) 최근 본 차량도 필요하면 여기서 service 호출 후 model에 추가
-        // List<RecentCarDto> recentCars = recentService.findRecent(memberId);
-        // model.addAttribute("recentCars", recentCars);
+        // 4) ✅ 판매 등록 차량(팝업에서 '완료' 눌러 isSubmitted=true 된 차량들)
+        List<CarEntryDraft> sellDrafts =
+                carEntryDraftRepository.findByMemberIdAndIsSubmittedTrueOrderByCreatedAtDesc(memberId);
 
-        // 4) 모델 주입
+        // 간단 상태 카운트(현재는 제출된 걸 '판매대기'로 표시, 나머지는 0)
+        int saleWaiting = sellDrafts.size();
+        int saleOn = saleWaiting;  // ✅ 여기만 수정
+        int saleDone = 0;
+        int saleDeleted = 0;
+
+        int totalSellCars = saleWaiting + saleOn + saleDone; // 삭제는 총합에서 제외
+        model.addAttribute("totalSellCars", totalSellCars);
+
+        // 5) ✅ 쿠폰/포인트
+        CouponSummary couponSummary = couponPointService.getCouponSummary(memberId);
+        List<CouponRow> couponValid   = couponPointService.getUsableCoupons(memberId);
+        List<CouponRow> couponExpired = couponPointService.getUsedOrExpiredCoupons(memberId);
+
+        PointSummary pointSummary = couponPointService.getPointSummary(memberId);
+        List<PointRow> pointRows  = couponPointService.getPointHistory(memberId);
+
+        // 6) 모델 주입
         model.addAttribute("member", member);
-        model.addAttribute("wishCount", wishCount);     // 상단 "총 N대" 표시용
-        model.addAttribute("wishMini", wishMini);       // 미니 그리드
-        model.addAttribute("wishlistCars", wishlistCars); // 테이블 섹션 바인딩
+        model.addAttribute("wishCount", wishCount);
+        model.addAttribute("wishMini", wishMini);
+        model.addAttribute("wishlistCars", wishlistCars);
+
+        // ✅ 판매 차량 바인딩
+        model.addAttribute("sellDrafts", sellDrafts);   // 목록
+        model.addAttribute("saleWaiting", saleWaiting);
+        model.addAttribute("saleOn", saleOn);
+        model.addAttribute("saleDone", saleDone);
+        model.addAttribute("saleDeleted", saleDeleted);
+
+        // ✅ 쿠폰/포인트 바인딩
+        model.addAttribute("couponSummary", couponSummary);
+        model.addAttribute("couponValid", couponValid);
+        model.addAttribute("couponExpired", couponExpired);
+        model.addAttribute("pointSummary", pointSummary);
+        model.addAttribute("pointRows", pointRows);
 
         return "mypage";
     }

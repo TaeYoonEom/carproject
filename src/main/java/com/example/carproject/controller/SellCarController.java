@@ -23,6 +23,9 @@ import java.util.List;
 import java.io.File;
 import java.io.IOException;
 
+// ✅ 추가된 import
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 @Controller
 @RequiredArgsConstructor
@@ -120,19 +123,6 @@ public class SellCarController {
 
         return "redirect:/sell/detail/view?carNumber=" + URLEncoder.encode(carNumber, StandardCharsets.UTF_8);
     }
-//    @GetMapping("/sell/detail/view")
-//    public String viewCarInfo(@RequestParam String carNumber, Principal principal, Model model) {
-//        String loginId = principal.getName();
-//        Member member = memberRepository.findByLoginId(loginId).orElseThrow();
-//        Long memberId = member.getMemberId().longValue();
-//
-//        CarEntryDraft draft = carEntryDraftRepository
-//                .findByMemberIdAndCarNumber(memberId, carNumber)
-//                .orElseThrow();
-//
-//        model.addAttribute("car", draft);
-//        return "selldetail/car_view"; // templates/selldetail/car_view.html
-//    }
 
     @GetMapping("/sell/detail/view")
     public String viewCarDetail(@RequestParam String carNumber, Model model) {
@@ -157,13 +147,14 @@ public class SellCarController {
         model.addAttribute("maxPrice", maxPrice);
         model.addAttribute("estimatedPrice", estimated);
         return "selldetail/car_view";
-
     }
+
     @GetMapping("/sell/detail/photo")
     public String showPhotoUpload(@RequestParam("carId") Long carId, Model model) {
         CarEntryDraft car = carEntryDraftRepository.findById(carId)
                 .orElseThrow(() -> new IllegalArgumentException("차량 정보가 없습니다."));
         model.addAttribute("car", car);
+        model.addAttribute("cb", System.currentTimeMillis()); // ✅ 캐시버스터 값
         return "selldetail/sell_photo";
     }
 
@@ -211,11 +202,6 @@ public class SellCarController {
         return "redirect:/sell/detail/color?carId=" + carId;
     }
 
-    //    @PostMapping("/sell/detail/photo/confirm")
-//    public String confirmPhotos(@RequestParam("carId") Long carId) {
-//        // carId로 엔트리 검증 및 다음 단계로 이동
-//        return "redirect:/sell/detail/nextstep?carId=" + carId;
-//    }
     @GetMapping("/sell/detail/photo/preview")
     public String previewCarPhotos(@RequestParam("carId") Long carId, Model model) {
         CarEntryDraft car = carEntryDraftRepository.findById(carId)
@@ -228,9 +214,9 @@ public class SellCarController {
     public String showColorForm(@RequestParam("carId") Long carId, Model model) {
         CarEntryDraft carEntryDraft = carEntryDraftRepository.findById(carId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 차량 정보가 없습니다."));
-        model.addAttribute("color", carEntryDraft);   // <== 색상 포함 draft 전체 전달
-        model.addAttribute("carId", carId);           // <== id도 같이 전달
-        return "selldetail/sell_color";              // 색상 선택 페이지(Thymeleaf 템플릿) 이름
+        model.addAttribute("color", carEntryDraft);   // 색상 포함 draft 전체 전달
+        model.addAttribute("carId", carId);           // id도 같이 전달
+        return "selldetail/sell_color";
     }
 
     // 색상 저장 처리
@@ -249,6 +235,7 @@ public class SellCarController {
         // 다음 단계로 이동 (ex. 옵션 선택 페이지)
         return "redirect:/sell/detail/option?carId=" + carId;
     }
+
     @PostMapping("/sell/detail/option/save")
     public String saveOption(
             @RequestParam("carId") Long carId,
@@ -268,16 +255,17 @@ public class SellCarController {
         carEntryDraftRepository.save(draft);
 
         return "redirect:/sell/detail/sale?carId=" + carId; // 다음 페이지로 이동
-
     }
+
     @GetMapping("/sell/detail/option")
     public String showOptionForm(@RequestParam("carId") Long carId, Model model) {
         CarEntryDraft carEntryDraft = carEntryDraftRepository.findById(carId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 차량 정보가 없습니다."));
-        model.addAttribute("option", carEntryDraft); // draft 전체 or 필요한 속성 전달
+        model.addAttribute("option", carEntryDraft);
         model.addAttribute("carId", carId);
-        return "selldetail/sell_option"; // 파일명과 반드시 일치
+        return "selldetail/sell_option";
     }
+
     @GetMapping("/sell/detail/sale")
     public String showSaleForm(@RequestParam("carId") Long carId, Model model) {
         CarEntryDraft carEntryDraft = carEntryDraftRepository.findById(carId)
@@ -305,16 +293,62 @@ public class SellCarController {
         // 다음 단계 또는 완료 페이지로 리다이렉트
         return "redirect:/sell/detail/confirm?carId=" + carId;
     }
+
     @GetMapping("/sell/detail/confirm")
     public String confirmCarEntry(@RequestParam("carId") Long carId, Model model) {
         CarEntryDraft car = carEntryDraftRepository.findById(carId)
                 .orElseThrow(() -> new IllegalArgumentException("차량 정보를 찾을 수 없습니다."));
         model.addAttribute("car", car);
+        model.addAttribute("cb", System.currentTimeMillis()); // ✅
         return "selldetail/car_confirm";
     }
 
+    // ✅ 팝업 종료 + 부모창 알림/갱신 (팝업이 아닐 땐 기존처럼 알림 후 홈 이동)
+    @GetMapping("/sell/detail/complete")
+    public ResponseEntity<String> completeAndAlert(@RequestParam("carId") Long carId,
+                                                   Principal principal) {
+        try {
+            CarEntryDraft draft = carEntryDraftRepository.findById(carId)
+                    .orElseThrow(() -> new IllegalArgumentException("차량 정보를 찾을 수 없습니다."));
+            draft.setIsSubmitted(true);
+            carEntryDraftRepository.save(draft);
 
+            String body =
+                    "<!DOCTYPE html><html><head><meta charset='UTF-8'></head><body><script>" +
+                            "var msg='차량 등록이 완료되었습니다.';" +
+                            "(function(){ " +
+                            "  var notified=false;" +
+                            "  if(window.opener && !window.opener.closed){" +
+                            "    try{ window.opener.focus(); }catch(e){}" +
+                            "    try{ if(typeof window.opener.showRegisterDone==='function'){ window.opener.showRegisterDone(msg); notified=true; } }catch(e){}" +
+                            "    if(!notified){ try{ window.opener.alert(msg); notified=true; }catch(e){} }" +
+                            "    if(!notified){ alert(msg); }" +  // ✅ 마지막 보루: 팝업에서라도 알림 띄우기
+                            "    setTimeout(function(){ " +
+                            "      try{ window.close(); }catch(e){} " +
+                            "      try{ window.open('','_self'); window.close(); }catch(e){} " +
+                            "    }, 150);" + // ✅ 너무 빨리 닫히지 않도록 약간의 딜레이
+                            "  } else {" +
+                            "    alert(msg);" +
+                            "    window.location.href='/'" +
+                            "  }" +
+                            "})();" +
+                            "</script></body></html>";
 
+            return ResponseEntity.ok()
+                    .header("Content-Type", "text/html; charset=UTF-8")
+                    .body(body);
 
-
+        } catch (Exception e) {
+            String errorBody =
+                    "<!DOCTYPE html><html><head><meta charset='UTF-8'></head><body><script>" +
+                            "alert('등록 처리 중 오류가 발생했습니다. 다시 시도해주세요.');" +
+                            "if(window.opener && !window.opener.closed){" +
+                            "  setTimeout(function(){ try{ window.close(); }catch(e){}; try{ window.open('','_self'); window.close(); }catch(e){}; }, 150);" +
+                            "} else { history.back(); }" +
+                            "</script></body></html>";
+            return ResponseEntity.status(400)
+                    .header("Content-Type", "text/html; charset=UTF-8")
+                    .body(errorBody);
+        }
+    }
 }
