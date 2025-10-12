@@ -1,9 +1,13 @@
 package com.example.carproject.controller;
 
 import com.example.carproject.domain.CarEntryDraft;
+import com.example.carproject.domain.CarConditionHistory;
+
 import com.example.carproject.domain.Member;
 import com.example.carproject.repository.CarEntryDraftRepository;
 import com.example.carproject.repository.MemberRepository;
+import com.example.carproject.repository.CarConditionHistoryRepository;
+
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -254,8 +258,64 @@ public class SellCarController {
         draft.setIsEcoFriendly(isEcoFriendly == 1);
         carEntryDraftRepository.save(draft);
 
-        return "redirect:/sell/detail/sale?carId=" + carId; // 다음 페이지로 이동
+        return "redirect:/sell/detail/condition?carId=" + carId; // 다음 페이지로 이동
     }
+
+    private final CarConditionHistoryRepository carConditionHistoryRepository;
+    @GetMapping("/sell/detail/condition")
+    public String showConditionForm(@RequestParam("carId") Long carId, Model model) {
+        CarConditionHistory exist = carConditionHistoryRepository.findById(carId.intValue()).orElse(null);
+        model.addAttribute("carId", carId);
+        model.addAttribute("condition", exist);
+        return "selldetail/sell_condition";
+    }
+
+    @PostMapping("/sell/detail/condition/save")
+    public String saveCondition(
+            @RequestParam("carId") Long carId,
+            @RequestParam(value="tirePercentage", defaultValue="0") Integer tirePercentage,
+            @RequestParam(value="engineOilIssue", defaultValue="0") Integer engineOilIssue,
+            @RequestParam(value="brakeIssue", defaultValue="0") Integer brakeIssue,
+            @RequestParam(value="performanceChecked", defaultValue="1") Integer performanceChecked,
+            @RequestParam(value="accidentRepairCnt", defaultValue="0") Integer accidentRepairCnt,
+            @RequestParam(value="totalLossCnt", defaultValue="0") Integer totalLossCnt,
+            @RequestParam(value="floodCnt", defaultValue="0") Integer floodCnt,
+            @RequestParam(value="panelReplacementCnt", defaultValue="0") Integer panelReplacementCnt,
+            @RequestParam(value="insuranceClaimCost", defaultValue="0") Integer insuranceClaimCost,
+            @RequestParam(value="thirdPartyDamage", defaultValue="0") Integer thirdPartyDamage,
+            @RequestParam(value="panelBeating", defaultValue="0") Integer panelBeating,
+            @RequestParam(value="replacementMinor", defaultValue="0") Integer replacementMinor,
+            @RequestParam(value="corrosion", defaultValue="0") Integer corrosion,
+            @RequestParam(value="specialNote", required=false) String specialNote
+    ){
+        CarConditionHistory entity = carConditionHistoryRepository.findById(carId.intValue())
+                .orElseGet(() -> CarConditionHistory.builder().carId(carId.intValue()).build());
+
+        entity.setTirePercentage(tirePercentage);
+        entity.setEngineOilIssue(engineOilIssue == 1);
+        entity.setBrakeIssue(brakeIssue == 1);
+        entity.setPerformanceChecked(performanceChecked == 1);
+        entity.setAccidentRepairCnt(accidentRepairCnt);
+        entity.setTotalLossCnt(totalLossCnt);
+        entity.setFloodCnt(floodCnt);
+        entity.setPanelReplacementCnt(panelReplacementCnt);
+        entity.setInsuranceClaimCost(insuranceClaimCost);
+        entity.setThirdPartyDamage(thirdPartyDamage == 1);
+        entity.setPanelBeating(panelBeating == 1);
+        entity.setReplacementMinor(replacementMinor == 1);
+        entity.setCorrosion(corrosion == 1);
+        entity.setSpecialNote(specialNote);
+
+        carConditionHistoryRepository.save(entity);
+
+        // ✅ 검사/이력 완료 → 판매정보로 이동
+        return "redirect:/sell/detail/sale?carId=" + carId;
+    }
+
+
+
+
+
 
     @GetMapping("/sell/detail/option")
     public String showOptionForm(@RequestParam("carId") Long carId, Model model) {

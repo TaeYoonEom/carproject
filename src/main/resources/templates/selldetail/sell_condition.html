@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>성능 · 보험 · 차량 이력</title>
+  <link rel="stylesheet" th:href="@{/css/sell_condition.css}">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="cond-container">
+  <div class="cond-title">성능 · 보험 · 차량 이력</div>
+
+  <form th:action="@{/sell/detail/condition/save}" method="post" class="cond-form">
+    <input type="hidden" name="carId" th:value="${carId}"/>
+
+    <div class="grid">
+      <!-- 타이어 -->
+      <div class="field field-col2">
+        <label>타이어 상태(%)</label>
+        <div class="range-wrap">
+          <input type="range" min="0" max="100" step="1" name="tirePercentage"
+                 th:value="${condition != null}? ${condition.tirePercentage} : 80"
+                 oninput="document.getElementById('tpv').innerText=this.value + '%';">
+          <div id="tpv" class="range-value"
+               th:text="${condition != null}? ${condition.tirePercentage} + '%':'80%'">80%</div>
+        </div>
+      </div>
+
+      <!-- ① 엔진오일/브레이크/성능점검 : 3개 한 줄 -->
+      <section class="toggle-section">
+        <h3 class="sub-title">상태 점검</h3>
+        <div class="toggle-grid grid-3">
+          <!-- 엔진오일 이상 -->
+          <div class="toggle-item">
+            <span>엔진오일 이상</span>
+            <!-- 기본 0을 위해 hidden 먼저 -->
+            <input type="hidden" name="engineOilIssue" value="0">
+            <input id="engineOilIssue" type="checkbox" class="switch"
+                   name="engineOilIssue" value="1">
+            <label for="engineOilIssue" class="switch-ui"></label>
+          </div>
+
+          <!-- 브레이크 이상 -->
+          <div class="toggle-item">
+            <span>브레이크 이상</span>
+            <input type="hidden" name="brakeIssue" value="0">
+            <input id="brakeIssue" type="checkbox" class="switch"
+                   name="brakeIssue" value="1">
+            <label for="brakeIssue" class="switch-ui"></label>
+          </div>
+
+          <!-- 성능점검 실시 -->
+          <div class="toggle-item">
+            <span>성능점검 실시</span>
+            <input type="hidden" name="performanceChecked" value="0">
+            <input id="performanceChecked" type="checkbox" class="switch"
+                   name="performanceChecked" value="1" checked>
+            <label for="performanceChecked" class="switch-ui"></label>
+          </div>
+        </div>
+      </section>
+
+      <!-- 사고/보험/침수 등 건수 -->
+      <div class="field">
+        <label>사고/수리(건)</label>
+        <input type="number" name="accidentRepairCnt" min="0" step="1"
+               th:value="${condition != null}? ${condition.accidentRepairCnt}:0">
+      </div>
+
+      <div class="field">
+        <label>전손(건)</label>
+        <input type="number" name="totalLossCnt" min="0" step="1"
+               th:value="${condition != null}? ${condition.totalLossCnt}:0">
+      </div>
+
+      <div class="field">
+        <label>침수(건)</label>
+        <input type="number" name="floodCnt" min="0" step="1"
+               th:value="${condition != null}? ${condition.floodCnt}:0">
+      </div>
+
+      <div class="field">
+        <label>내/외판 교환(부위 수)</label>
+        <input type="number" name="panelReplacementCnt" min="0" step="1"
+               th:value="${condition != null}? ${condition.panelReplacementCnt}:0">
+      </div>
+
+      <div class="field">
+        <label>보험사고 이력(원)</label>
+        <input type="number" name="insuranceClaimCost" min="0" step="10000"
+               th:value="${condition != null}? ${condition.insuranceClaimCost}:0" placeholder="예) 1500000">
+      </div>
+
+      <!-- ② 타차가해/판금/국소 교환/부식 : 4개 한 줄 -->
+      <section class="toggle-section">
+        <h3 class="sub-title">사고/수리 항목</h3>
+        <div class="toggle-grid grid-4">
+          <div class="toggle-item">
+            <span>타차가해</span>
+            <input type="hidden" name="thirdPartyDamage" value="0">
+            <input id="thirdPartyDamage" type="checkbox" class="switch"
+                   name="thirdPartyDamage" value="1">
+            <label for="thirdPartyDamage" class="switch-ui"></label>
+          </div>
+
+          <div class="toggle-item">
+            <span>판금</span>
+            <input type="hidden" name="panelBeating" value="0">
+            <input id="panelBeating" type="checkbox" class="switch"
+                   name="panelBeating" value="1">
+            <label for="panelBeating" class="switch-ui"></label>
+          </div>
+
+          <div class="toggle-item">
+            <span>국소 교환</span>
+            <input type="hidden" name="replacementMinor" value="0">
+            <input id="replacementMinor" type="checkbox" class="switch"
+                   name="replacementMinor" value="1">
+            <label for="replacementMinor" class="switch-ui"></label>
+          </div>
+
+          <div class="toggle-item">
+            <span>부식</span>
+            <input type="hidden" name="corrosion" value="0">
+            <input id="corrosion" type="checkbox" class="switch"
+                   name="corrosion" value="1">
+            <label for="corrosion" class="switch-ui"></label>
+          </div>
+        </div>
+      </section>
+
+      <!-- 특이사항 -->
+      <div class="field field-col2">
+        <label>특이사항</label>
+        <textarea name="specialNote" rows="3" maxlength="255"
+                  placeholder="예) 앞 범퍼 교환, 하부부식 경미"
+                  th:text="${condition != null}? ${condition.specialNote} : ''"></textarea>
+      </div>
+    </div>
+
+    <button type="submit" class="next-btn">판매 정보로 넘어가기</button>
+  </form>
+</div>
+</body>
+</html>
