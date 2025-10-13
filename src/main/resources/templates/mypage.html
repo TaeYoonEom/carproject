@@ -242,26 +242,32 @@
                         <!-- (옵션) 판매대기 간단 미리보기 -->
                         <div style="margin-top: 10px;" th:if="${saleWaiting > 0}">
                             <strong style="font-size: 13px;">• 판매대기</strong>
-                            <div style="display:flex; gap:10px; margin-top:6px; overflow:auto;">
-                                <a th:each="s : ${sellDrafts}"
-                                   th:href="@{|/sell/detail/view?carNumber=${s.carNumber}|}"
-                                   style="display:flex; flex-direction:column; align-items:center;
-                                       border:1px solid #ccc; padding:6px 8px; text-decoration:none; color:inherit;
-                                       width:100px; height:140px; box-sizing:border-box;">
 
-                                    <img th:src="${s.frontViewUrl} ?: '/img/common/noimage.png'"
-                                         alt="" style="width:100px; height:70px; object-fit:cover; border-radius:6px;">
-
-                                    <div style="font-size:12px; text-align:center; margin-top:5px;">
-                                        <div style="font-weight:600;" th:text="${s.modelName}">모델명</div>
-                                        <div th:text="${s.carNumber}">12가 1234</div>
-                                        <div th:text="${#temporals.format(s.manufactureDate,'yyyy-MM')}">2023-05</div>
-                                    </div>
-                                </a>
+                            <!-- ✅ 찜한 차량과 동일한 구조/클래스 사용 -->
+                            <div class="wish-mini" style="margin-top:6px;">
+                                <div class="wish-mini-grid">
+                                    <a th:each="s : ${sellDrafts}"
+                                       th:href="@{|/sell/detail/view?carNumber=${s.carNumber}|}"
+                                       class="wish-mini-card">
+                                        <div class="thumb">
+                                            <img th:src="${s.frontViewUrl} ?: @{/img/common/noimage.png}" alt="">
+                                        </div>
+                                        <div class="txt">
+                                            <div class="name" th:text="${s.modelName}">모델명</div>
+                                            <!-- price 자리에 차량번호/연식 표시 -->
+                                            <div class="price">
+                                                <span th:text="${s.carNumber}">12가 1234</span>
+                                                <span style="margin-left:6px;"
+                                                      th:text="${#temporals.format(s.manufactureDate,'yyyy-MM')}">2023-05</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
                         </div>
 
-                            <!-- 비교견적 신청내역 -->
+
+                        <!-- 비교견적 신청내역 -->
                         <div style="margin-top: 16px;">
                             <br>
                             <strong style="font-size: 13px;">• 비교견적 신청내역</strong>

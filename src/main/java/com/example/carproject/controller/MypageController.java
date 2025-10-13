@@ -9,6 +9,8 @@ import com.example.carproject.buy.repository.AllCarSaleRepository;
 import com.example.carproject.buy.repository.WishMini;
 import com.example.carproject.service.WishlistService;
 import com.example.carproject.service.WishlistService.WishCarDto;
+import com.example.carproject.domain.CarSold;
+import com.example.carproject.service.CarSoldService;
 
 // ✅ 쿠폰/포인트 서비스 & DTO
 import com.example.carproject.service.CouponPointService;
@@ -32,6 +34,7 @@ public class MypageController {
     private final MemberRepository memberRepository;
     private final AllCarSaleRepository allCarSaleRepository;
     private final WishlistService wishlistService;
+    private final CarSoldService carSoldService;
 
     // ✅ 추가: 판매 등록 조회용
     private final CarEntryDraftRepository carEntryDraftRepository;
@@ -42,13 +45,15 @@ public class MypageController {
     public MypageController(MemberRepository memberRepository,
                             AllCarSaleRepository allCarSaleRepository,
                             WishlistService wishlistService,
-                            CarEntryDraftRepository carEntryDraftRepository,   // ✅ 주입
-                            CouponPointService couponPointService) {
+                            CarEntryDraftRepository carEntryDraftRepository,
+                            CouponPointService couponPointService,
+                            CarSoldService carSoldService) {                 // ★ 추가
         this.memberRepository = memberRepository;
         this.allCarSaleRepository = allCarSaleRepository;
         this.wishlistService = wishlistService;
-        this.carEntryDraftRepository = carEntryDraftRepository;               // ✅ 주입
+        this.carEntryDraftRepository = carEntryDraftRepository;
         this.couponPointService = couponPointService;
+        this.carSoldService = carSoldService;                               // ★ 추가
     }
 
     @GetMapping("/mypage")
@@ -57,52 +62,47 @@ public class MypageController {
             throw new IllegalStateException("인증되지 않은 사용자입니다.");
         }
 
-        // 1) 회원 조회
         Member member = resolveMember(authentication);
         Integer memberId = member.getMemberId();
 
-        // 2) 찜
-        List<WishMini> wishMini = allCarSaleRepository.findWishAll(memberId);
-
-        // 3) 찜 테이블
-        List<WishCarDto> wishlistCars = wishlistService.myWishlistCars(memberId);
+        // 찜
+        var wishMini = allCarSaleRepository.findWishAll(memberId);
+        var wishlistCars = wishlistService.myWishlistCars(memberId);
         int wishCount = wishlistService.count(memberId);
 
-        // 4) ✅ 판매 등록 차량(팝업에서 '완료' 눌러 isSubmitted=true 된 차량들)
-        List<CarEntryDraft> sellDrafts =
-                carEntryDraftRepository.findByMemberIdAndIsSubmittedTrueOrderByCreatedAtDesc(memberId);
+        // 판매대기: draft (is_submitted=1)
+        var sellWaiting = carEntryDraftRepository
+                .findByMemberIdAndIsSubmittedTrueOrderByCreatedAtDesc(memberId);
+        int saleWaiting = sellWaiting.size();
 
-        // 간단 상태 카운트(현재는 제출된 걸 '판매대기'로 표시, 나머지는 0)
-        int saleWaiting = sellDrafts.size();
-        int saleOn = saleWaiting;  // ✅ 여기만 수정
-        int saleDone = 0;
-        int saleDeleted = 0;
+        // 판매 상태: car_sold
+        int saleOn       = carSoldService.count(memberId, CarSold.Status.판매중);
+        int saleDone     = carSoldService.count(memberId, CarSold.Status.판매완료);
+        int saleWithdraw = carSoldService.count(memberId, CarSold.Status.철회);
 
-        int totalSellCars = saleWaiting + saleOn + saleDone; // 삭제는 총합에서 제외
-        model.addAttribute("totalSellCars", totalSellCars);
+        int totalSellCars = saleWaiting + saleOn + saleDone; // 철회는 총합 제외 권장
 
-        // 5) ✅ 쿠폰/포인트
-        CouponSummary couponSummary = couponPointService.getCouponSummary(memberId);
-        List<CouponRow> couponValid   = couponPointService.getUsableCoupons(memberId);
-        List<CouponRow> couponExpired = couponPointService.getUsedOrExpiredCoupons(memberId);
-
-        PointSummary pointSummary = couponPointService.getPointSummary(memberId);
-        List<PointRow> pointRows  = couponPointService.getPointHistory(memberId);
-
-        // 6) 모델 주입
+        // 모델 주입
         model.addAttribute("member", member);
         model.addAttribute("wishCount", wishCount);
         model.addAttribute("wishMini", wishMini);
         model.addAttribute("wishlistCars", wishlistCars);
 
-        // ✅ 판매 차량 바인딩
-        model.addAttribute("sellDrafts", sellDrafts);   // 목록
+        model.addAttribute("sellWaiting", sellWaiting);
         model.addAttribute("saleWaiting", saleWaiting);
+        model.addAttribute("sellDrafts", sellWaiting);
         model.addAttribute("saleOn", saleOn);
         model.addAttribute("saleDone", saleDone);
-        model.addAttribute("saleDeleted", saleDeleted);
+        model.addAttribute("saleWithdraw", saleWithdraw);
+        model.addAttribute("totalSellCars", totalSellCars);
 
-        // ✅ 쿠폰/포인트 바인딩
+        // 쿠폰/포인트 (기존 그대로)
+        var couponSummary = couponPointService.getCouponSummary(memberId);
+        var couponValid   = couponPointService.getUsableCoupons(memberId);
+        var couponExpired = couponPointService.getUsedOrExpiredCoupons(memberId);
+        var pointSummary  = couponPointService.getPointSummary(memberId);
+        var pointRows     = couponPointService.getPointHistory(memberId);
+
         model.addAttribute("couponSummary", couponSummary);
         model.addAttribute("couponValid", couponValid);
         model.addAttribute("couponExpired", couponExpired);

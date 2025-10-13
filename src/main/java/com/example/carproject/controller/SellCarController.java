@@ -9,6 +9,7 @@ import com.example.carproject.repository.MemberRepository;
 import com.example.carproject.repository.CarConditionHistoryRepository;
 
 
+import com.example.carproject.service.SellSubmissionService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -37,6 +38,7 @@ public class SellCarController {
 
     private final MemberRepository memberRepository;
     private final CarEntryDraftRepository carEntryDraftRepository;
+    private final SellSubmissionService sellSubmissionService;
 
     // 1️⃣ 판매 방식 선택 메인 페이지
     @GetMapping("/sell")
@@ -71,7 +73,7 @@ public class SellCarController {
                                Model model) {
         String loginId = principal.getName();
         Member member = memberRepository.findByLoginId(loginId).orElseThrow();
-        Long memberId = member.getMemberId().longValue();
+        Integer memberId = member.getMemberId();
 
         Optional<CarEntryDraft> optionalDraft =
                 carEntryDraftRepository.findByMemberIdAndCarNumber(memberId, carNumber);
@@ -104,7 +106,7 @@ public class SellCarController {
 
         String loginId = principal.getName();
         Member member = memberRepository.findByLoginId(loginId).orElseThrow();
-        Long memberId = member.getMemberId().longValue();
+        Integer memberId = member.getMemberId();
 
         CarEntryDraft draft = carEntryDraftRepository
                 .findByMemberIdAndCarNumber(memberId, carNumber)
@@ -154,7 +156,7 @@ public class SellCarController {
     }
 
     @GetMapping("/sell/detail/photo")
-    public String showPhotoUpload(@RequestParam("carId") Long carId, Model model) {
+    public String showPhotoUpload(@RequestParam("carId") Integer carId, Model model) {
         CarEntryDraft car = carEntryDraftRepository.findById(carId)
                 .orElseThrow(() -> new IllegalArgumentException("차량 정보가 없습니다."));
         model.addAttribute("car", car);
@@ -163,7 +165,7 @@ public class SellCarController {
     }
 
     @PostMapping("/sell/detail/photo/upload")
-    public String uploadCarPhotos(@RequestParam("carId") Long carId,
+    public String uploadCarPhotos(@RequestParam("carId") Integer carId,
                                   @RequestParam("front") MultipartFile front,
                                   @RequestParam("left") MultipartFile left,
                                   @RequestParam("right") MultipartFile right,
@@ -207,7 +209,7 @@ public class SellCarController {
     }
 
     @GetMapping("/sell/detail/photo/preview")
-    public String previewCarPhotos(@RequestParam("carId") Long carId, Model model) {
+    public String previewCarPhotos(@RequestParam("carId") Integer carId, Model model) {
         CarEntryDraft car = carEntryDraftRepository.findById(carId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 차량 정보가 없습니다."));
         model.addAttribute("car", car);
@@ -215,7 +217,7 @@ public class SellCarController {
     }
 
     @GetMapping("/sell/detail/color")
-    public String showColorForm(@RequestParam("carId") Long carId, Model model) {
+    public String showColorForm(@RequestParam("carId") Integer carId, Model model) {
         CarEntryDraft carEntryDraft = carEntryDraftRepository.findById(carId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 차량 정보가 없습니다."));
         model.addAttribute("color", carEntryDraft);   // 색상 포함 draft 전체 전달
@@ -225,7 +227,7 @@ public class SellCarController {
 
     // 색상 저장 처리
     @PostMapping("/sell/detail/color/save")
-    public String saveCarColor(@RequestParam Long carId,
+    public String saveCarColor(@RequestParam Integer carId,
                                @RequestParam String exteriorColor,
                                @RequestParam String interiorColor,
                                @RequestParam String seatColor) {
@@ -242,7 +244,7 @@ public class SellCarController {
 
     @PostMapping("/sell/detail/option/save")
     public String saveOption(
-            @RequestParam("carId") Long carId,
+            @RequestParam("carId") Integer carId,
             @RequestParam("driveType") String driveType,
             @RequestParam("carType") String carType,
             @RequestParam("fuelType") String fuelType,
@@ -318,7 +320,7 @@ public class SellCarController {
 
 
     @GetMapping("/sell/detail/option")
-    public String showOptionForm(@RequestParam("carId") Long carId, Model model) {
+    public String showOptionForm(@RequestParam("carId") Integer carId, Model model) {
         CarEntryDraft carEntryDraft = carEntryDraftRepository.findById(carId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 차량 정보가 없습니다."));
         model.addAttribute("option", carEntryDraft);
@@ -327,7 +329,7 @@ public class SellCarController {
     }
 
     @GetMapping("/sell/detail/sale")
-    public String showSaleForm(@RequestParam("carId") Long carId, Model model) {
+    public String showSaleForm(@RequestParam("carId") Integer carId, Model model) {
         CarEntryDraft carEntryDraft = carEntryDraftRepository.findById(carId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 차량 정보가 없습니다."));
         model.addAttribute("carId", carId);
@@ -336,7 +338,7 @@ public class SellCarController {
 
     @PostMapping("/sell/detail/sale/save")
     public String saveSaleInfo(
-            @RequestParam("carId") Long carId,
+            @RequestParam("carId") Integer carId,
             @RequestParam("deliveryOption") String deliveryOption,
             @RequestParam("carGrade") String carGrade,
             @RequestParam("saleType") String saleType,
@@ -355,7 +357,7 @@ public class SellCarController {
     }
 
     @GetMapping("/sell/detail/confirm")
-    public String confirmCarEntry(@RequestParam("carId") Long carId, Model model) {
+    public String confirmCarEntry(@RequestParam("carId") Integer carId, Model model) {
         CarEntryDraft car = carEntryDraftRepository.findById(carId)
                 .orElseThrow(() -> new IllegalArgumentException("차량 정보를 찾을 수 없습니다."));
         model.addAttribute("car", car);
@@ -365,28 +367,47 @@ public class SellCarController {
 
     // ✅ 팝업 종료 + 부모창 알림/갱신 (팝업이 아닐 땐 기존처럼 알림 후 홈 이동)
     @GetMapping("/sell/detail/complete")
-    public ResponseEntity<String> completeAndAlert(@RequestParam("carId") Long carId,
+    public ResponseEntity<String> completeAndAlert(@RequestParam("carId") Integer carId,
                                                    Principal principal) {
         try {
+            // 0) 본인 확인
+            if (principal == null) {
+                throw new IllegalStateException("로그인이 필요합니다.");
+            }
+            String loginId = principal.getName();
+            Member member = memberRepository.findByLoginId(loginId)
+                    .orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다."));
+            Integer memberId = member.getMemberId();
+
+            // 1) 드래프트 로드 및 소유자 검증
             CarEntryDraft draft = carEntryDraftRepository.findById(carId)
                     .orElseThrow(() -> new IllegalArgumentException("차량 정보를 찾을 수 없습니다."));
+            if (!memberId.equals(draft.getMemberId())) {
+                throw new SecurityException("본인 차량만 등록 완료할 수 있습니다.");
+            }
+
+            // 2) 제출 플래그 세팅 (최종 완료 시점에서만 true)
             draft.setIsSubmitted(true);
             carEntryDraftRepository.save(draft);
 
+            // 3) ✅ all_car_sale + car_sold 연동 (멱등)
+            int createdCarId = sellSubmissionService.processDraftSubmission(draft.getId(), memberId);
+
+            // 4) 응답 (팝업/비팝업 겸용)
             String body =
                     "<!DOCTYPE html><html><head><meta charset='UTF-8'></head><body><script>" +
-                            "var msg='차량 등록이 완료되었습니다.';" +
+                            "var msg='차량 등록이 완료되었습니다. (carId: " + createdCarId + ")';" +
                             "(function(){ " +
                             "  var notified=false;" +
                             "  if(window.opener && !window.opener.closed){" +
                             "    try{ window.opener.focus(); }catch(e){}" +
                             "    try{ if(typeof window.opener.showRegisterDone==='function'){ window.opener.showRegisterDone(msg); notified=true; } }catch(e){}" +
                             "    if(!notified){ try{ window.opener.alert(msg); notified=true; }catch(e){} }" +
-                            "    if(!notified){ alert(msg); }" +  // ✅ 마지막 보루: 팝업에서라도 알림 띄우기
+                            "    if(!notified){ alert(msg); }" +
                             "    setTimeout(function(){ " +
                             "      try{ window.close(); }catch(e){} " +
                             "      try{ window.open('','_self'); window.close(); }catch(e){} " +
-                            "    }, 150);" + // ✅ 너무 빨리 닫히지 않도록 약간의 딜레이
+                            "    }, 150);" +
                             "  } else {" +
                             "    alert(msg);" +
                             "    window.location.href='/'" +
@@ -401,9 +422,9 @@ public class SellCarController {
         } catch (Exception e) {
             String errorBody =
                     "<!DOCTYPE html><html><head><meta charset='UTF-8'></head><body><script>" +
-                            "alert('등록 처리 중 오류가 발생했습니다. 다시 시도해주세요.');" +
+                            "alert('등록 처리 중 오류가 발생했습니다. 다시 시도해주세요.\\n사유: " + e.getMessage().replace("'", "\\'") + "');" +
                             "if(window.opener && !window.opener.closed){" +
-                            "  setTimeout(function(){ try{ window.close(); }catch(e){}; try{ window.open('','_self'); window.close(); }catch(e){}; }, 150);" +
+                            "  setTimeout(function(){ try{ window.close(); }catch(e){}; try{ window.open(\"\",\"_self\"); window.close(); }catch(e){}; }, 150);" +
                             "} else { history.back(); }" +
                             "</script></body></html>";
             return ResponseEntity.status(400)

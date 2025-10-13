@@ -11,6 +11,7 @@ import lombok.Setter;
 public class AllCarSale {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)          // ✅ AUTO_INCREMENT 맞추기
     @Column(name = "car_id")
     private Integer carId;
 
@@ -25,6 +26,9 @@ public class AllCarSale {
 
     @Column(name = "is_cargo")
     private Boolean isCargo;
+
+    @Column(name = "car_entry_draft_id", unique = true)          // ✅ 서비스에서 세팅할 필드 추가
+    private Integer carEntryDraftId;
 
     @OneToMany(mappedBy = "allCarSale", cascade = CascadeType.ALL)
     private java.util.List<CarImage> carImages;

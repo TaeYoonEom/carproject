@@ -17,7 +17,7 @@ public class CarEntryDraft {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "member_id")
     private Integer memberId;
@@ -70,6 +70,9 @@ public class CarEntryDraft {
 
     @Column(name = "seat_color")
     private String seatColor;
+
+    @Column(name = "car_id")         // DB 컬럼명: car_id (NULL 허용)
+    private Integer carId;
 
     @Column(name = "drive_type")
     private String driveType;

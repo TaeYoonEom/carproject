@@ -2,12 +2,12 @@ package com.example.carproject.repository;
 
 import com.example.carproject.domain.CarEntryDraft;
 import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.List;         // ✅ 여기가 핵심
-import java.util.Optional;    // ✅ 이것도 같이 필요
+import java.util.List;
+import java.util.Optional;
 
-public interface CarEntryDraftRepository extends JpaRepository<CarEntryDraft, Long> {
+public interface CarEntryDraftRepository extends JpaRepository<CarEntryDraft, Integer> {
 
-    Optional<CarEntryDraft> findByMemberIdAndCarNumber(Long memberId, String carNumber);
+    Optional<CarEntryDraft> findByMemberIdAndCarNumber(Integer memberId, String carNumber);
 
     Optional<CarEntryDraft> findByCarNumber(String carNumber);
 
