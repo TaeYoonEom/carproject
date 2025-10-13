@@ -47,11 +47,12 @@
         <a href="#">엔카믿고 <span class="beta">Beta</span></a>
         <a href="/sell" class="big-link">내차팔기</a>
         <a href="/sell/quick">비교견적</a>
-        <a href="#">직거래</a>
+        <a href="/sell/quick">직거래</a>
       </div>
       <div class="menu-right">
         <a href="#">이차어때</a>
-        <a href="#">시세</a>
+        <a href="/price" data-path="/price"
+           th:classappend="${activeMenu}=='price' ? ' active'">시세</a>
         <a href="/media">미디어</a>
         <a href="/event">이벤트</a>
       </div>
