@@ -91,6 +91,7 @@ public class SellCarController {
         carEntryDraftRepository.save(draft);
 
         model.addAttribute("draft", draft);
+        model.addAttribute("showNav", false); // ★ 네비 숨김
         return "selldetail/sell_input";
     }
 
@@ -102,6 +103,9 @@ public class SellCarController {
                                  @RequestParam String manufactureDate, // "YYYY-MM" 형식
                                  @RequestParam Integer mileage,
                                  @RequestParam String region,
+                                 @RequestParam(required = false) String manufacturer,
+                                 @RequestParam(required = false) String model,
+                                 @RequestParam(required = false, defaultValue = "0") int origin,
                                  Principal principal) {
 
         String loginId = principal.getName();
@@ -120,6 +124,10 @@ public class SellCarController {
         draft.setRegion(region);
         draft.setManufactureDate(LocalDate.parse(manufactureDate + "-01")); // "YYYY-MM" → LocalDate
         draft.setIsSubmitted(true);
+
+        draft.setManufacturer(manufacturer);
+        draft.setModel(model);
+        draft.setOrigin(origin == 1);   // 0=국산(false), 1=수입(true)
 
         if (draft.getId() == null) {
             draft.setCreatedAt(LocalDateTime.now());

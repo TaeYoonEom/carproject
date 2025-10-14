@@ -1,126 +1,170 @@
-body {
-  font-family: 'Noto Sans KR', sans-serif;
-  background: linear-gradient(120deg, #f6faff 0%, #fff6f5 100%);
-  margin: 0;
-  padding: 0;
+/* ---------- Theme ---------- */
+:root{
+  --bg-grad-1:#f6faff;
+  --bg-grad-2:#fff6f5;
+  --brand:#d62828;
+  --brand-2:#fa872b;
+  --ink:#2a2a2a;
+  --ink-2:#555;
+  --muted:#8f95a3;
+  --line:#ececec;
+  --surface:#ffffff;
+  --focus:#ff6b5a;
+  --shadow:0 6px 32px rgba(90,90,130,.09);
+  --radius-xl:22px;
+  --radius-lg:14px;
+  --radius-md:10px;
 }
 
-.input-container {
-  max-width: 480px;
-  margin: 70px auto 45px auto;
-  background: #fff;
-  border-radius: 22px;
-  box-shadow: 0 6px 32px rgba(90,90,130,0.09);
-  padding: 42px 32px 34px 32px;
+*{box-sizing:border-box}
+
+body{
+  font-family:'Noto Sans KR',sans-serif;
+  background:linear-gradient(120deg,var(--bg-grad-1) 0%,var(--bg-grad-2) 100%);
+  margin:0; padding:0;
+  color:var(--ink);
 }
 
-.input-icon {
-  width: 32px;
-  vertical-align: middle;
-  margin-right: 8px;
-  margin-bottom: 4px;
+/* ---------- Card ---------- */
+.input-container{
+  max-width: 560px;
+  margin: 72px auto 48px;
+  background:var(--surface);
+  border-radius:var(--radius-xl);
+  box-shadow:var(--shadow);
+  padding: 42px 36px 34px;
 }
 
-h2 {
-  text-align: center;
-  color: #d62828;
-  font-size: 26px;
-  font-weight: 700;
-  margin-bottom: 14px;
-  letter-spacing: -1px;
+/* ---------- Title ---------- */
+h2{
+  display:flex; align-items:center; justify-content:center;
+  gap:10px;
+  color:var(--brand);
+  font-size:28px; font-weight:800; letter-spacing:-.02em;
+  margin:0 0 12px;
+}
+.input-icon{width:34px; height:34px}
+
+/* ---------- Sub text ---------- */
+.input-desc{
+  text-align:center; font-size:15px; line-height:1.6;
+  color:var(--ink-2); margin:0 0 28px;
+}
+.input-desc .desc-tip{
+  display:block; margin-top:6px; font-size:13px; color:var(--muted);
 }
 
-.input-desc {
-  text-align: center;
-  color: #333;
-  margin-bottom: 32px;
-  font-size: 15px;
+/* ---------- Groups ---------- */
+.form-group{margin: 20px 0}
+label{
+  display:block; margin:0 0 8px; font-weight:700; color:#3b3b3b;
+  letter-spacing:-.5px;
 }
 
-.input-desc .desc-tip {
-  display: block;
-  font-size: 13px;
-  color: #888;
-  margin-top: 4px;
-}
+/* inline rows (지역, 제조국 등) */
+.region-row{display:flex; gap:12px}
+.two-col{display:grid; grid-template-columns:1fr 1fr; gap:12px}
 
-.form-group {
-  margin-bottom: 23px;
-}
-
-label {
-  font-weight: 600;
-  display: block;
-  margin-bottom: 7px;
-  color: #474747;
-  letter-spacing: -0.5px;
-}
-
+/* ---------- Inputs ---------- */
 input[type="text"],
 input[type="number"],
 input[type="month"],
-select {
-  width: 100%;
-  padding: 11px 12px;
-  font-size: 16px;
-  border: 1.5px solid #ececec;
-  border-radius: 8px;
-  background-color: #fafbfc;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  box-sizing: border-box;
+select{
+  width:100%; height:48px;
+  padding:12px 14px;
+  font-size:15.5px;
+  border:1.5px solid var(--line);
+  border-radius:var(--radius-md);
+  background:#fafbfc;
+  transition:border-color .2s, box-shadow .2s, background .2s;
 }
 
-input[readonly] {
-  background: #f7f6f4;
-  color: #999;
+input[readonly]{
+  background:#f6f6f6; color:#999;
 }
 
-input:focus,
-select:focus {
-  border-color: #fa872b;
-  outline: none;
-  box-shadow: 0 0 3px #ffe2c1;
+/* focus */
+input:focus, select:focus{
+  outline:none;
+  border-color:var(--focus);
+  box-shadow:0 0 0 3px rgba(255,107,90,.12);
+  background:#fff;
 }
 
-.region-row {
-  display: flex;
-  gap: 12px;
+/* placeholder tone */
+::placeholder{color:#b6bdc9}
+
+/* ---------- Radio (제조국) ---------- */
+.origin-row{
+  display:flex; gap:14px; flex-wrap:wrap;
+}
+.origin-radio{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:10px 14px;
+  border:1.5px solid var(--line);
+  border-radius:999px;
+  background:#fff;
+  cursor:pointer; user-select:none;
+  transition:border-color .2s, box-shadow .2s, background .2s;
+  font-weight:700; color:#333;
+}
+.origin-radio input{
+  appearance:none; width:16px; height:16px; border-radius:50%;
+  border:2px solid #cfd6e4; display:inline-block; position:relative;
+  transition:border-color .2s, background .2s;
+}
+.origin-radio input:checked{border-color:var(--brand); background:
+  radial-gradient(var(--brand) 50%, transparent 51%)}
+
+/* 선택된 라벨 하이라이트 */
+.origin-radio:has(input:checked){
+  border-color:rgba(214,40,40,.35);
+  box-shadow:0 4px 14px rgba(214,40,40,.08);
 }
 
-.small-label {
-  font-size: 13px;
-  color: #a87c0f;
-  margin-left: 6px;
+/* ---------- Selects for 제조사/모델 ---------- */
+#manufacturerSelect,#modelSelect,
+#manufacturerOther,#modelOther{
+  height:48px;
+  padding:0 14px;
+  border:1.5px solid var(--line);
+  border-radius:var(--radius-md);
+  background:#fff;
+}
+#manufacturerSelect:focus,#modelSelect:focus,
+#manufacturerOther:focus,#modelOther:focus{
+  border-color:var(--focus);
+  box-shadow:0 0 0 3px rgba(255,107,90,.12);
 }
 
-.form-actions {
-  text-align: center;
-  margin-top: 38px;
-}
+/* 기타 입력 숨김 컨트롤 시 사용 */
+.hidden{display:none}
 
-.save-btn {
-  width: 100%;
-  padding: 15px 0;
-  background: linear-gradient(90deg, #d62828 20%, #fa872b 100%);
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  font-size: 17px;
-  font-weight: 700;
-  cursor: pointer;
-  letter-spacing: 1px;
-  box-shadow: 0 2px 10px rgba(246, 138, 43, 0.07);
-  transition: background 0.18s, box-shadow 0.18s;
-}
+/* 작은 보조 라벨 */
+.small-label{font-size:12.5px; color:#a87c0f; margin-left:6px}
 
-.save-btn:hover {
-  background: linear-gradient(90deg, #b71f1f 20%, #e26904 100%);
-  box-shadow: 0 6px 16px rgba(246, 138, 43, 0.12);
+/* ---------- Actions ---------- */
+.form-actions{margin-top:34px}
+.save-btn{
+  width:100%; height:52px;
+  border:0; border-radius:12px;
+  color:#fff; font-weight:800; font-size:17px; letter-spacing:.02em;
+  cursor:pointer;
+  background:linear-gradient(90deg,var(--brand) 15%, var(--brand-2) 100%);
+  box-shadow:0 8px 20px rgba(246,138,43,.14);
+  transition:transform .12s ease, box-shadow .18s ease, filter .18s ease;
 }
+.save-btn:hover{transform:translateY(-1px); filter:saturate(1.02)}
+.save-btn:active{transform:translateY(0); box-shadow:0 4px 12px rgba(246,138,43,.14)}
+.save-btn:disabled{opacity:.6; cursor:not-allowed}
 
-@media (max-width: 700px) {
-  .input-container {
-    max-width: 98vw;
-    padding: 20px 6vw;
-  }
+/* ---------- Utilities ---------- */
+.mt-8{margin-top:8px}
+.w-full{width:100%}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 700px){
+  .input-container{max-width:96vw; padding:26px 20px}
+  .region-row,.two-col{gap:10px}
+  h2{font-size:24px}
 }

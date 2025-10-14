@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${pageTitle} ?: '시세'">시세</title>
+    <th:block layout:fragment="style">
+        <link rel="stylesheet" th:href="@{/css/market-price.css(v=${#dates.createNow().time})}" />
+    </th:block>
+</head>
+<body>
+
+<div layout:fragment="content">
+
+    <main class="wrap page">
+        <!-- 좌측 필터 -->
+        <aside class="filter">
+            <h3>차량검색</h3>
+
+            <div class="field">
+                <label>제조사</label>
+                <select id="make">
+                    <option value="">제조사 선택</option>
+                    <option value="현대">현대</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>모델</label>
+                <input id="model" type="text" placeholder="예: 그랜저, G90" />
+            </div>
+
+            <div class="field grid2">
+                <div><label>연식(From)</label><input id="yearFrom" type="number" placeholder="2010" /></div>
+                <div><label>연식(To)</label><input id="yearTo" type="number" placeholder="2025" value="2025"/></div>
+            </div>
+
+            <div class="field">
+                <label>가격(만원)</label>
+                <div class="range">
+                    <input id="priceMin" type="number" placeholder="최소" /><span>~</span>
+                    <input id="priceMax" type="number" placeholder="최대" />
+                </div>
+            </div>
+
+            <div class="field">
+                <label>주행거리(km)</label>
+                <div class="range">
+                    <input id="mileageMin" type="number" placeholder="0" value="0" /><span>~</span>
+                    <input id="mileageMax" type="number" placeholder="200000" value="200000" />
+                </div>
+            </div>
+
+            <div class="field">
+                <label>연료</label>
+                <div class="chips" id="fuel">
+                    <label><input type="checkbox" value="GASOLINE"> 가솔린</label>
+                    <label><input type="checkbox" value="DIESEL"> 디젤</label>
+                    <label><input type="checkbox" value="LPG"> LPG</label>
+                    <label><input type="checkbox" value="HYBRID"> 하이브리드</label>
+                    <label><input type="checkbox" value="EV"> 전기</label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>색상</label>
+                <div class="color-pills" id="colors">
+                    <label><input type="checkbox" value="흰색"><span class="dot white" title="흰색"></span></label>
+                    <label><input type="checkbox" value="은색"><span class="dot silver" title="은색"></span></label>
+                    <label><input type="checkbox" value="검정"><span class="dot black" title="검정"></span></label>
+                    <label><input type="checkbox" value="회색"><span class="dot gray" title="회색"></span></label>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button id="btnReset" class="ghost" type="button">초기화</button>
+                <button id="btnSearch" class="primary" type="button">검색</button>
+            </div>
+        </aside>
+
+        <!-- 우측 콘텐츠 -->
+        <section class="content">
+            <div class="title-row">
+                <div>
+                    <h1 id="pageTitle">현대 그랜저 HG 2013년식</h1>
+                    <div class="tags">
+                        <span class="tag">무사고 기준</span>
+                        <span class="tag">주행 70,000km 기준</span>
+                    </div>
+                </div>
+                <img class="thumb" src="/img/car_image/제네시스로고.jpg" alt="car" />
+            </div>
+
+            <div class="price-box">
+                <div class="label">중고차 시세</div>
+                <div class="price"><span id="statMin">-</span> ~ <span id="statMax">-</span> <em>만원</em></div>
+                <div class="sub">평균 <b id="statAvg">-</b> 만원 · 매물 <b id="statCnt">0</b>대</div>
+            </div>
+
+            <div class="toolbar">
+                <div class="count"><b id="resultCount">0</b>대 검색됨</div>
+                <div class="sort">
+                    <label>정렬</label>
+                    <select id="sort">
+                        <option value="RECENT">최신순</option>
+                        <option value="PRICE_ASC">가격 낮은순</option>
+                        <option value="PRICE_DESC">가격 높은순</option>
+                        <option value="MILEAGE_ASC">주행 적은순</option>
+                    </select>
+                </div>
+            </div>
+
+            <ul id="list" class="cards"></ul>
+            <div id="pagination" class="pagination"></div>
+        </section>
+    </main>
+</div>
+
+<!-- 페이지 스크립트 -->
+<th:block layout:fragment="script">
+    <script>
+        const qs = (s, p=document)=>p.querySelector(s);
+        const qsa = (s, p=document)=>Array.from(p.querySelectorAll(s));
+
+        function collect(page=0){
+          const params = new URLSearchParams();
+          const make = qs('#make').value.trim();
+          const model = qs('#model').value.trim();
+          const yearFrom = qs('#yearFrom').value;
+          const yearTo = qs('#yearTo').value;
+          const priceMin = qs('#priceMin').value;
+          const priceMax = qs('#priceMax').value;
+          const mileageMin = qs('#mileageMin').value;
+          const mileageMax = qs('#mileageMax').value;
+          const sort = qs('#sort').value;
+          const fuels = qsa('#fuel input:checked').map(i=>i.value);
+          const colors = qsa('#colors input:checked').map(i=>i.value);
+
+          if(make) params.append('make', make);
+          if(model) params.append('model', model);
+          if(yearFrom) params.append('yearFrom', yearFrom);
+          if(yearTo) params.append('yearTo', yearTo);
+          if(priceMin) params.append('priceMin', priceMin);
+          if(priceMax) params.append('priceMax', priceMax);
+          if(mileageMin) params.append('mileageMin', mileageMin);
+          if(mileageMax) params.append('mileageMax', mileageMax);
+          fuels.forEach(f=>params.append('fuel', f));
+          colors.forEach(c=>params.append('colors', c));
+          params.append('sort', sort);
+          params.append('page', page);
+          params.append('size', 10);
+          return params;
+        }
+
+        function renderCard(it){
+          const li = document.createElement('li');
+          li.className = 'card';
+          li.innerHTML = `
+            <div class="img"><img src="${it.thumbnailUrl || '/img/car_image/car_g80.jpg'}" alt=""></div>
+            <div class="meta">
+              <div class="name">${it.title}</div>
+              <div class="sub">${it.summary}</div>
+              <div class="badges">
+                ${(it.badges||[]).map(b=>`<span class="badge badge-ring">${b}</span>`).join('')}
+              </div>
+            </div>
+            <div class="price-area">
+              <div class="price"><b>${(it.priceManwon??0).toLocaleString()}</b> 만원</div>
+              <a class="btn" href="/cars/${it.id}">상세보기</a>
+            </div>`;
+          return li;
+        }
+
+        function renderPagination(pg){
+          const root = qs('#pagination'); root.innerHTML='';
+          if(!pg || pg.totalPages<=1) return;
+
+          const mkBtn=(t,disabled=false,active=false)=>{
+            const b=document.createElement('button'); b.textContent=t;
+            if(disabled) b.disabled=true;
+            if(active) b.classList.add('active');
+            return b;
+          };
+
+          const prev = mkBtn('이전', pg.number===0);
+          prev.onclick = ()=>load(pg.number-1);
+          root.appendChild(prev);
+
+          const start = Math.max(0, pg.number-2);
+          const end   = Math.min(pg.totalPages-1, pg.number+2);
+          for(let i=start;i<=end;i++){
+            const b = mkBtn(String(i+1), false, i===pg.number);
+            b.onclick = ()=>load(i);
+            root.appendChild(b);
+          }
+          const next = mkBtn('다음', pg.number>=pg.totalPages-1);
+          next.onclick = ()=>load(pg.number+1);
+          root.appendChild(next);
+        }
+
+        async function load(page=0){
+          const params = collect(page);
+          // 리스트
+          const r = await fetch('/market/api/prices?'+params.toString());
+          const data = await r.json();
+
+          const ul = qs('#list'); ul.innerHTML='';
+          (data.content||[]).forEach(it=>ul.appendChild(renderCard(it)));
+
+          qs('#resultCount').textContent = data.totalElements ?? 0;
+          renderPagination(data);
+
+          // 통계
+          const sres = await fetch('/market/api/prices/stats?'+collect().toString());
+          const s = await sres.json();
+          qs('#statMin').textContent = (s.minManwon||0).toLocaleString();
+          qs('#statMax').textContent = (s.maxManwon||0).toLocaleString();
+          qs('#statAvg').textContent = (s.avgManwon||0).toLocaleString();
+          qs('#statCnt').textContent = s.totalCount || 0;
+
+          // 타이틀
+          const make = qs('#make').value || '전체';
+          const model = qs('#model').value || '';
+          const yFrom = qs('#yearFrom').value || '';
+          const yTo = qs('#yearTo').value || '';
+          qs('#pageTitle').textContent = `${make} ${model} ${yFrom?yFrom+'~':''}${yTo}`.trim();
+        }
+
+        qs('#btnSearch').onclick = ()=>load(0);
+        qs('#btnReset').onclick = ()=>{
+          ['#make','#model','#yearFrom','#yearTo','#priceMin','#priceMax','#mileageMin','#mileageMax'].forEach(id=>qs(id).value='');
+          qsa('#fuel input:checked').forEach(i=>i.checked=false);
+          qsa('#colors input:checked').forEach(i=>i.checked=false);
+          load(0);
+        };
+        qs('#sort').onchange = ()=>load(0);
+
+        document.addEventListener('DOMContentLoaded', ()=>load(0));
+    </script>
+</th:block>
+</body>
+</html>

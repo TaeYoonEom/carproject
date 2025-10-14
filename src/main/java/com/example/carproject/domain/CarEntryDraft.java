@@ -104,6 +104,15 @@ public class CarEntryDraft {
     @Column(name = "sale_method")
     private String saleMethod;
 
+    @Column(name = "manufacturer", length = 50)
+    private String manufacturer;   // 제조사
+
+    @Column(name = "model", length = 100)
+    private String model;          // 모델(세부명)
+
+    @Column(name = "origin")
+    private Boolean origin;        // false=국산(0), true=수입(1)  // TINYINT(1) 매핑
+
 
 
 
