@@ -16,6 +16,8 @@ public class CarSale {
     private int carId;
     private int memberId;
     private String carName;
+    private String manufacturer;
+    private String modelName;
     private String carNumber;
 
     @Column(columnDefinition = "ENUM('소유중', '판매완료', '등록중')")
@@ -30,6 +32,7 @@ public class CarSale {
     private int price;
     private int mileage;
     private int year;
+    private int month;
     private LocalDateTime createdAt;
 
     @Column(length = 50)
@@ -41,6 +44,9 @@ public class CarSale {
 
     @Column(length = 50)
     private String transmission; //변속기
+
+    @Column(columnDefinition = "ENUM('엔카 직영 성능점검', '성능기록부', '보험이력', '차량 이력 공개')")
+    private String performanceOpen;
 
     @Column(columnDefinition = "ENUM('개인', '딜러', '리스렌트제휴')")
     private String sellerType;

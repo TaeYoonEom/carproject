@@ -1,4 +1,4 @@
-package com.example.carproject.importcar.domain;
+package com.example.carproject.buy.domain;
 
 import com.example.carproject.domain.AllCarSale;
 import jakarta.persistence.*;
@@ -15,9 +15,10 @@ public class ImportCarSale {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int carId;
-
     private int memberId;
     private String carName;
+    private String manufacturer;
+    private String modelName;
     private String carNumber;
 
     @Column(columnDefinition = "ENUM('소유중', '판매완료', '등록중')")
@@ -33,8 +34,11 @@ public class ImportCarSale {
     private int price;
     private int mileage;
     private int year;
+    private int month;
     private LocalDateTime createdAt;
 
+    @Column(length = 50)
+    private String carType;
     private String carGrade;
     private int capacity;
     private String saleType;
@@ -43,10 +47,17 @@ public class ImportCarSale {
     @Column(length = 50)
     private String transmission;
 
-    @Column(length = 50)
-    private String carType;  // 수입
+    @Column(columnDefinition = "ENUM('엔카 직영 성능점검', '성능기록부', '보험이력', '차량 이력 공개')")
+    private String performanceOpen;
+
+
+    @Column(columnDefinition = "ENUM('개인', '딜러', '리스렌트제휴')")
+    private String sellerType;
+
+    @Column(columnDefinition = "ENUM('일반', '렌트', '리스')")
+    private String saleMethod;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "car_id", referencedColumnName = "car_id") // 🔁 중요 포인트
+    @JoinColumn(name = "car_id", referencedColumnName = "car_id")
     private AllCarSale allCarSale;
 }

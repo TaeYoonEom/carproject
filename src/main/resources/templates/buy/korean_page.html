@@ -50,49 +50,15 @@
             <details class="filter-group" open>
                 <summary>차종</summary>
                 <ul class="filter-list with-count">
-                    <li data-ct="KE">
-                        <label><input type="checkbox" name="ct" value="KE"> 경차</label>
-                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['KE']?:0),1,'COMMA')}">0</span>
-                    </li>
-                    <li data-ct="SM">
-                        <label><input type="checkbox" name="ct" value="SM"> 소형차</label>
-                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['SM']?:0),1,'COMMA')}">0</span>
-                    </li>
-                    <li data-ct="JM">
-                        <label><input type="checkbox" name="ct" value="JM"> 준중형차</label>
-                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['JM']?:0),1,'COMMA')}">0</span>
-                    </li>
-                    <li data-ct="MD">
-                        <label><input type="checkbox" name="ct" value="MD"> 중형차</label>
-                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['MD']?:0),1,'COMMA')}">0</span>
-                    </li>
-                    <li data-ct="LG">
-                        <label><input type="checkbox" name="ct" value="LG"> 대형차</label>
-                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['LG']?:0),1,'COMMA')}">0</span>
-                    </li>
-                    <li data-ct="SC">
-                        <label><input type="checkbox" name="ct" value="SC"> 스포츠카</label>
-                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['SC']?:0),1,'COMMA')}">0</span>
-                    </li>
-                    <li data-ct="SUV">
-                        <label><input type="checkbox" name="ct" value="SUV"> SUV</label>
-                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['SUV']?:0),1,'COMMA')}">0</span>
-                    </li>
-                    <li data-ct="RV">
-                        <label><input type="checkbox" name="ct" value="RV"> RV</label>
-                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['RV']?:0),1,'COMMA')}">0</span>
-                    </li>
-                    <li data-ct="VN">
-                        <label><input type="checkbox" name="ct" value="VN"> 승합차</label>
-                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['VN']?:0),1,'COMMA')}">0</span>
-                    </li>
-                    <li data-ct="TR">
-                        <label><input type="checkbox" name="ct" value="TR"> 화물차</label>
-                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['TR']?:0),1,'COMMA')}">0</span>
-                    </li>
-                    <li data-ct="ET">
-                        <label><input type="checkbox" name="ct" value="ET"> 기타</label>
-                        <span class="count" th:text="${#numbers.formatInteger((typeCounts['ET']?:0),1,'COMMA')}">0</span>
+                    <li th:each="e : ${carTypeCounts}">
+                        <label>
+                            <input type="checkbox" name="carTypes"
+                                   th:value="${e.key}"
+                                   th:disabled="${e.value == 0}">
+                            <span th:text="${e.key}">중형차</span>
+                        </label>
+                        <span class="count"
+                              th:text="${#numbers.formatInteger(e.value,1,'COMMA')}">0</span>
                     </li>
                 </ul>
             </details>
@@ -100,21 +66,16 @@
             <!-- 제조사 / 모델 / 등급 -->
             <details class="filter-group" open>
                 <summary>제조사/모델/등급</summary>
-                <ul class="filter-list with-count">
-                    <li>
-                        <label><input type="checkbox" name="brand" value="현대"> 현대</label>
-
+                <ul class="filter-list with-count" id="facet-makers">
+                    <li th:each="e : ${manufacturerCounts}">
+                        <label>
+                            <input type="checkbox" name="manufacturers" th:value="${e.key}">
+                            <span th:text="${e.key}">현대</span>
+                        </label>
+                        <span class="count" th:text="${#numbers.formatInteger(e.value,1,'COMMA')}">0</span>
                     </li>
-                    <li>
-                        <label><input type="checkbox" name="brand" value="제네시스"> 제네시스</label>
-
-                    </li>
-                    <li>
-                        <label><input type="checkbox" name="brand" value="기아"> 기아</label>
-
-                    </li>
-                    <!-- 필요 브랜드 계속... -->
                 </ul>
+                <div id="facet-models" hidden></div>
             </details>
 
             <!-- 연식 -->
@@ -231,116 +192,139 @@
             </details>
 
             <!-- 지역 -->
-            <details class="filter-group">
+            <details class="filter-group" open>
                 <summary>지역</summary>
-                <ul class="filter-list">
-                    <li><label><input type="checkbox"> 경기</label></li>
-                    <li><label><input type="checkbox"> 대구</label></li>
-                    <li><label><input type="checkbox"> 부산</label></li>
-                    <li><label><input type="checkbox"> 서울</label></li>
-                    <li><label><input type="checkbox"> 인천</label></li>
+                <ul class="filter-list with-count">
+                    <li th:each="e : ${saleLocationCounts}">
+                        <label>
+                            <input type="checkbox" name="saleLocations"
+                                   th:value="${e.key}"
+                                   th:disabled="${e.value == 0}">
+                            <span th:text="${e.key}">경기</span>
+                        </label>
+                        <span class="count" th:text="${#numbers.formatInteger(e.value,1,'COMMA')}">0</span>
+                    </li>
                 </ul>
+                <!-- 원하면 '다른 지역 더보기'는 CSS로 높이 제한 + 토글 -->
             </details>
 
             <!-- 인승 -->
-            <details class="filter-group">
+            <details class="filter-group" open>
                 <summary>인승</summary>
-                <ul class="filter-list">
-                    <li><label><input type="checkbox"> 2인승 이하</label></li>
-                    <li><label><input type="checkbox"> 3인승</label></li>
-                    <li><label><input type="checkbox"> 4인승</label></li>
-                    <li><label><input type="checkbox"> 5인승</label></li>
-                    <li><label><input type="checkbox"> 6인승</label></li>
-                    <li><label><input type="checkbox"> 7인승</label></li>
-                    <li><label><input type="checkbox"> 8인승</label></li>
-                    <li><label><input type="checkbox"> 9인승</label></li>
-                    <li><label><input type="checkbox"> 10인승 이상</label></li>
+                <ul class="filter-list with-count">
+                    <li th:each="e : ${capacityBucketCounts}">
+                        <label>
+                            <input type="checkbox" class="cap-bucket"
+                                   th:data-bucket="${e.key}" th:disabled="${e.value == 0}">
+                            <span th:text="${e.key}">5인승</span>
+                        </label>
+                        <span class="count" th:text="${#numbers.formatInteger(e.value,1,'COMMA')}">0</span>
+                    </li>
                 </ul>
             </details>
+
 
             <!-- 성능 / 보험 공개 -->
-            <details class="filter-group">
-                <summary>성능 / 보험 공개</summary>
-                <ul class="filter-list">
-                    <li><label><input type="checkbox"> 엔카 직영 성능점검</label></li>
-                    <li><label><input type="checkbox"> 성능기록부</label></li>
-                    <li><label><input type="checkbox"> 보험이력</label></li>
-                    <li><label><input type="checkbox"> 차량 이력 공개</label></li>
+            <details class="filter-group" open>
+                <summary>성능/보험공개</summary>
+                <ul class="filter-list with-count">
+                    <li th:each="e : ${performanceOpenCounts}">
+                        <label>
+                            <input type="checkbox" name="performanceOpen" th:value="${e.key}" th:disabled="${e.value == 0}">
+                            <span th:text="${e.key}">성능기록부</span>
+                        </label>
+                        <span class="count" th:text="${#numbers.formatInteger(e.value,1,'COMMA')}">0</span>
+                    </li>
                 </ul>
             </details>
 
+
             <!-- 판매자 구분 -->
-            <details class="filter-group">
-                <summary>판매자 구분</summary>
-                <ul class="filter-list">
-                    <li><label><input type="checkbox"> 개인</label></li>
-                    <li><label><input type="checkbox"> 딜러</label></li>
-                    <li><label><input type="checkbox"> 리스렌트제휴</label></li>
+            <details class="filter-group" open>
+                <summary>판매자구분</summary>
+                <ul class="filter-list with-count">
+                    <li th:each="e : ${sellerTypeCounts}">
+                        <label>
+                            <input type="checkbox" name="sellerTypes" th:value="${e.key}" th:disabled="${e.value == 0}">
+                            <span th:text="${e.key}">개인</span>
+                        </label>
+                        <span class="count" th:text="${#numbers.formatInteger(e.value,1,'COMMA')}">0</span>
+                    </li>
                 </ul>
             </details>
 
             <!-- 판매 방식 -->
-            <details class="filter-group">
-                <summary>판매 방식</summary>
-                <ul class="filter-list">
-                    <li><label><input type="checkbox"> 일반</label></li>
-                    <li><label><input type="checkbox"> 렌트</label></li>
-                    <li><label><input type="checkbox"> 리스</label></li>
+            <details class="filter-group" open>
+                <summary>판매방식</summary>
+                <ul class="filter-list with-count">
+                    <li th:each="e : ${saleMethodCounts}">
+                        <label>
+                            <input type="checkbox" name="saleMethods" th:value="${e.key}" th:disabled="${e.value == 0}">
+                            <span th:text="${e.key}">일반</span>
+                        </label>
+                        <span class="count" th:text="${#numbers.formatInteger(e.value,1,'COMMA')}">0</span>
+                    </li>
                 </ul>
             </details>
 
+
             <!-- 외부 색상 -->
-            <details class="filter-group">
-                <summary>외부 색상</summary>
-                <ul class="filter-list">
-                    <li><label><input type="checkbox"> 흰색</label></li>
-                    <li><label><input type="checkbox"> 검정색</label></li>
-                    <li><label><input type="checkbox"> 쥐색</label></li>
-                    <li><label><input type="checkbox"> 청색</label></li>
-                    <li><label><input type="checkbox"> 은색</label></li>
+            <details class="filter-group" open>
+                <summary>외부색상</summary>
+                <ul class="filter-list with-count">
+                    <li th:each="e : ${exteriorColorCounts}">
+                        <label>
+                            <input type="checkbox" name="exteriorColors" th:value="${e.key}" th:disabled="${e.value == 0}">
+                            <span th:text="${e.key}">흰색</span>
+                        </label>
+                        <span class="count" th:text="${#numbers.formatInteger(e.value,1,'COMMA')}">0</span>
+                    </li>
                 </ul>
             </details>
 
             <!-- 내부 색상 -->
-            <details class="filter-group">
-                <summary>내부 색상</summary>
-                <ul class="filter-list">
-                    <li><label><input type="checkbox"> 검정색 계열</label></li>
-                    <li><label><input type="checkbox"> 갈색 계열</label></li>
-                    <li><label><input type="checkbox"> 베이지색 계열</label></li>
-                    <li><label><input type="checkbox"> 회색 계열</label></li>
-                    <li><label><input type="checkbox"> 흰색 계열</label></li>
+            <details class="filter-group" open>
+                <summary>내부색상</summary>
+                <ul class="filter-list with-count">
+                    <li th:each="e : ${interiorColorCounts}">
+                        <label>
+                            <input type="checkbox" name="interiorColors"
+                                   th:value="${e.key}" th:disabled="${e.value == 0}">
+                            <span th:text="${e.key}">검정색 계열</span>
+                        </label>
+                        <span class="count" th:text="${#numbers.formatInteger(e.value,1,'COMMA')}">0</span>
+                    </li>
                 </ul>
+                <!-- 필요시 '다른 색상 더보기'는 CSS/JS로 토글 -->
             </details>
 
             <!-- 연료 -->
-            <details class="filter-group">
+            <details class="filter-group" open>
                 <summary>연료</summary>
-                <ul class="filter-list">
-                    <li><label><input type="checkbox"> 가솔린</label></li>
-                    <li><label><input type="checkbox"> 디젤</label></li>
-                    <li><label><input type="checkbox"> LPG(일반인 구입)</label></li>
-                    <li><label><input type="checkbox"> LPG</label></li>
-                    <li><label><input type="checkbox"> 가솔린+전기</label></li>
-                    <li><label><input type="checkbox"> LPG+전기</label></li>
-                    <li><label><input type="checkbox"> 가솔린+LPG</label></li>
-                    <li><label><input type="checkbox"> 가솔린+CNG</label></li>
-                    <li><label><input type="checkbox"> 전기</label></li>
-                    <li><label><input type="checkbox"> 수소</label></li>
-                    <li><label><input type="checkbox"> LNG</label></li>
-                    <li><label><input type="checkbox"> CNG</label></li>
+                <ul class="filter-list with-count">
+                    <li th:each="e : ${fuelTypeCounts}">
+                        <label>
+                            <input type="checkbox" name="fuelTypes"
+                                   th:value="${e.key}" th:disabled="${e.value == 0}">
+                            <span th:text="${e.key}">가솔린</span>
+                        </label>
+                        <span class="count" th:text="${#numbers.formatInteger(e.value,1,'COMMA')}">0</span>
+                    </li>
                 </ul>
             </details>
 
             <!-- 변속기 -->
-            <details class="filter-group">
+            <details class="filter-group" open>
                 <summary>변속기</summary>
-                <ul class="filter-list">
-                    <li><label><input type="checkbox"> 오토</label></li>
-                    <li><label><input type="checkbox"> 수동</label></li>
-                    <li><label><input type="checkbox"> 세미오토</label></li>
-                    <li><label><input type="checkbox"> CVT</label></li>
-                    <li><label><input type="checkbox"> 기타</label></li>
+                <ul class="filter-list with-count">
+                    <li th:each="e : ${transmissionCounts}">
+                        <label>
+                            <input type="checkbox" name="transmissions"
+                                   th:value="${e.key}" th:disabled="${e.value == 0}">
+                            <span th:text="${e.key}">오토</span>
+                        </label>
+                        <span class="count" th:text="${#numbers.formatInteger(e.value,1,'COMMA')}">0</span>
+                    </li>
                 </ul>
             </details>
 
@@ -515,9 +499,6 @@
                 </tbody>
             </table>
         </main>
-
-
-
 
         <!-- 📦 우측 배너 영역 -->
         <aside class="sidebar-right">
