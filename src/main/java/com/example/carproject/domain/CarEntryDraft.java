@@ -1,3 +1,4 @@
+// src/main/java/com/example/carproject/domain/CarEntryDraft.java
 package com.example.carproject.domain;
 
 import jakarta.persistence.*;
@@ -19,7 +20,7 @@ public class CarEntryDraft {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "member_id")
+    @Column(name = "member_id", nullable = false)
     private Integer memberId;
 
     @Column(name = "car_number", nullable = false)
@@ -31,19 +32,34 @@ public class CarEntryDraft {
     @Column(name = "model_name")
     private String modelName;
 
-    @Column(name = "manufacture_date")
-    private LocalDate manufactureDate; // ✅ year 대신 LocalDate
+    @Column(name = "manufacturer", length = 50)
+    private String manufacturer;   // 제조사
 
+    @Column(name = "model", length = 100)
+    private String model;          // 모델(세부명)
+
+    /**
+     * 0=국산, 1=수입 (DB: tinyint(1))
+     */
+    @Column(name = "origin", nullable = false)
+    private Boolean origin;  // false=국산(0), true=수입(1)
+
+    @Column(name = "manufacture_date")
+    private LocalDate manufactureDate;
+
+    @Column(name = "mileage")
     private Integer mileage;
 
+    @Column(name = "region")
     private String region;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "is_submitted")
     private Boolean isSubmitted;
 
+    // 이미지 URL들
     @Column(name = "front_view_url")
     private String frontViewUrl;
 
@@ -62,6 +78,7 @@ public class CarEntryDraft {
     @Column(name = "back_seat_url")
     private String backSeatUrl;
 
+    // 색상/구동 등 기초 스펙
     @Column(name = "exterior_color")
     private String exteriorColor;
 
@@ -71,7 +88,10 @@ public class CarEntryDraft {
     @Column(name = "seat_color")
     private String seatColor;
 
-    @Column(name = "car_id")         // DB 컬럼명: car_id (NULL 허용)
+    /**
+     * 매핑된 all_car_sale.car_id (NULL 허용)
+     */
+    @Column(name = "car_id")
     private Integer carId;
 
     @Column(name = "drive_type")
@@ -88,32 +108,111 @@ public class CarEntryDraft {
 
     @Column(name = "is_eco_friendly")
     private Boolean isEcoFriendly;
-    // 출고 일정
+
     @Column(name = "delivery_option")
     private String deliveryOption;
 
-    // 차량 등급 (신차/중고)
     @Column(name = "car_grade")
     private String carGrade;
 
-    // 판매 유형 (위탁/직거래)
     @Column(name = "sale_type")
     private String saleType;
 
-    // 판매 방식 (일반/렌트/리스)
     @Column(name = "sale_method")
     private String saleMethod;
 
-    @Column(name = "manufacturer", length = 50)
-    private String manufacturer;   // 제조사
+    // ====== 추가된 상태/점검/이력 컬럼들 ======
 
-    @Column(name = "model", length = 100)
-    private String model;          // 모델(세부명)
+    /**
+     * 타이어 잔량(0~100) (DB: tinyint unsigned)
+     */
+    @Column(name = "tire_percentage")
+    private Integer tirePercentage;
 
-    @Column(name = "origin")
-    private Boolean origin;        // false=국산(0), true=수입(1)  // TINYINT(1) 매핑
+    /**
+     * 엔진오일 이상(0/1)
+     */
+    @Column(name = "engine_oil_issue")
+    private Boolean engineOilIssue;
 
+    /**
+     * 브레이크 이상(0/1)
+     */
+    @Column(name = "brake_issue")
+    private Boolean brakeIssue;
 
+    /**
+     * 성능점검 실시(0/1)
+     */
+    @Column(name = "performance_checked")
+    private Boolean performanceChecked;
 
+    /**
+     * 사고 수리 건수 (tinyint unsigned)
+     */
+    @Column(name = "accident_repair_cnt")
+    private Integer accidentRepairCnt;
 
+    /**
+     * 전손 건수 (tinyint unsigned)
+     */
+    @Column(name = "total_loss_cnt")
+    private Integer totalLossCnt;
+
+    /**
+     * 침수(0/1)
+     */
+    @Column(name = "flood_cnt")
+    private Integer floodCnt;
+
+    /**
+     * 판금 횟수 (tinyint unsigned)
+     */
+    @Column(name = "panel_replacement_cnt")
+    private Integer panelReplacementCnt;
+
+    /**
+     * 보험처리 비용(원) (int)
+     */
+    @Column(name = "insurance_claim_cost")
+    private Integer insuranceClaimCost;
+
+    /**
+     * 타차가해(0/1)
+     */
+    @Column(name = "third_party_damage")
+    private Boolean thirdPartyDamage;
+
+    /**
+     * 특이사항
+     */
+    @Column(name = "special_note")
+    private String specialNote;
+
+    /**
+     * 판금(0/1)
+     */
+    @Column(name = "panel_beating")
+    private Boolean panelBeating;
+
+    /**
+     * 국소 교환(0/1)
+     */
+    @Column(name = "replacement_minor")
+    private Boolean replacementMinor;
+
+    /**
+     * 부식(0/1)
+     */
+    @Column(name = "corrosion")
+    private Boolean corrosion;
+
+    // ====== 기본값 처리 ======
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) createdAt = LocalDateTime.now();
+        if (isSubmitted == null) isSubmitted = Boolean.FALSE;
+        if (origin == null) origin = Boolean.FALSE; // 기본 국산
+        if (isEcoFriendly == null) isEcoFriendly = Boolean.FALSE;
+    }
 }

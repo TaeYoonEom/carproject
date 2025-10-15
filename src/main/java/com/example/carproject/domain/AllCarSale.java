@@ -18,8 +18,8 @@ public class AllCarSale {
     @Column(name = "member_id", nullable = false)
     private Integer memberId;
 
-    @Column(name = "origin")
-    private String origin;
+    @Column(name = "origin", length = 10)
+    private String origin;   // "국산" 또는 "수입"
 
     @Column(name = "is_eco_friendly")
     private Boolean isEcoFriendly;
