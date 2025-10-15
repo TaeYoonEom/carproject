@@ -1,6 +1,6 @@
 package com.example.carproject.buy.dto;
 
-import com.example.carproject.importcar.domain.ImportCarSale;
+import com.example.carproject.buy.domain.ImportCarSale;
 import com.example.carproject.domain.CarImage;
 import lombok.Getter;
 
