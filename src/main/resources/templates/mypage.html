@@ -243,18 +243,18 @@
                         <div style="margin-top: 10px;" th:if="${saleWaiting > 0}">
                             <strong style="font-size: 13px;">• 판매대기</strong>
 
-                            <!-- ✅ 찜한 차량과 동일한 구조/클래스 사용 -->
-                            <div class="wish-mini" style="margin-top:6px;">
+                            <!-- 기존: th:each="s : ${sellDrafts}" -->
+                            <div class="wish-mini" style="margin-top:6px;" th:if="${saleWaiting > 0}">
                                 <div class="wish-mini-grid">
-                                    <a th:each="s : ${sellDrafts}"
-                                       th:href="@{|/sell/detail/view?carNumber=${s.carNumber}|}"
+                                    <a th:each="s : ${sellCards}"
+                                       th:href="${s.carId} != null ? @{/cars/{id}(id=${s.carId})}
+                                  : @{|/sell/detail/view?carNumber=${s.carNumber}|}"
                                        class="wish-mini-card">
                                         <div class="thumb">
                                             <img th:src="${s.frontViewUrl} ?: @{/img/common/noimage.png}" alt="">
                                         </div>
                                         <div class="txt">
                                             <div class="name" th:text="${s.modelName}">모델명</div>
-                                            <!-- price 자리에 차량번호/연식 표시 -->
                                             <div class="price">
                                                 <span th:text="${s.carNumber}">12가 1234</span>
                                                 <span style="margin-left:6px;"
@@ -690,10 +690,11 @@
                         <td colspan="4" style="text-align: center;">판매대기 차량이 없습니다.</td>
                     </tr>
 
-                    <!-- ✅ 제출된 차량(현재는 판매대기=sellDrafts) 렌더 -->
-                    <tr th:each="s : ${sellDrafts}">
+                    <!-- (기존 th:each="s : ${sellDrafts}" → sellCards로 변경, 링크도 동일 로직) -->
+                    <tr th:each="s : ${sellCards}">
                         <td>
-                            <a th:href="@{|/sell/detail/view?carNumber=${s.carNumber}|}"
+                            <a th:href="${s.carId} != null ? @{/cars/{id}(id=${s.carId})}
+                                   : @{|/sell/detail/view?carNumber=${s.carNumber}|}"
                                style="display:flex; gap:10px; align-items:center; text-decoration:none; color:inherit;">
                                 <img th:src="${s.frontViewUrl} ?: '/img/common/noimage.png'"
                                      alt="" style="width:100px; height:70px; object-fit:cover; border-radius:6px;">
@@ -708,12 +709,14 @@
                                 </div>
                             </a>
                         </td>
-                        <!-- 현재 임시 정책: 제출된 건 = 판매중으로 표기하려면 '판매중'으로, 대기로 보려면 '판매대기'로 -->
                         <td th:text="${saleOn > 0} ? '판매중' : '판매대기'">판매대기</td>
-                        <td>-</td> <!-- 가격 미정이면 '-' -->
+                        <td>-</td>
                         <td>
-                            <a th:href="@{|/sell/detail/view?carNumber=${s.carNumber}|}" class="btn-gray-small">보기</a>
-                            <a th:href="@{|/sell/detail/photo?carId=${s.id}|}" class="btn-gray-small">사진수정</a>
+                            <a th:href="${s.carId} != null ? @{/cars/{id}(id=${s.carId})}
+                                   : @{|/sell/detail/view?carNumber=${s.carNumber}|}"
+                               class="btn-gray-small">보기</a>
+                            <!-- 사진수정은 draftId 기준 유지 -->
+                            <a th:href="@{|/sell/detail/photo?carId=${s.draftId}|}" class="btn-gray-small">사진수정</a>
                         </td>
                     </tr>
                     </tbody>

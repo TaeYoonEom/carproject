@@ -1,4 +1,4 @@
-package com.example.carproject.buy.repository;
+package com.example.carproject.repository;
 
 public interface WishMini {
     Integer getId();         // s.car_id

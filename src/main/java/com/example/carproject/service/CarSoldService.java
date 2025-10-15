@@ -2,7 +2,7 @@ package com.example.carproject.service;
 
 import com.example.carproject.domain.CarSold;
 import com.example.carproject.repository.CarSoldRepository;
-import com.example.carproject.repository.AllCarSaleRepositorys2;
+import com.example.carproject.repository.AllCarSaleRepository2;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +14,7 @@ import java.util.List;
 public class CarSoldService {
 
     private final CarSoldRepository carSoldRepo;
-    private final AllCarSaleRepositorys2 allCarSaleRepo;
+    private final AllCarSaleRepository2 allCarSaleRepo;
 
     @Transactional
     public void setStatus(int memberId, int carId, CarSold.Status status) {
