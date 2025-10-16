@@ -1,8 +1,8 @@
 package com.example.carproject.buy.service;
 
 import com.example.carproject.buy.domain.CargoSpecialSale;
-import com.example.carproject.buy.dto.CargoCardDto;
-import com.example.carproject.buy.repository.CargoSpecialSaleRepository;
+import com.example.carproject.buy.dto.TruckCardDto;
+import com.example.carproject.buy.repository.TruckSaleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,24 +10,23 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CargoSpecialServiceImpl implements CargoSpecialService {
+public class TruckSaleService {
 
-    private final CargoSpecialSaleRepository repo;
+    private final TruckSaleRepository repo;
 
-    @Override
+    // 전체 화물차 리스트 반환
     public List<CargoSpecialSale> getAll() {
         return repo.findAll();
     }
 
-    @Override
-    public List<CargoCardDto> getCargoCards() {
+    // DTO 변환 (국산차 패턴 동일)
+    public List<TruckCardDto> getTruckCards() {
         return repo.findAll().stream()
-                .map(CargoCardDto::new)
+                .map(TruckCardDto::new)
                 .toList();
     }
 
-    @Override
-    public long getCargoCount() {
+    public long getTruckCount() {
         return repo.count();
     }
 }

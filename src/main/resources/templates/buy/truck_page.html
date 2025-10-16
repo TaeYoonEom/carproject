@@ -292,84 +292,71 @@
         <main class="content">
             <div class="section-title">사진우대</div>
             <div class="encar-grid">
-                <article class="encar-card" th:each="card : ${cargoCards}">
+                <article class="encar-card" th:each="card : ${truckCards}">
                     <img class="encar-img"
                          th:src="${card.frontViewUrl != null} ? ${card.frontViewUrl} : '@{/img/default.jpg}'"
                          alt="차량 이미지"/>
 
                     <div class="encar-info">
                         <div class="encar-title"
-                             th:text="${card.manufacturer} + ' ' + ${card.modelName}">
-                            제조사 모델
-                        </div>
-
+                             th:text="${card.manufacturer} + ' ' + ${card.modelName}">모델명</div>
                         <div class="encar-category"
                              th:text="${card.year} + '년 ' + ${card.month} + '월 | ' + ${#numbers.formatInteger(card.mileage, 1, 'COMMA')} + 'km | ' + ${card.bodyType} + ' | ' + ${card.region}">
-                            2022년 5월 | 50,000km | 카고 | 경기
                         </div>
-
                         <div class="encar-price"
                              th:text="${#numbers.formatInteger(card.price/10000, 1, 'COMMA')} + '만원'">
-                            0만원
                         </div>
                     </div>
                 </article>
             </div>
-
-
-
-            <!-- 우대등록 영역 -->
+            <!-- 우대등록 -->
             <div class="section-title">우대등록</div>
             <table class="premium-table">
                 <thead>
-                <tr>
-                    <th>사진</th>
-                    <th>차량정보</th>
-                    <th>가격</th>
-                </tr>
+                <tr><th>사진</th><th>차량정보</th><th>가격</th></tr>
                 </thead>
                 <tbody>
-                <tr th:each="car : ${carList}">
-                    <td><img class="thumb" th:src="@{'/img/' + ${car.carName} + '.jpg'}" th:alt="${car.carName}"></td>
+                <tr th:each="card : ${truckCards}">
                     <td>
-                        <div class="encar-title" th:text="${car.carName}">차량명</div>
+                        <img class="thumb"
+                             th:src="${card.frontViewUrl != null} ? ${card.frontViewUrl} : '@{/img/default.jpg}'"
+                             th:alt="${card.manufacturer} + ' ' + ${card.modelName}">
+                    </td>
+                    <td>
+                        <div class="encar-title" th:text="${card.manufacturer} + ' ' + ${card.modelName}">차량명</div>
                         <div class="encar-category"
-                             th:text="${car.year} + '년 | ' + ${car.mileage} + 'km | ' + ${car.saleLocation}">정보</div>
-                        <div class="encar-tag">
-                            <span class="tag" th:if="${car.ownershipStatus == '소유중'}">무사고</span>
-                            <span class="tag">1인소유</span>
+                             th:text="${card.year} + '년 | ' + ${#numbers.formatInteger(card.mileage,1,'COMMA')} + 'km | ' + ${card.region}">
                         </div>
+                        <!-- 트럭에는 ownershipStatus가 없으니 배지는 임시로 숨김 -->
+                        <!-- <span class="tag" th:if="${card.ownershipStatus == '소유중'}">무사고</span> -->
                     </td>
                     <td class="encar-price"
-                        th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'">가격</td>
+                        th:text="${#numbers.formatInteger(card.price/10000,1,'COMMA')} + '만원'">가격</td>
                 </tr>
                 </tbody>
             </table>
 
-            <!-- 일반등록 영역 -->
+            <!-- 일반등록 -->
             <div class="section-title">일반등록</div>
             <table class="premium-table">
                 <thead>
-                <tr>
-                    <th>사진</th>
-                    <th>차량정보</th>
-                    <th>가격</th>
-                </tr>
+                <tr><th>사진</th><th>차량정보</th><th>가격</th></tr>
                 </thead>
                 <tbody>
-                <tr th:each="car : ${carList}">
-                    <td><img class="thumb" th:src="@{'/img/' + ${car.carName} + '.jpg'}" th:alt="${car.carName}"></td>
+                <tr th:each="card : ${truckCards}">
                     <td>
-                        <div class="encar-title" th:text="${car.carName}">차량명</div>
+                        <img class="thumb"
+                             th:src="${card.frontViewUrl != null} ? ${card.frontViewUrl} : '@{/img/default.jpg}'"
+                             th:alt="${card.manufacturer} + ' ' + ${card.modelName}">
+                    </td>
+                    <td>
+                        <div class="encar-title" th:text="${card.manufacturer} + ' ' + ${card.modelName}">차량명</div>
                         <div class="encar-category"
-                             th:text="${car.year} + '년 | ' + ${car.mileage} + 'km | ' + ${car.saleLocation}">정보</div>
-                        <div class="encar-tag">
-                            <span class="tag" th:if="${car.ownershipStatus == '소유중'}">무사고</span>
-                            <span class="tag">1인소유</span>
+                             th:text="${card.year} + '년 | ' + ${#numbers.formatInteger(card.mileage,1,'COMMA')} + 'km | ' + ${card.region}">
                         </div>
                     </td>
-                    <<td class="encar-price"
-                         th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'">가격</td>
+                    <td class="encar-price"
+                        th:text="${#numbers.formatInteger(card.price/10000,1,'COMMA')} + '만원'">가격</td>
                 </tr>
                 </tbody>
             </table>

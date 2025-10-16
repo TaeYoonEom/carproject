@@ -49,12 +49,11 @@ public class CargoSpecialSale {
     @Column(length = 100)
     private String region; //지역
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "performance_open", columnDefinition = "ENUM('전체 성능점검','성능기록부','미공개')")
-    private PerformanceOpen performanceOpen;
+    @Column(columnDefinition = "ENUM('직영 성능점검', '성능기록부', '보험이력', '차량 이력 공개')")
+    private String performanceOpen;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "seller_type", columnDefinition = "ENUM('일반','딜러')")
+    @Column(name = "seller_type", columnDefinition = "ENUM('개인','딜러')")
     private SellerType sellerType;
 
     @Enumerated(EnumType.STRING)
@@ -65,7 +64,7 @@ public class CargoSpecialSale {
     private String color;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "fuel_type", columnDefinition = "ENUM('휘발유','경유','LPG','전기','CNG','기타')")
+    @Column(name = "fuel_type", columnDefinition = "ENUM('가솔린','디젤','LPG','전기','CNG','기타')")
     private FuelType fuelType;
 
     @Enumerated(EnumType.STRING)
@@ -83,11 +82,10 @@ public class CargoSpecialSale {
     private AllCarSale allCarSale;
 
     // ====== ENUM 내부 클래스 ======
-    public enum AxleConfig { 전축, 후축, 추축, 없음 }
+    public enum AxleConfig { 전축, 후축, 중축, 없음 }
     public enum EncarDiagnosis { 엔카진단, 미진단 }
-    public enum PerformanceOpen { 전체_성능점검, 성능기록부, 미공개 }
-    public enum SellerType { 일반, 딜러 }
-    public enum UsageType { 자가용, 영업용, 특장차량 }
-    public enum FuelType { 휘발유, 경유, LPG, 전기, CNG, 기타 }
+    public enum SellerType { 개인, 딜러 }
+    public enum UsageType { 자가용, 영업용, 등본차량 }
+    public enum FuelType { 가솔린, 디젤, LPG, 전기, CNG, 기타 }
     public enum Transmission { 오토, 수동, 세미오토, 기타 }
 }
