@@ -16,18 +16,25 @@
     <!-- === 기본 HTML 골격 === -->
     <div class="page-wrapper">
         <!-- 좌측 필터 영역 -->
-        <aside class="sidebar-left">
+        <aside class="sidebar-left encar-filters">
             <div class="filter-header">
-                <h4>화물특장버스검색</h4>
-                <span class="allcount">
-                대
-                </span>
-                선택초기화 최근검색조건
+                <div class="header-top">
+                    <span class="label">화물특장버스 검색</span>
+                </div>
+                <div class="count-reset">
+                    <span class="allcount">
+                      <strong th:text="${#numbers.formatInteger(totalCount, 1, 'COMMA')}">0</strong>대
+                    </span>
+                    <button type="button" class="btn-reset" aria-label="선택 초기화">
+                        <span class="ico-rotate" aria-hidden="true">↻</span>
+                        선택 초기화
+                    </button>
+                </div>
             </div>
 
             <!-- 차종 -->
             <details class="filter-group" open>
-                <summary>차종</summary>
+                <summary>형식/적재용량</summary>
                 <ul class="filter-list">
                     <li><label><input type="checkbox"> 경차</label></li>
                     <li><label><input type="checkbox"> 소형차</label></li>
@@ -51,6 +58,16 @@
                     <label><input type="checkbox"> 현대</label>
                     <label><input type="checkbox"> 기아</label>
                     <label><input type="checkbox"> 제네시스</label>
+                </ul>
+            </details>
+
+            <!-- 가변축 -->
+            <details class="filter-group">
+                <summary>가변축</summary>
+                <ul class="filter-list">
+                    <label><input type="checkbox"> 전축</label>
+                    <label><input type="checkbox"> 중축</label>
+                    <label><input type="checkbox"> 후축</label>
                 </ul>
             </details>
 
@@ -136,7 +153,6 @@
                 </div>
             </details>
 
-
             <!-- 주행거리 -->
             <details class="filter-group">
                 <summary>주행거리</summary>
@@ -155,6 +171,14 @@
                 </ul>
             </details>
 
+            <!-- 엔카진단 -->
+            <details class="filter-group">
+                <summary>엔카진단</summary>
+                <ul class="filter-list">
+                    <label><input type="checkbox"> 엔카진단</label>
+                </ul>
+            </details>
+
             <!-- 지역 -->
             <details class="filter-group">
                 <summary>지역</summary>
@@ -167,30 +191,12 @@
                 </ul>
             </details>
 
-            <!-- 인승 -->
+            <!-- 성능 공개 -->
             <details class="filter-group">
-                <summary>인승</summary>
-                <ul class="filter-list">
-                    <li><label><input type="checkbox"> 2인승 이하</label></li>
-                    <li><label><input type="checkbox"> 3인승</label></li>
-                    <li><label><input type="checkbox"> 4인승</label></li>
-                    <li><label><input type="checkbox"> 5인승</label></li>
-                    <li><label><input type="checkbox"> 6인승</label></li>
-                    <li><label><input type="checkbox"> 7인승</label></li>
-                    <li><label><input type="checkbox"> 8인승</label></li>
-                    <li><label><input type="checkbox"> 9인승</label></li>
-                    <li><label><input type="checkbox"> 10인승 이상</label></li>
-                </ul>
-            </details>
-
-            <!-- 성능 / 보험 공개 -->
-            <details class="filter-group">
-                <summary>성능 / 보험 공개</summary>
+                <summary>성능공개</summary>
                 <ul class="filter-list">
                     <li><label><input type="checkbox"> 엔카 직영 성능점검</label></li>
                     <li><label><input type="checkbox"> 성능기록부</label></li>
-                    <li><label><input type="checkbox"> 보험이력</label></li>
-                    <li><label><input type="checkbox"> 차량 이력 공개</label></li>
                 </ul>
             </details>
 
@@ -200,8 +206,6 @@
                 <ul class="filter-list">
                     <li><label><input type="checkbox"> 개인</label></li>
                     <li><label><input type="checkbox"> 딜러</label></li>
-                    <li><label><input type="checkbox"> 브랜드인증</label></li>
-                    <li><label><input type="checkbox"> 리스렌트제휴</label></li>
                 </ul>
             </details>
 
@@ -215,9 +219,19 @@
                 </ul>
             </details>
 
-            <!-- 외부 색상 -->
+            <!-- 용도 -->
             <details class="filter-group">
-                <summary>외부 색상</summary>
+                <summary>용도</summary>
+                <ul class="filter-list">
+                    <li><label><input type="checkbox"> 자가용</label></li>
+                    <li><label><input type="checkbox"> 영업용</label></li>
+                    <li><label><input type="checkbox"> 등본차량</label></li>
+                </ul>
+            </details>
+
+            <!-- 색상 -->
+            <details class="filter-group">
+                <summary>색상</summary>
                 <ul class="filter-list">
                     <li><label><input type="checkbox"> 흰색</label></li>
                     <li><label><input type="checkbox"> 검정색</label></li>
@@ -227,29 +241,14 @@
                 </ul>
             </details>
 
-            <!-- 내부 색상 -->
-            <details class="filter-group">
-                <summary>내부 색상</summary>
-                <ul class="filter-list">
-                    <li><label><input type="checkbox"> 검정색 계열</label></li>
-                    <li><label><input type="checkbox"> 갈색 계열</label></li>
-                    <li><label><input type="checkbox"> 베이지색 계열</label></li>
-                    <li><label><input type="checkbox"> 회색 계열</label></li>
-                    <li><label><input type="checkbox"> 흰색 계열</label></li>
-                </ul>
-            </details>
-
-            <!-- 연료 -->
             <details class="filter-group">
                 <summary>연료</summary>
                 <ul class="filter-list">
                     <li><label><input type="checkbox"> 가솔린</label></li>
                     <li><label><input type="checkbox"> 디젤</label></li>
                     <li><label><input type="checkbox"> LPG(일반인 구입)</label></li>
-                    <li><label><input type="checkbox"> 가솔린+전기</label></li>
-                    <li><label><input type="checkbox"> 디젤+전기</label></li>
-                    <li><label><input type="checkbox"> 가솔린+LPG</label></li>
                     <li><label><input type="checkbox"> 전기</label></li>
+                    <li><label><input type="checkbox"> CNG</label></li>
                     <li><label><input type="checkbox"> 기타</label></li>
                 </ul>
             </details>
@@ -261,7 +260,6 @@
                     <li><label><input type="checkbox"> 오토</label></li>
                     <li><label><input type="checkbox"> 수동</label></li>
                     <li><label><input type="checkbox"> 세미오토</label></li>
-                    <li><label><input type="checkbox"> CVT</label></li>
                     <li><label><input type="checkbox"> 기타</label></li>
                 </ul>
             </details>
