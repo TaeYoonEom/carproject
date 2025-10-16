@@ -65,7 +65,7 @@ public class CargoSpecialSale {
     private String color;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "fuel_type", columnDefinition = "ENUM('가솔린','디젤','LPG','전기','CNG','기타')")
+    @Column(name = "fuel_type", columnDefinition = "ENUM('휘발유','경유','LPG','전기','CNG','기타')")
     private FuelType fuelType;
 
     @Enumerated(EnumType.STRING)

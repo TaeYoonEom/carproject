@@ -292,29 +292,31 @@
         <main class="content">
             <div class="section-title">사진우대</div>
             <div class="encar-grid">
-                <article class="encar-card" th:each="car :  ${carList.subList(0, 8)}">
-                    <!-- 차량 이미지: carName으로 이미지 경로 지정 -->
-                    <img class="encar-img" th:src="@{'/img/' + ${car.carName} + '.jpg'}" alt="차량 이미지">
+                <article class="encar-card" th:each="card : ${cargoCards}">
+                    <img class="encar-img"
+                         th:src="${card.frontViewUrl != null} ? ${card.frontViewUrl} : '@{/img/default.jpg}'"
+                         alt="차량 이미지"/>
 
                     <div class="encar-info">
-                        <!-- 상태 뱃지: 소유중일 경우만 표시
-                        <span class="badge-hot" th:if="${car.ownershipStatus == '소유중'}">판매중</span>-->
-
-                        <!-- 차량 제목 -->
-                        <div class="encar-title" th:text="${car.carName}">차량명</div>
-
-                        <!-- 차량 정보: 연식 | 주행거리 | 구동방식 | 지역 -->
-                        <div class="encar-category"
-                             th:utext="${car.year} + '년 | ' + ${car.mileage} + 'km<br>' + ${car.driveType} + ' | ' + ${car.saleLocation}">
+                        <div class="encar-title"
+                             th:text="${card.manufacturer} + ' ' + ${card.modelName}">
+                            제조사 모델
                         </div>
 
-                        <!-- 가격 (숫자 포맷 + 만원 단위) -->
+                        <div class="encar-category"
+                             th:text="${card.year} + '년 ' + ${card.month} + '월 | ' + ${#numbers.formatInteger(card.mileage, 1, 'COMMA')} + 'km | ' + ${card.bodyType} + ' | ' + ${card.region}">
+                            2022년 5월 | 50,000km | 카고 | 경기
+                        </div>
+
                         <div class="encar-price"
-                             th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'">
+                             th:text="${#numbers.formatInteger(card.price/10000, 1, 'COMMA')} + '만원'">
+                            0만원
                         </div>
                     </div>
                 </article>
             </div>
+
+
 
             <!-- 우대등록 영역 -->
             <div class="section-title">우대등록</div>
