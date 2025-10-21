@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="ko">
 <head>
   <title>차량 정보 입력</title>
   <th:block layout:fragment="style">
@@ -35,12 +37,13 @@
         <div class="origin-row">
           <label class="origin-radio">
             <input type="radio" name="origin" value="0"
-                   th:checked="${draft.origin == null or !draft.origin}"
+                   th:checked="${draft.origin == null or draft.origin == 0}"
                    id="originDomestic"> 국산
           </label>
+
           <label class="origin-radio">
             <input type="radio" name="origin" value="1"
-                   th:checked="${draft.origin == true}"
+                   th:checked="${draft.origin == 1}"
                    id="originImport"> 수입
           </label>
         </div>
@@ -119,269 +122,249 @@
     </form>
   </div>
 
-<th:block layout:fragment="script">
-  <script>
-    function validateForm() {
-        const modelName = document.querySelector("input[name='modelName']").value.trim();
-        const date = document.querySelector("input[name='manufactureDate']").value;
-        const mileage = document.querySelector("input[name='mileage']").value;
-        const region = document.getElementById("regionInput").value;
-        if (!modelName || !date || !mileage || !region) {
-            alert("모든 필수 정보를 입력해주세요.");
-            return false;
+  <th:block layout:fragment="script">
+
+    <!-- ✅ 1. 일반 스크립트 (validateForm, 지역 선택 등) -->
+    <script>
+      function validateForm() {
+          const modelName = document.querySelector("input[name='modelName']").value.trim();
+          const date = document.querySelector("input[name='manufactureDate']").value;
+          const mileage = document.querySelector("input[name='mileage']").value;
+          const region = document.getElementById("regionInput").value;
+          if (!modelName || !date || !mileage || !region) {
+              alert("모든 필수 정보를 입력해주세요.");
+              return false;
+          }
+          return true;
+      }
+    </script>
+
+    <script>
+      const provinceCityMap = {
+        "서울특별시": ["강남구", "서초구", "강북구", "송파구", "관악구"],
+        "경기도": ["부천시", "광명시", "안양시", "성남시", "광명시"],
+        "부산광역시": ["해운대구", "사하구", "남구", "중구"],
+        "강원도": ["춘천시", "원주시", "강릉시"]
+      };
+
+      const provinceSelect = document.getElementById("province");
+      const citySelect = document.getElementById("city");
+      const regionInput = document.getElementById("regionInput");
+
+      provinceSelect.addEventListener("change", function () {
+        const selectedProvince = this.value;
+        citySelect.innerHTML = `<option value="">시/군/구 선택</option>`;
+
+        if (selectedProvince && provinceCityMap[selectedProvince]) {
+          provinceCityMap[selectedProvince].forEach(city => {
+            const option = document.createElement("option");
+            option.value = city;
+            option.textContent = city;
+            citySelect.appendChild(option);
+          });
+          citySelect.disabled = false;
+        } else {
+          citySelect.disabled = true;
         }
-        return true;
-    }
-  </script>
-  <script>
-    const provinceCityMap = {
-      "서울특별시": ["강남구", "서초구", "강북구", "송파구", "관악구"],
-      "경기도": ["부천시", "광명시", "안양시", "성남시", "광명시"],
-      "부산광역시": ["해운대구", "사하구", "남구", "중구"],
-      "강원도": ["춘천시", "원주시", "강릉시"]
-    };
+        regionInput.value = "";
+      });
 
-    const provinceSelect = document.getElementById("province");
-    const citySelect = document.getElementById("city");
-    const regionInput = document.getElementById("regionInput");
+      citySelect.addEventListener("change", function () {
+        const province = provinceSelect.value;
+        const city = this.value;
+        if (province && city) {
+          regionInput.value = `${province} ${city}`;
+        }
+      });
+    </script>
 
-    provinceSelect.addEventListener("change", function () {
-      const selectedProvince = this.value;
-      citySelect.innerHTML = `<option value="">시/군/구 선택</option>`;
+    <!-- ✅ 2. 카탈로그 + preset JS (Thymeleaf 인라인 파싱 활성화) -->
+    <script th:inline="javascript">
+      // 카탈로그(대표 모델만 예시)
+      const CATALOG = {
+        domestic: {
+          "현대":     ["아반떼","쏘나타","그랜저","투싼","싼타페"],
+          "기아":     ["모닝","K3","K5","K8","스포티지","쏘렌토","카니발"],
+          "르노코리아": ["SM3","SM5","QM6"],
+          "KG 모빌리티": ["티볼리","코란도","렉스턴"],
+          "쉐보레":   ["스파크","말리부","트랙스","트레일블레이저"],
+          "제네시스": ["G70","G80","G90","GV70","GV80"]
+        },
+        import: {
+          "BMW":            ["3 Series","5 Series","X3","X5"],
+          "Mercedes-Benz":  ["C-Class","E-Class","S-Class","GLC"],
+          "Audi":           ["A4","A6","Q5","Q7"],
+          "Volkswagen":     ["Golf","Tiguan","Passat"],
+          "Toyota":         ["Camry","RAV4","Prius"],
+          "Lexus":          ["ES","RX"],
+          "Honda":          ["Accord","CR-V"],
+          "Volvo":          ["S60","S90","XC60"],
+          "Porshe":         ["911","Cayenne","Macan", "Panamera"]
+        }
+      };
 
-      if (selectedProvince && provinceCityMap[selectedProvince]) {
-        provinceCityMap[selectedProvince].forEach(city => {
-          const option = document.createElement("option");
-          option.value = city;
-          option.textContent = city;
-          citySelect.appendChild(option);
-        });
-        citySelect.disabled = false;
-      } else {
-        citySelect.disabled = true;
-      }
-      regionInput.value = "";
-    });
+      // DOM 참조
+      const originDomestic = document.getElementById('originDomestic');
+      const originImport   = document.getElementById('originImport');
+      const manufacturerSelect = document.getElementById('manufacturerSelect');
+      const manufacturerOther  = document.getElementById('manufacturerOther');
+      const manufacturerHidden = document.getElementById('manufacturer');
+      const modelSelect = document.getElementById('modelSelect');
+      const modelOther  = document.getElementById('modelOther');
+      const modelHidden = document.getElementById('model');
 
-    citySelect.addEventListener("change", function () {
-      const province = provinceSelect.value;
-      const city = this.value;
-      if (province && city) {
-        regionInput.value = `${province} ${city}`;
-      }
-    });
-  </script>
-  <script>
-    // 카탈로그(대표 모델만 예시)
-    const CATALOG = {
-      domestic: {
-        "현대":     ["아반떼","쏘나타","그랜저","투싼","싼타페"],
-        "기아":     ["모닝","K3","K5","K8","스포티지","쏘렌토","카니발"],
-        "르노코리아": ["SM3","SM5","QM6"],
-        "KG 모빌리티": ["티볼리","코란도","렉스턴"],
-        "쉐보레":   ["스파크","말리부","트랙스","트레일블레이저"],
-        "제네시스": ["G70","G80","G90","GV70","GV80"]
-      },
-      import: {
-        "BMW":            ["3 Series","5 Series","X3","X5"],
-        "Mercedes-Benz":  ["C-Class","E-Class","S-Class","GLC"],
-        "Audi":           ["A4","A6","Q5","Q7"],
-        "Volkswagen":     ["Golf","Tiguan","Passat"],
-        "Toyota":         ["Camry","RAV4","Prius"],
-        "Lexus":          ["ES","RX"],
-        "Honda":          ["Accord","CR-V"],
-        "Volvo":          ["S60","S90","XC60"],
-        "Porshe":         ["911","Cayenne","Macan", "Panamera"]
-      }
-    };
+      // ✅ 서버에서 내려온 기존 값(있으면 미리 반영)
+      const presetManufacturer = /*[[${draft.manufacturer}]]*/ '';
+      const presetModel        = /*[[${draft.model}]]*/ '';
+      const presetOrigin       = /*[[${draft.origin}]]*/ '';
 
-    // DOM 참조
-    const originDomestic = document.getElementById('originDomestic');
-    const originImport   = document.getElementById('originImport');
+      // === 제조사 옵션 채우기 ===
+      function fillManufacturers() {
+        const isDomestic = originDomestic.checked || (!originDomestic.checked && !originImport.checked);
+        const source = isDomestic ? CATALOG.domestic : CATALOG.import;
 
-    const manufacturerSelect = document.getElementById('manufacturerSelect');
-    const manufacturerOther  = document.getElementById('manufacturerOther');
-    const manufacturerHidden = document.getElementById('manufacturer');
+        manufacturerSelect.innerHTML =
+          '<option value="">제조사를 선택하세요</option>' +
+          Object.keys(source).map(m => `<option value="${m}">${m}</option>`).join('') +
+          '<option value="__OTHER__">기타(직접 입력)</option>';
 
-    const modelSelect = document.getElementById('modelSelect');
-    const modelOther  = document.getElementById('modelOther');
-    const modelHidden = document.getElementById('model');
-
-    // 서버에서 내려온 기존 값(있으면 미리 반영)
-    const presetManufacturer = /*[[${draft.manufacturer}]]*/ '';
-    const presetModel        = /*[[${draft.model}]]*/ '';
-    const presetOrigin       = /*[[${draft.origin}]]*/ '';
-
-    // 제조사 옵션 채우기
-    function fillManufacturers() {
-      const isDomestic = originDomestic.checked || (!originDomestic.checked && !originImport.checked);
-      const source = isDomestic ? CATALOG.domestic : CATALOG.import;
-
-      // 초기화
-      manufacturerSelect.innerHTML =
-        '<option value="">제조사를 선택하세요</option>' +
-        Object.keys(source).map(m => `<option value="${m}">${m}</option>`).join('') +
-        '<option value="__OTHER__">기타(직접 입력)</option>';
-
-      manufacturerOther.style.display = 'none';
-      manufacturerOther.value = '';
-
-      // 모델도 초기화
-      modelSelect.innerHTML = '<option value="">모델을 선택하세요</option><option value="__OTHER__">기타(직접 입력)</option>';
-      modelSelect.disabled = true;
-      modelOther.style.display = 'none';
-      modelOther.value = '';
-
-      // hidden 초기화
-      manufacturerHidden.value = '';
-      modelHidden.value = '';
-    }
-
-    // 모델 옵션 채우기
-    function fillModels(maker) {
-      const isDomestic = originDomestic.checked;
-      const source = isDomestic ? CATALOG.domestic : CATALOG.import;
-      const models = source[maker] || [];
-
-      modelSelect.innerHTML =
-        '<option value="">모델을 선택하세요</option>' +
-        models.map(v => `<option value="${v}">${v}</option>`).join('') +
-        '<option value="__OTHER__">기타(직접 입력)</option>';
-
-      modelSelect.disabled = false;
-      modelOther.style.display = 'none';
-      modelOther.value = '';
-      modelHidden.value = '';
-    }
-
-    // 이벤트 바인딩
-    originDomestic.addEventListener('change', fillManufacturers);
-    originImport.addEventListener('change',  fillManufacturers);
-
-    manufacturerSelect.addEventListener('change', () => {
-      const v = manufacturerSelect.value;
-      if (v === '__OTHER__') {
-        manufacturerOther.style.display = '';
-        manufacturerHidden.value = ''; // 직접 입력 기다림
-        modelSelect.innerHTML = '<option value="">모델을 선택하세요</option><option value="__OTHER__">기타(직접 입력)</option>';
-        modelSelect.disabled = false;  // 기타 제조사여도 모델 기타 가능
-        modelOther.style.display = 'none';
-        modelOther.value = '';
-        modelHidden.value = '';
-      } else if (v) {
         manufacturerOther.style.display = 'none';
         manufacturerOther.value = '';
-        manufacturerHidden.value = v;
-        fillModels(v);
-      } else {
-        manufacturerOther.style.display = 'none';
-        manufacturerOther.value = '';
-        manufacturerHidden.value = '';
         modelSelect.innerHTML = '<option value="">모델을 선택하세요</option><option value="__OTHER__">기타(직접 입력)</option>';
         modelSelect.disabled = true;
         modelOther.style.display = 'none';
         modelOther.value = '';
+        manufacturerHidden.value = '';
         modelHidden.value = '';
       }
-    });
 
-    modelSelect.addEventListener('change', () => {
-      const v = modelSelect.value;
-      if (v === '__OTHER__') {
-        modelOther.style.display = '';
-        modelHidden.value = '';
-      } else if (v) {
-        modelOther.style.display = 'none';
-        modelOther.value = '';
-        modelHidden.value = v;
-      } else {
-        modelOther.style.display = 'none';
-        modelOther.value = '';
-        modelHidden.value = '';
-      }
-    });
-
-    // 폼 제출 시 유효성 + 기타 처리
-    const _oldValidate = validateForm;
-    window.validateForm = function () {
-      // 기존 필수값 체크
-      if (_oldValidate && _oldValidate() === false) return false;
-
-      // manufacturer
-      if (manufacturerSelect.value === '__OTHER__') {
-        if (!manufacturerOther.value.trim()) {
-          alert('제조사를 입력하세요.');
-          manufacturerOther.focus();
-          return false;
-        }
-        manufacturerHidden.value = manufacturerOther.value.trim();
-      }
-      if (!manufacturerHidden.value) {
-        alert('제조사를 선택하세요.');
-        manufacturerSelect.focus();
-        return false;
-      }
-
-      // model
-      if (modelSelect.value === '__OTHER__') {
-        if (!modelOther.value.trim()) {
-          alert('모델을 입력하세요.');
-          modelOther.focus();
-          return false;
-        }
-        modelHidden.value = modelOther.value.trim();
-      }
-      if (!modelHidden.value) {
-        alert('모델을 선택하세요.');
-        modelSelect.focus();
-        return false;
-      }
-
-      return true;
-    };
-
-    // 처음 로드 시: 라디오 상태 보고 제조사/모델 채우기 + 기존 값 복원
-    fillManufacturers();
-
-    // preset 값이 있으면 복원
-    (function restorePreset() {
-      // origin은 Thymeleaf 체크로 반영됨. 제조사/모델만 맞춰줌
-      const isDomestic = originDomestic.checked;
-      const hasMaker = presetManufacturer && presetManufacturer.length > 0;
-
-      if (hasMaker) {
-        // 현재 카탈로그에 있으면 select로, 없으면 기타로
+      // === 모델 옵션 채우기 ===
+      function fillModels(maker) {
+        const isDomestic = originDomestic.checked;
         const source = isDomestic ? CATALOG.domestic : CATALOG.import;
-        if (source[presetManufacturer]) {
-          manufacturerSelect.value = presetManufacturer;
-          manufacturerHidden.value = presetManufacturer;
-          fillModels(presetManufacturer);
+        const models = source[maker] || [];
 
-          if (presetModel && (source[presetManufacturer] || []).includes(presetModel)) {
-            modelSelect.value = presetModel;
-            modelHidden.value = presetModel;
-          } else if (presetModel) {
+        modelSelect.innerHTML =
+          '<option value="">모델을 선택하세요</option>' +
+          models.map(v => `<option value="${v}">${v}</option>`).join('') +
+          '<option value="__OTHER__">기타(직접 입력)</option>';
+
+        modelSelect.disabled = false;
+        modelOther.style.display = 'none';
+        modelOther.value = '';
+        modelHidden.value = '';
+      }
+
+      // === 이벤트 바인딩 ===
+      originDomestic.addEventListener('change', fillManufacturers);
+      originImport.addEventListener('change',  fillManufacturers);
+
+      manufacturerSelect.addEventListener('change', () => {
+        const v = manufacturerSelect.value;
+        if (v === '__OTHER__') {
+          manufacturerOther.style.display = '';
+          manufacturerHidden.value = '';
+          modelSelect.innerHTML = '<option value="">모델을 선택하세요</option><option value="__OTHER__">기타(직접 입력)</option>';
+          modelSelect.disabled = false;
+        } else if (v) {
+          manufacturerOther.style.display = 'none';
+          manufacturerOther.value = '';
+          manufacturerHidden.value = v;
+          fillModels(v);
+        } else {
+          manufacturerOther.style.display = 'none';
+          manufacturerHidden.value = '';
+          modelSelect.innerHTML = '<option value="">모델을 선택하세요</option><option value="__OTHER__">기타(직접 입력)</option>';
+          modelSelect.disabled = true;
+        }
+      });
+
+      modelSelect.addEventListener('change', () => {
+        const v = modelSelect.value;
+        if (v === '__OTHER__') {
+          modelOther.style.display = '';
+          modelHidden.value = '';
+        } else if (v) {
+          modelOther.style.display = 'none';
+          modelHidden.value = v;
+        } else {
+          modelOther.style.display = 'none';
+          modelHidden.value = '';
+        }
+      });
+
+      // === 폼 제출 시 검증 ===
+      const _oldValidate = validateForm;
+      window.validateForm = function () {
+        if (_oldValidate && _oldValidate() === false) return false;
+
+        if (manufacturerSelect.value === '__OTHER__') {
+          if (!manufacturerOther.value.trim()) {
+            alert('제조사를 입력하세요.');
+            manufacturerOther.focus();
+            return false;
+          }
+          manufacturerHidden.value = manufacturerOther.value.trim();
+        }
+        if (!manufacturerHidden.value) {
+          alert('제조사를 선택하세요.');
+          manufacturerSelect.focus();
+          return false;
+        }
+
+        if (modelSelect.value === '__OTHER__') {
+          if (!modelOther.value.trim()) {
+            alert('모델을 입력하세요.');
+            modelOther.focus();
+            return false;
+          }
+          modelHidden.value = modelOther.value.trim();
+        }
+        if (!modelHidden.value) {
+          alert('모델을 선택하세요.');
+          modelSelect.focus();
+          return false;
+        }
+
+        return true;
+      };
+
+      // === 초기 로드 시 제조사/모델 복원 ===
+      fillManufacturers();
+      (function restorePreset() {
+        const isDomestic = originDomestic.checked;
+        const hasMaker = presetManufacturer && presetManufacturer.length > 0;
+        if (hasMaker) {
+          const source = isDomestic ? CATALOG.domestic : CATALOG.import;
+          if (source[presetManufacturer]) {
+            manufacturerSelect.value = presetManufacturer;
+            manufacturerHidden.value = presetManufacturer;
+            fillModels(presetManufacturer);
+            if (presetModel && (source[presetManufacturer] || []).includes(presetModel)) {
+              modelSelect.value = presetModel;
+              modelHidden.value = presetModel;
+            } else if (presetModel) {
+              modelSelect.value = '__OTHER__';
+              modelOther.style.display = '';
+              modelOther.value = presetModel;
+              modelHidden.value = presetModel;
+            }
+          } else {
+            manufacturerSelect.value = '__OTHER__';
+            manufacturerOther.style.display = '';
+            manufacturerOther.value = presetManufacturer;
+            manufacturerHidden.value = presetManufacturer;
+            modelSelect.disabled = false;
             modelSelect.value = '__OTHER__';
             modelOther.style.display = '';
-            modelOther.value = presetModel;
-            modelHidden.value = presetModel;
+            modelOther.value = presetModel || '';
+            modelHidden.value = presetModel || '';
           }
-        } else {
-          manufacturerSelect.value = '__OTHER__';
-          manufacturerOther.style.display = '';
-          manufacturerOther.value = presetManufacturer;
-          manufacturerHidden.value = presetManufacturer;
-
-          modelSelect.disabled = false;
-          modelSelect.value = '__OTHER__';
-          modelOther.style.display = '';
-          modelOther.value = presetModel || '';
-          modelHidden.value = presetModel || '';
         }
-      }
-    })();
-  </script>
+      })();
+    </script>
 
-</th:block>
+  </th:block>
+
 </body>
 </html>

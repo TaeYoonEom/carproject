@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 public class CarSale {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int carId;
+    @Column(name = "car_id")
+    private Integer carId; // ✅ GeneratedValue 제거 (공유 PK)
     private int memberId;
     private String carName;
     private String manufacturer;
@@ -56,7 +56,7 @@ public class CarSale {
 
     // AllCarSale 연결 추가
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "car_id", referencedColumnName = "car_id")
+    @JoinColumn(name = "all_car_sale_id", referencedColumnName = "car_id")
     private AllCarSale allCarSale;
 
 }

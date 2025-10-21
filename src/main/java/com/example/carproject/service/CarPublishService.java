@@ -9,7 +9,9 @@ import com.example.carproject.repository.CarEntryDraftRepository;
 import com.example.carproject.repository.CarSaleRepository2;
 import com.example.carproject.repository.ImportCarSaleRepository2;
 import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -23,28 +25,28 @@ public class CarPublishService {
     private final CarEntryDraftRepository draftRepo;
     private final CarSaleRepository2 carSaleRepo;
     private final ImportCarSaleRepository2 importRepo;
+    private final JdbcTemplate jdbc;
 
     /**
      * 초안(draftId)을 정식 매물로 발행:
      * - all_car_sale 생성/재사용
-     * - origin=false(국산) → car_sale
-     * - origin=true(수입)  → import_car_sale
-     * @return 생성/연결된 car_id
+     * - origin=0 → car_sale / origin=1 → import_car_sale
+     * - car_entry_draft 이미지 → car_image 자동 복사
      */
     @Transactional
     public Integer publishFromDraft(Integer draftId) {
 
-        // 1) Draft 조회
+        // 1️⃣ Draft 조회
         CarEntryDraft d = draftRepo.findById(draftId)
                 .orElseThrow(() -> new IllegalArgumentException("초안을 찾을 수 없습니다. id=" + draftId));
 
-        // 2) AllCarSale 확보 (없으면 생성)
+        // 2️⃣ AllCarSale 확보 (없으면 생성)
         AllCarSale all = allRepo.findByCarEntryDraftId(draftId)
                 .orElseGet(() -> {
                     AllCarSale created = new AllCarSale();
                     created.setMemberId(d.getMemberId());
                     created.setCarEntryDraftId(d.getId());
-                    created.setOrigin(Boolean.TRUE.equals(d.getOrigin()) ? "수입" : "국산");
+                    created.setOrigin(d.getOrigin()); // 그대로 전달 (0=국산, 1=수입)
                     created.setIsEcoFriendly(Boolean.TRUE.equals(d.getIsEcoFriendly()));
                     created.setIsCargo(d.getCarType() != null && d.getCarType().contains("화물"));
                     return allRepo.save(created);
@@ -52,7 +54,7 @@ public class CarPublishService {
 
         Integer carId = all.getCarId();
 
-        // 3) 제조 연/월 계산
+        // 3️⃣ 제조 연/월 계산
         Integer year = null, month = null;
         if (d.getManufactureDate() != null) {
             LocalDate md = d.getManufactureDate();
@@ -60,7 +62,7 @@ public class CarPublishService {
             month = md.getMonthValue();
         }
 
-        // 4) 공통 매핑 값
+        // 4️⃣ 공통 매핑 값
         String carName        = (d.getModelName() != null && !d.getModelName().isBlank()) ? d.getModelName() : d.getModel();
         String manufacturer   = d.getManufacturer();
         String modelName      = (d.getModelName() != null) ? d.getModelName() : d.getModel();
@@ -79,23 +81,21 @@ public class CarPublishService {
         String fuelType       = d.getFuelType();
         String transmission   = d.getTransmission();
         String saleMethod     = d.getSaleMethod();
-        Integer price         = 0;                       // draft에 없으면 0
-        String performanceOpen= "성능기록부";            // 기본값
-        String sellerType     = "개인";                  // 기본값
-        String ownershipStatus= "등록중";                // 기본값
+        Integer price         = (d.getPrice() != null) ? d.getPrice() : 0;
+        String performanceOpen= "성능기록부";
+        String sellerType     = "개인";
+        String ownershipStatus= "등록중";
         LocalDateTime createdAt = LocalDateTime.now();
 
-        boolean isImport = Boolean.TRUE.equals(d.getOrigin()); // true=수입, false=국산
+        int originValue = (d.getOrigin() != null ? d.getOrigin() : 0);
+        boolean isImport = (originValue == 1);
 
+        // 5️⃣ 분기: 국산/수입 테이블 삽입
         if (!isImport) {
-            // === 국산: car_sale ===
             if (!carSaleRepo.existsByCarId(carId)) {
                 CarSale cs = new CarSale();
-                // 🔑 PK를 all_car_sale.car_id와 동일하게 맞춤 (현재 매핑에서는 명시 세팅이 필요)
                 cs.setCarId(carId);
-                // 🔗 연관관계는 엔티티로 세팅
                 cs.setAllCarSale(all);
-
                 cs.setMemberId(d.getMemberId());
                 cs.setCarName(carName);
                 cs.setManufacturer(manufacturer);
@@ -116,24 +116,20 @@ public class CarPublishService {
                 cs.setCreatedAt(createdAt);
                 cs.setCarType(carType);
                 cs.setCarGrade(carGrade);
-                cs.setCapacity(0); // Draft에 값 없으므로 0 또는 null 허용 시 엔티티 타입을 Integer로
+                cs.setCapacity(0);
                 cs.setSaleType(saleType);
                 cs.setFuelType(fuelType);
                 cs.setTransmission(transmission);
                 cs.setPerformanceOpen(performanceOpen);
                 cs.setSellerType(sellerType);
                 cs.setSaleMethod(saleMethod != null ? saleMethod : "일반");
-                carSaleRepo.save(cs);
+                carSaleRepo.saveAndFlush(cs); // ✅ 즉시 flush 보장
             }
         } else {
-            // === 수입: import_car_sale ===
             if (!importRepo.existsByCarId(carId)) {
                 ImportCarSale is = new ImportCarSale();
-                // 🔑 PK를 all_car_sale.car_id와 동일하게
                 is.setCarId(carId);
-                // 🔗 연관관계는 엔티티로 세팅
                 is.setAllCarSale(all);
-
                 is.setMemberId(d.getMemberId());
                 is.setCarName(carName);
                 is.setManufacturer(manufacturer);
@@ -154,17 +150,45 @@ public class CarPublishService {
                 is.setCreatedAt(createdAt);
                 is.setCarType(carType);
                 is.setCarGrade(carGrade);
-                is.setCapacity(0); // 필요 시 Integer로 변경
+                is.setCapacity(0);
                 is.setSaleType(saleType);
                 is.setFuelType(fuelType);
                 is.setTransmission(transmission);
                 is.setPerformanceOpen(performanceOpen);
                 is.setSellerType(sellerType);
                 is.setSaleMethod(saleMethod != null ? saleMethod : "일반");
-                importRepo.save(is);
+                importRepo.saveAndFlush(is); // ✅ 즉시 반영
             }
         }
 
+        // 6️⃣ 이미지 복사
+        copyDraftImagesToCarImage(d, carId);
+
         return carId;
+    }
+
+    private void copyDraftImagesToCarImage(CarEntryDraft draft, int carId) {
+        Integer exists = jdbc.queryForObject(
+                "SELECT COUNT(*) FROM car_image WHERE car_id = ?", Integer.class, carId);
+        if (exists != null && exists > 0) return;
+
+        String sql = """
+            INSERT INTO car_image (
+                car_id, is_representative, uploaded_at,
+                front_view_url, left_side_url, right_side_url,
+                rear_view_url, driver_seat_url, back_seat_url
+            )
+            VALUES (?, 1, NOW(), ?, ?, ?, ?, ?, ?)
+        """;
+
+        jdbc.update(sql,
+                carId,
+                draft.getFrontViewUrl(),
+                draft.getLeftSideUrl(),
+                draft.getRightSideUrl(),
+                draft.getRearViewUrl(),
+                draft.getDriverSeatUrl(),
+                draft.getBackSeatUrl()
+        );
     }
 }

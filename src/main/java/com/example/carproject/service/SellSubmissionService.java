@@ -15,20 +15,24 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class SellSubmissionService {
 
-    private final CarEntryDraftRepository draftRepo;   // <-- JpaRepository<CarEntryDraft, Integer> 이어야 함
+    private final CarEntryDraftRepository draftRepo;   // <-- JpaRepository<CarEntryDraft, Integer>
     private final AllCarSaleRepository2 allRepo;
     private final CarSoldRepository soldRepo;
+
+    // ✅ 추가된 부분
+    private final CarPublishService carPublishService;
 
     /**
      * 초안 제출(내차등록 완료) 시 호출:
      * 1) all_car_sale 생성/재사용
      * 2) draft.car_id 역기입
      * 3) car_sold('판매중') 생성/유지
+     * 4) car_sale / import_car_sale / car_image 자동 생성 (CarPublishService 호출)
      * @return 생성/연결된 carId
      */
     @Transactional
-    public int processDraftSubmission(Integer draftId, Integer memberId) { // <-- long/int → Integer
-        // 0) 초안 로딩 + 소유자 검증
+    public int processDraftSubmission(Integer draftId, Integer memberId) {
+        // 0️⃣ 초안 로딩 + 소유자 검증
         CarEntryDraft draft = draftRepo.findById(draftId)
                 .orElseThrow(() -> new IllegalArgumentException("Draft not found: " + draftId));
 
@@ -38,69 +42,77 @@ public class SellSubmissionService {
 
         // 제출 플래그가 숫자/불린 혼용될 수 있으니 안전 체크
         if (!isSubmittedTrue(draft)) {
-            // 여기서 강제로 제출 상태로 만들고 싶으면 주석 해제
-            // draft.setIsSubmitted(1); // 또는 true
+            // draft.setIsSubmitted(true);
             // draftRepo.save(draft);
         }
 
-        // 1) all_car_sale upsert (car_entry_draft_id UNIQUE 기준 멱등)
+        // 1️⃣ all_car_sale upsert (car_entry_draft_id UNIQUE 기준 멱등)
         AllCarSale all = allRepo.findByCarEntryDraftId(draft.getId())
                 .orElseGet(() -> createAllCarSaleFromDraft(draft));
 
-        // 2) draft.car_id 역기입 (멱등)
+        // 2️⃣ draft.car_id 역기입 (멱등)
         if (draft.getCarId() == null || draft.getCarId() == 0) {
             draft.setCarId(all.getCarId());
             draftRepo.save(draft);
         }
 
-        // 3) car_sold 생성/유지 (멱등)
+        // 3️⃣ car_sold 생성/유지 (멱등)
         if (soldRepo.findByCarId(all.getCarId()).isEmpty()) {
             CarSold sold = new CarSold();
             sold.setMemberId(memberId);
             sold.setCarId(all.getCarId());
-            // enum 사용이면:
             sold.setStatus(CarSold.Status.판매중);
-            // 문자열 컬럼이면 대신: sold.setStatus("판매중");
             soldRepo.save(sold);
+        }
+
+        // ✅ 4️⃣ car_publish 자동 호출
+        try {
+            carPublishService.publishFromDraft(draft.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("CarPublishService 호출 중 오류 발생: " + e.getMessage());
         }
 
         return all.getCarId();
     }
 
+    /**
+     * Draft를 기반으로 AllCarSale 생성 (중복 안전)
+     */
     private AllCarSale createAllCarSaleFromDraft(CarEntryDraft d) {
         AllCarSale a = new AllCarSale();
         a.setMemberId(d.getMemberId());
 
-        // origin 기본값: region에 '수입' 포함하면 '수입', 아니면 '국산'
-        String origin = (d.getRegion() != null && d.getRegion().contains("수입")) ? "수입" : "국산";
-        a.setOrigin(origin);
+        // ✅ origin: draft의 0/1 값을 그대로 저장 (0=국산, 1=수입)
+        Integer originValue = (d.getOrigin() != null) ? d.getOrigin() : 0; // null 방어
+        a.setOrigin(originValue);
 
-        // eco: 드래프트 isEcoFriendly 우선, 없으면 연료 타입으로 추론
-        // eco: 드래프트 isEcoFriendly 우선, 없으면 연료 타입으로 추론
+        // ✅ eco: 드래프트 isEcoFriendly 우선, 없으면 연료 타입으로 추론
         Boolean eco = d.getIsEcoFriendly();
         if (eco == null) {
             String fuel = d.getFuelType();
-            eco = (fuel != null && (fuel.contains("전기") || fuel.contains("수소"))); // true/false
+            eco = (fuel != null && (fuel.contains("전기") || fuel.contains("수소")));
         }
         a.setIsEcoFriendly(eco);
 
-        // cargo: 기본 0 → Boolean로 false
-        a.setIsCargo(false);
+        // ✅ cargo: 기본 false 처리
+        a.setIsCargo(d.getCarType() != null && d.getCarType().contains("화물"));
 
-        // draft 연결 (Integer 그대로)
+        // ✅ draft 연결
         a.setCarEntryDraftId(d.getId());
-
 
         try {
             return allRepo.save(a);
         } catch (DataIntegrityViolationException e) {
-            // 동시 제출로 UNIQUE(car_entry_draft_id) 충돌 → 이미 생성된 행 재조회 (멱등 보장)
+            // UNIQUE(car_entry_draft_id) 충돌 시 이미 생성된 행 재조회
             return allRepo.findByCarEntryDraftId(d.getId())
                     .orElseThrow(() -> e);
         }
     }
 
-    /** isSubmitted이 Integer(0/1) 또는 Boolean일 수 있는 경우 모두 true 판정 */
+    /**
+     * isSubmitted이 Integer(0/1) 또는 Boolean일 수 있는 경우 모두 true 판정
+     */
     private boolean isSubmittedTrue(CarEntryDraft d) {
         Object v = d.getIsSubmitted();
         if (v == null) return false;

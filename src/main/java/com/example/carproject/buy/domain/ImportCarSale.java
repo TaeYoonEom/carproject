@@ -10,12 +10,14 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
+@Table(name = "import_car_sale")
 public class ImportCarSale {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int carId;
-    private int memberId;
+    @Column(name = "car_id")
+    private Integer carId;  // ✅ 수동 세팅 (GeneratedValue 제거)
+
+    private Integer memberId;
     private String carName;
     private String manufacturer;
     private String modelName;
@@ -31,16 +33,16 @@ public class ImportCarSale {
     private String seatColor;
     private String driveType;
     private String saleLocation;
-    private int price;
-    private int mileage;
-    private int year;
-    private int month;
+    private Integer price;
+    private Integer mileage;
+    private Integer year;
+    private Integer month;
     private LocalDateTime createdAt;
 
     @Column(length = 50)
     private String carType;
     private String carGrade;
-    private int capacity;
+    private Integer capacity;
     private String saleType;
     private String fuelType;
 
@@ -50,7 +52,6 @@ public class ImportCarSale {
     @Column(columnDefinition = "ENUM('엔카 직영 성능점검', '성능기록부', '보험이력', '차량 이력 공개')")
     private String performanceOpen;
 
-
     @Column(columnDefinition = "ENUM('개인', '딜러', '리스렌트제휴')")
     private String sellerType;
 
@@ -58,6 +59,6 @@ public class ImportCarSale {
     private String saleMethod;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "car_id", referencedColumnName = "car_id")
+    @JoinColumn(name = "all_car_sale_id", referencedColumnName = "car_id")
     private AllCarSale allCarSale;
 }

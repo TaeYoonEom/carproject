@@ -39,16 +39,20 @@ public class CarEntryDraft {
     private String model;          // 모델(세부명)
 
     /**
-     * 0=국산, 1=수입 (DB: tinyint(1))
+     * 0=국산, 1=수입 (DB: TINYINT(1))
      */
-    @Column(name = "origin", nullable = false)
-    private Boolean origin;  // false=국산(0), true=수입(1)
+    @Column(name = "origin", nullable = false, columnDefinition = "TINYINT(1)")
+    private Integer origin;  // 0=국산, 1=수입
 
     @Column(name = "manufacture_date")
     private LocalDate manufactureDate;
 
     @Column(name = "mileage")
     private Integer mileage;
+
+    @Builder.Default
+    @Column(name = "price", nullable = false)
+    private Integer price = 0;
 
     @Column(name = "region")
     private String region;
@@ -123,87 +127,59 @@ public class CarEntryDraft {
 
     // ====== 추가된 상태/점검/이력 컬럼들 ======
 
-    /**
-     * 타이어 잔량(0~100) (DB: tinyint unsigned)
-     */
+    /** 타이어 잔량(0~100) (DB: tinyint unsigned) */
     @Column(name = "tire_percentage")
     private Integer tirePercentage;
 
-    /**
-     * 엔진오일 이상(0/1)
-     */
+    /** 엔진오일 이상(0/1) */
     @Column(name = "engine_oil_issue")
     private Boolean engineOilIssue;
 
-    /**
-     * 브레이크 이상(0/1)
-     */
+    /** 브레이크 이상(0/1) */
     @Column(name = "brake_issue")
     private Boolean brakeIssue;
 
-    /**
-     * 성능점검 실시(0/1)
-     */
+    /** 성능점검 실시(0/1) */
     @Column(name = "performance_checked")
     private Boolean performanceChecked;
 
-    /**
-     * 사고 수리 건수 (tinyint unsigned)
-     */
+    /** 사고 수리 건수 (tinyint unsigned) */
     @Column(name = "accident_repair_cnt")
     private Integer accidentRepairCnt;
 
-    /**
-     * 전손 건수 (tinyint unsigned)
-     */
+    /** 전손 건수 (tinyint unsigned) */
     @Column(name = "total_loss_cnt")
     private Integer totalLossCnt;
 
-    /**
-     * 침수(0/1)
-     */
+    /** 침수(0/1) */
     @Column(name = "flood_cnt")
     private Integer floodCnt;
 
-    /**
-     * 판금 횟수 (tinyint unsigned)
-     */
+    /** 판금 횟수 (tinyint unsigned) */
     @Column(name = "panel_replacement_cnt")
     private Integer panelReplacementCnt;
 
-    /**
-     * 보험처리 비용(원) (int)
-     */
+    /** 보험처리 비용(원) (int) */
     @Column(name = "insurance_claim_cost")
     private Integer insuranceClaimCost;
 
-    /**
-     * 타차가해(0/1)
-     */
+    /** 타차가해(0/1) */
     @Column(name = "third_party_damage")
     private Boolean thirdPartyDamage;
 
-    /**
-     * 특이사항
-     */
+    /** 특이사항 */
     @Column(name = "special_note")
     private String specialNote;
 
-    /**
-     * 판금(0/1)
-     */
+    /** 판금(0/1) */
     @Column(name = "panel_beating")
     private Boolean panelBeating;
 
-    /**
-     * 국소 교환(0/1)
-     */
+    /** 국소 교환(0/1) */
     @Column(name = "replacement_minor")
     private Boolean replacementMinor;
 
-    /**
-     * 부식(0/1)
-     */
+    /** 부식(0/1) */
     @Column(name = "corrosion")
     private Boolean corrosion;
 
@@ -212,7 +188,23 @@ public class CarEntryDraft {
     protected void onCreate() {
         if (createdAt == null) createdAt = LocalDateTime.now();
         if (isSubmitted == null) isSubmitted = Boolean.FALSE;
-        if (origin == null) origin = Boolean.FALSE; // 기본 국산
+        if (origin == null) origin = 0; // 기본 국산
         if (isEcoFriendly == null) isEcoFriendly = Boolean.FALSE;
+
+        // ✅ NOT NULL 방어 기본값
+        if (accidentRepairCnt == null) accidentRepairCnt = 0;
+        if (totalLossCnt == null) totalLossCnt = 0;
+        if (floodCnt == null) floodCnt = 0;
+        if (panelReplacementCnt == null) panelReplacementCnt = 0;
+        if (insuranceClaimCost == null) insuranceClaimCost = 0;
+
+        // ✅ Boolean 기본값도 null 방지
+        if (thirdPartyDamage == null) thirdPartyDamage = false;
+        if (engineOilIssue == null) engineOilIssue = false;
+        if (brakeIssue == null) brakeIssue = false;
+        if (performanceChecked == null) performanceChecked = false;
+        if (panelBeating == null) panelBeating = false;
+        if (replacementMinor == null) replacementMinor = false;
+        if (corrosion == null) corrosion = false;
     }
 }

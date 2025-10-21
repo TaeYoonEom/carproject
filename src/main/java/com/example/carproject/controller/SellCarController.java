@@ -105,7 +105,7 @@ public class SellCarController {
                                  @RequestParam String region,
                                  @RequestParam(required = false) String manufacturer,
                                  @RequestParam(required = false) String model,
-                                 @RequestParam(required = false, defaultValue = "0") int origin,
+                                 @RequestParam(required = false, defaultValue = "0") Integer origin,
                                  Principal principal) {
 
         String loginId = principal.getName();
@@ -127,7 +127,7 @@ public class SellCarController {
 
         draft.setManufacturer(manufacturer);
         draft.setModel(model);
-        draft.setOrigin(origin == 1);   // 0=국산(false), 1=수입(true)
+        draft.setOrigin(origin);    // 0=국산(false), 1=수입(true)
 
         if (draft.getId() == null) {
             draft.setCreatedAt(LocalDateTime.now());
@@ -143,18 +143,19 @@ public class SellCarController {
         CarEntryDraft car = carEntryDraftRepository.findByCarNumber(carNumber)
                 .orElseThrow(() -> new IllegalArgumentException("해당 차량 정보를 찾을 수 없습니다."));
 
-        // 간단 시세 예측 로직
         int yearsOld = Period.between(car.getManufactureDate(), LocalDate.now()).getYears();
-        int basePrice = 2000; // 만원 단위
+        int basePrice = 3000; // 만원 단위
         int mileage = car.getMileage() != null ? car.getMileage() : 0;
 
-        // 예시 공식
-        int estimated = basePrice - (yearsOld * 100) - (mileage / 20000 * 50);
-        estimated = Math.max(estimated, 300); // 최저 보장
+        int estimated = basePrice - (yearsOld * 70) - ((mileage / 20000) * 30);
+        estimated = Math.max(estimated, 500);
 
-        // 범위 제공: ±15% 오차
-        int minPrice = (int) Math.floor(estimated * 0.7 / 10) * 10;
-        int maxPrice = (int) Math.ceil(estimated * 1.1 / 10) * 10;
+        int minPrice = (int) Math.floor(estimated * 0.85 / 10) * 10;
+        int maxPrice = (int) Math.ceil(estimated * 1.15 / 10) * 10;
+
+        // ✅ DB 저장 시 '원 단위'로 변환 (만원 → 원)
+        car.setPrice(estimated * 10000);
+        carEntryDraftRepository.save(car);
 
         model.addAttribute("car", car);
         model.addAttribute("minPrice", minPrice);
@@ -162,6 +163,8 @@ public class SellCarController {
         model.addAttribute("estimatedPrice", estimated);
         return "selldetail/car_view";
     }
+
+
 
     @GetMapping("/sell/detail/photo")
     public String showPhotoUpload(@RequestParam("carId") Integer carId, Model model) {
