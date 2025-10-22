@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
@@ -25,8 +26,16 @@ public class CarDetailController {
     }
 
     @GetMapping("/cars/{carId}")
-    public String carDetail(@PathVariable Long carId, Model model) {
-        CarDto car = carService.getCarDetail(carId);
+    public String carDetail(@PathVariable Long carId,
+                            @RequestParam(required = false, defaultValue = "0") Integer origin,
+                            Model model) {
+
+        CarDto car;
+        if (origin == 1) {  // ✅ 수입차
+            car = carService.getImportCarDetail(carId);
+        } else {            // ✅ 국산차
+            car = carService.getCarDetail(carId);
+        }
         model.addAttribute("car", car);
 
         model.addAttribute("mainImage", carService.getMainImage(carId));

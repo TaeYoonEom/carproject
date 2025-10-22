@@ -9,5 +9,6 @@ import java.util.Optional;
 @Repository
 public interface ImportCarSaleRepository2 extends JpaRepository<ImportCarSale, Integer> {
     Optional<ImportCarSale> findByCarId(Integer carId);
+    Optional<ImportCarSale> findImportCarByCarId(Long carId);
     boolean existsByCarId(Integer carId);
 }

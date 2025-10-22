@@ -7,6 +7,8 @@ import com.example.carproject.dto.InsuranceDto;
 import com.example.carproject.dto.SellerDto;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import com.example.carproject.repository.ImportCarSaleRepository2;
+
 
 import java.util.*;
 
@@ -14,8 +16,12 @@ import java.util.*;
 public class CarServiceImpl implements CarService {
 
     private final JdbcTemplate jdbc;
+    private final ImportCarSaleRepository2 importCarSaleRepository;
 
-    public CarServiceImpl(JdbcTemplate jdbc) { this.jdbc = jdbc; }
+    public CarServiceImpl(JdbcTemplate jdbc, ImportCarSaleRepository2 importCarSaleRepository) {
+        this.jdbc = jdbc;
+        this.importCarSaleRepository = importCarSaleRepository;
+    }
 
     private enum Category {
         KOREAN("국산차", "/korean"),
@@ -94,33 +100,84 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public CarDto getCarDetail(Long carId) {
-        final String SELECT_COMMON = """
-        SELECT
+        // 1️⃣ origin 확인
+        final String ORIGIN_SQL = """
+        SELECT origin
+        FROM all_car_sale
+        WHERE car_id = ?
+        LIMIT 1
+    """;
+        Integer origin = jdbc.query(con -> {
+            var ps = con.prepareStatement(ORIGIN_SQL);
+            ps.setLong(1, carId);
+            return ps;
+        }, rs -> rs.next() ? rs.getInt("origin") : null);
+
+        if (origin == null)
+            throw new NoSuchElementException("🚫 all_car_sale에서 origin을 찾을 수 없습니다. car_id=" + carId);
+
+        // 2️⃣ origin별 대상 테이블 분기
+        String targetTable = (origin == 0) ? "car_sale" : "import_car_sale";
+
+        // 3️⃣ ✅ all_car_sale_id 기준으로 조회
+        final String SELECT_BY_ALL_ID = """
+        SELECT 
             car_id, car_name, year, mileage, price, fuel_type, transmission, drive_type,
             exterior_color, interior_color, sale_location, ownership_status, seller_type,
             car_number, capacity, sale_type, created_at
         FROM %s
-        WHERE car_id = ?
+        WHERE all_car_sale_id = ?
         LIMIT 1
-    """;
+    """.formatted(targetTable);
 
-        // 1) 우선 car_sale
-        List<CarDto> kr = jdbc.query(SELECT_COMMON.formatted("car_sale"),
-                ps -> ps.setLong(1, carId), (rs, n) -> mapCarRow(rs));
-        if (!kr.isEmpty()) return kr.get(0);
+        List<CarDto> result = jdbc.query(SELECT_BY_ALL_ID,
+                ps -> ps.setLong(1, carId),
+                (rs, n) -> mapCarRow(rs));
 
-        // 2) 다음 import_car_sale
-        List<CarDto> im = jdbc.query(SELECT_COMMON.formatted("import_car_sale"),
-                ps -> ps.setLong(1, carId), (rs, n) -> mapCarRow(rs));
-        if (!im.isEmpty()) return im.get(0);
+        if (result.isEmpty())
+            throw new NoSuchElementException("🚫 " + targetTable + "에서 차량 정보를 찾을 수 없습니다. all_car_sale_id=" + carId);
 
-        // 3) 마지막 안전망 all_car_sale
-        List<CarDto> all = jdbc.query(SELECT_COMMON.formatted("all_car_sale"),
-                ps -> ps.setLong(1, carId), (rs, n) -> mapCarRow(rs));
-        if (!all.isEmpty()) return all.get(0);
-
-        throw new NoSuchElementException("car not found in car_sale/import_car_sale/all_car_sale. car_id=" + carId);
+        CarDto dto = result.get(0);
+        dto.setCategoryName((origin == 0) ? "국산차" : "수입차");
+        dto.setCategoryPath((origin == 0) ? "/korean" : "/foreign");
+        return dto;
     }
+
+
+
+    @Override
+    public CarDto getImportCarDetail(Long carId) {
+        return importCarSaleRepository.findImportCarByCarId(carId)
+                .map(sale -> {
+                    CarDto dto = new CarDto();
+                    dto.setCarId(sale.getCarId().longValue());
+                    dto.setCarName(sale.getCarName());
+                    dto.setYear(sale.getYear());
+                    dto.setMileage(sale.getMileage());
+                    dto.setPrice(sale.getPrice());
+                    dto.setFuelType(sale.getFuelType());
+                    dto.setTransmission(sale.getTransmission());
+                    dto.setDriveType(sale.getDriveType());
+                    dto.setExteriorColor(sale.getExteriorColor());
+                    dto.setInteriorColor(sale.getInteriorColor());
+                    dto.setSaleLocation(sale.getSaleLocation());
+                    dto.setOwnershipStatus(sale.getOwnershipStatus());
+                    dto.setSellerType(sale.getSellerType());
+                    dto.setCarNumber(sale.getCarNumber());
+                    dto.setSaleType(sale.getSaleType());
+                    dto.setCapacity(sale.getCapacity());
+                    dto.setCreatedAt(sale.getCreatedAt());
+
+                    // ✅ 카테고리 정보 (수입차 기준)
+                    dto.setCategoryName("수입차");
+                    dto.setCategoryPath("/foreign");
+
+                    return dto;
+                })
+                .orElseThrow(() -> new IllegalArgumentException("수입 차량 정보를 찾을 수 없습니다."));
+    }
+
+
 
 
     // 대표 이미지: DB에서만. 없으면 null 반환

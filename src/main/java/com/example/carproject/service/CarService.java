@@ -11,6 +11,7 @@ import java.util.Map;
 public interface CarService {
 
     CarDto getCarDetail(Long carId);
+    CarDto getImportCarDetail(Long carId);
 
     String getMainImage(Long carId);
     List<String> getAllImages(Long carId);
