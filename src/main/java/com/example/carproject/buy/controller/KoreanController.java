@@ -1,27 +1,31 @@
 package com.example.carproject.buy.controller;
 
+import com.example.carproject.buy.domain.CarSale;
 import com.example.carproject.buy.dto.CarCardDto;
 import com.example.carproject.buy.dto.FilterRequest;
+import com.example.carproject.buy.repository.CarImageRepository;
+import com.example.carproject.buy.repository.CarSaleRepository;
 import com.example.carproject.buy.service.CarSaleService;
 import com.example.carproject.buy.service.FacetCountService;
 import com.example.carproject.buy.service.FacetViewService;
 import com.example.carproject.buy.service.KoreanFilterService;
+import com.example.carproject.domain.CarImage;
 import com.example.carproject.security.CustomUserDetails;
 import com.example.carproject.service.WishlistService;
 import jakarta.servlet.http.HttpSession; // Spring Boot 3.x (jakarta)
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import lombok.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @Controller
 @RequiredArgsConstructor
@@ -32,6 +36,9 @@ public class KoreanController {
     private final KoreanFilterService filterService;
     private final FacetCountService facetCountService;
     private final FacetViewService facetViewService;
+    private final CarSaleRepository carSaleRepository;
+    private final CarImageRepository carImageRepository;
+
 
     // 차량 목록 전체 + 우대/일반 구분 + 내 찜 목록 표시용 wishSet 주입
     @GetMapping("/korean")
@@ -100,6 +107,99 @@ public class KoreanController {
         model.addAttribute("facet", facet);
         return "buy/partials/_maker_models :: models";
     }
+    @PostMapping(value="/korean/filter", produces="text/html; charset=UTF-8")
+    public String applyFilter(@RequestBody FilterRequest req,
+                              @RequestParam(value = "page", defaultValue = "1") int page,
+                              @RequestParam(value = "size", defaultValue = "20") int size,
+                              @RequestParam(value = "sort", defaultValue = "recent") String sort,
+                              @RequestParam(value = "mode", defaultValue = "all") String mode,
+                              Model model,
+                              @AuthenticationPrincipal CustomUserDetails principal,
+                              HttpSession session) {
 
+        // ✅ 로그인 사용자 확인
+        Integer memberId = null;
+        if (principal != null) memberId = principal.getId();
+        else {
+            Object mid = session.getAttribute("memberId");
+            if (mid instanceof Integer i) memberId = i;
+            else if (mid instanceof Long l) memberId = l.intValue();
+        }
+
+        // ✅ 정렬 + 페이지 + 필터 적용
+        var carPage = carSaleService.searchWithFilter(req, page, size, sort);
+
+        // ✅ 찜 차량
+        var wishSet = (memberId != null)
+                ? wishlistService.myWishCarIds(memberId)
+                : Collections.emptySet();
+
+        // ✅ model 세팅
+        model.addAttribute("carList", carPage.getContent());
+        model.addAttribute("wishSet", wishSet);
+        model.addAttribute("page", carPage);
+        model.addAttribute("currentSort", sort);
+        model.addAttribute("currentSize", size);
+
+        if (mode.equals("general")) {
+            return "buy/partials/_car_cards_general :: general-list";
+        } else {
+            return "buy/partials/_car_cards :: list";
+        }
+
+    }
+
+    public String filterCars(@RequestBody Map<String, Object> filters, Model model) {
+
+        String yearFrom = (String) filters.get("yearFrom");
+        String yearTo = (String) filters.get("yearTo");
+        String mileageFrom = (String) filters.get("mileageFrom");
+        String mileageTo = (String) filters.get("mileageTo");
+        String priceFrom = (String) filters.get("priceFrom");
+        String priceTo = (String) filters.get("priceTo");
+
+        // ✅ 1) 모든 차량 불러오기
+        List<CarSale> cars = carSaleRepository.findAll();
+
+        // ✅ 2) 필터 적용
+        Stream<CarSale> stream = cars.stream();
+
+        if (yearFrom != null && !yearFrom.isBlank()) {
+            int minYear = Integer.parseInt(yearFrom);
+            stream = stream.filter(c -> c.getYear() != null && c.getYear() >= minYear);
+        }
+        if (yearTo != null && !yearTo.isBlank()) {
+            int maxYear = Integer.parseInt(yearTo);
+            stream = stream.filter(c -> c.getYear() != null && c.getYear() <= maxYear);
+        }
+
+        if (mileageFrom != null && !mileageFrom.isBlank()) {
+            int minM = Integer.parseInt(mileageFrom);
+            stream = stream.filter(c -> c.getMileage() != null && c.getMileage() >= minM);
+        }
+        if (mileageTo != null && !mileageTo.isBlank()) {
+            int maxM = Integer.parseInt(mileageTo);
+            stream = stream.filter(c -> c.getMileage() != null && c.getMileage() <= maxM);
+        }
+
+        if (priceFrom != null && !priceFrom.isBlank()) {
+            int minP = Integer.parseInt(priceFrom);
+            stream = stream.filter(c -> c.getPrice() != null && c.getPrice() >= minP);
+        }
+        if (priceTo != null && !priceTo.isBlank()) {
+            int maxP = Integer.parseInt(priceTo);
+            stream = stream.filter(c -> c.getPrice() != null && c.getPrice() <= maxP);
+        }
+
+        // ✅ CarSale → CarCardDto (AllCarSale 경유하여 이미지 가져오기)
+        List<CarCardDto> carDtos = stream
+                .map(CarCardDto::new)
+                .toList();
+
+        // ✅ 4) 모델에 DTO 리스트 추가
+        model.addAttribute("carList", carDtos);
+
+        return "buy/partials/_car_cards :: list";
+    }
 
 }

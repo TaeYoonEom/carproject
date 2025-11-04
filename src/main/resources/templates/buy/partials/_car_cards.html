@@ -1,28 +1,13 @@
-<!-- buy/partials/_car_cards.html -->
-<div class="encar-grid" th:fragment="list" xmlns:th="http://www.thymeleaf.org">
-    <article class="encar-card"
-             th:each="car : ${carList}"
-             th:with="cid=${car.car.carId}"
-             th:data-url="@{/cars/{id}(id=${cid})}"
-             style="cursor:pointer">
+<!-- ✅ buy/partials/_car_cards.html -->
+<div th:fragment="list" xmlns:th="http://www.thymeleaf.org">
 
-        <button type="button"
-                class="wish-btn"
-                th:data-car-id="${cid}"
-                th:classappend="${wishSet != null and wishSet.contains(cid)} ? ' on' : ''"
-                aria-label="찜하기" title="찜하기"> …(svg)… </button>
+    <!-- === 사진우대 === -->
+    <div class="photo-section" th:replace="buy/partials/_car_cards_photo :: photo-list"></div>
 
-        <a th:href="@{/cars/{id}(id=${cid})}">
-            <img class="encar-img" th:src="@{${car.frontViewUrl}}" alt="차량 이미지">
-        </a>
+    <!-- === 우대등록 === -->
+    <div class="premium-section" th:replace="buy/partials/_car_cards_premium :: premium-list"></div>
 
-        <div class="encar-info">
-            <a class="encar-title" th:href="@{/cars/{id}(id=${cid})}" th:text="${car.carName}">차량명</a>
-            <div class="encar-category"
-                 th:utext="${car.year} + '년 | ' + ${car.mileage} + 'km<br/>' + ${car.driveType} + ' | ' + ${car.saleLocation}">
-            </div>
-            <div class="encar-price"
-                 th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'"></div>
-        </div>
-    </article>
+    <!-- === 일반등록 === -->
+    <div class="general-section" th:replace="buy/partials/_car_cards_general :: general-list"></div>
+
 </div>

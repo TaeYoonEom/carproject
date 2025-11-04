@@ -11,24 +11,8 @@ import java.util.List;
 import java.util.Set;
 
 public class CarSaleSpecs {
-    private static final Set<String> KNOWN_CARTYPES = Set.of(
-            "경차","소형차","준중형차","중형차","대형차","스포츠카",
-            "SUV","RV","경승합차","승합차","화물차" // '기타' 제외
-    );
 
-    // 페이지에서 top7로 쓴 리스트와 일치시키는 게 베스트
-    private static final Set<String> TOP_MANUFACTURERS = Set.of(
-            "현대","제네시스","기아","쉐보레(GM대우)","르노코리아(삼성)","KG모빌리티(쌍용)","혼다" // 예시, 네 데이터에 맞춰 수정
-    );
-    //  fuelType, transmission 고정값 (기타 처리용)
-    private static final Set<String> KNOWN_FUELS = Set.of(
-            "가솔린", "디젤", "LPG(일반인 구입)", "가솔린+전기", "LPG+전기", "가솔린+LPG", "가솔린+CNG", "전기", "수소", "CNG"
-    );
-    private static final Set<String> KNOWN_TRANS = Set.of(
-            "오토", "수동", "세미오토", "CVT"
-    );
-
-    public static Specification<CarSale> from(FilterRequest f) {
+    public static Specification<CarSale> from(FilterRequest f, Set<String> topManufacturers) {
         return (root, q, cb) -> {
             List<Predicate> ps = new ArrayList<>();
 
@@ -48,26 +32,60 @@ public class CarSaleSpecs {
             if (notEmpty(f.getCapacities())) ps.add(root.get("capacity").in(f.getCapacities()));
 
             // ===== '기타' 처리 포함 IN 조건 =====
-            addInWithEtc(ps, root.get("fuelType"),
-                    f.getFuelTypes(), KNOWN_FUELS, "기타", cb);
+            addInWithEtc(ps, root.get("fuelType"), f.getFuelTypes(),
+                    Set.of("가솔린","디젤","LPG(일반인 구입)","가솔린+전기","LPG+전기","가솔린+LPG","가솔린+CNG","전기","수소","CNG"),
+                    "기타", cb);
 
-            addInWithEtc(ps, root.get("transmission"),
-                    f.getTransmissions(), KNOWN_TRANS, "기타", cb);
+            addInWithEtc(ps, root.get("transmission"), f.getTransmissions(),
+                    Set.of("오토","수동","세미오토","CVT"),
+                    "기타", cb);
 
-            addInWithEtc(ps, root.get("carType"),
-                    f.getCarTypes(), KNOWN_CARTYPES, "기타", cb);
-
-            addInWithEtc(ps, root.get("manufacturer"),
-                    f.getManufacturers(), TOP_MANUFACTURERS, "기타 제조사", cb);
+            addInWithEtc(ps, root.get("carType"), f.getCarTypes(),
+                    Set.of("경차","소형차","준중형차","중형차","대형차","스포츠카","SUV","RV","경승합차","승합차","화물차"),
+                    "기타", cb);
 
             // 범위조건
-            if (f.getPriceMin()!=null) ps.add(cb.greaterThanOrEqualTo(root.get("price"), f.getPriceMin()));
-            if (f.getPriceMax()!=null) ps.add(cb.lessThanOrEqualTo(root.get("price"), f.getPriceMax()));
-            if (f.getYearFrom()!=null) ps.add(cb.greaterThanOrEqualTo(root.get("year"), f.getYearFrom()));
-            if (f.getYearTo()!=null) ps.add(cb.lessThanOrEqualTo(root.get("year"), f.getYearTo()));
-            if (f.getMileageMin()!=null) ps.add(cb.greaterThanOrEqualTo(root.get("mileage"), f.getMileageMin()));
-            if (f.getMileageMax()!=null) ps.add(cb.lessThanOrEqualTo(root.get("mileage"), f.getMileageMax()));
+            // === 제조사: “기타 제조사” 선택 시 Top Set 이외 모두 포함 ===
+            if (notEmpty(f.getManufacturers())) {
+                boolean hasEtc = f.getManufacturers().contains("기타 제조사");
+                var normals = new ArrayList<>(f.getManufacturers());
+                normals.remove("기타 제조사");
 
+                List<Predicate> ors = new ArrayList<>();
+                if (!normals.isEmpty()) ors.add(root.get("manufacturer").in(normals));
+                if (hasEtc) ors.add(cb.or(cb.isNull(root.get("manufacturer")), cb.not(root.get("manufacturer").in(topManufacturers))));
+                if (!ors.isEmpty()) ps.add(cb.or(ors.toArray(new Predicate[0])));
+            }
+
+            // === 가격/주행거리 범위 ===
+            if (f.getPriceMin()!=null)   ps.add(cb.greaterThanOrEqualTo(root.get("price"),   f.getPriceMin()));
+            if (f.getPriceMax()!=null)   ps.add(cb.lessThanOrEqualTo(root.get("price"),     f.getPriceMax()));
+            if (f.getMileageMin()!=null) ps.add(cb.greaterThanOrEqualTo(root.get("mileage"), f.getMileageMin()));
+            if (f.getMileageMax()!=null) ps.add(cb.lessThanOrEqualTo(root.get("mileage"),   f.getMileageMax()));
+
+            // === 연-월 범위 (둘 다 있을 때만 Month 비교)
+            if (f.getYearFrom()!=null) {
+                if (f.getMonthFrom()!=null) {
+                    ps.add(cb.or(
+                            cb.greaterThan(root.get("year"), f.getYearFrom()),
+                            cb.and(cb.equal(root.get("year"), f.getYearFrom()),
+                                    cb.greaterThanOrEqualTo(root.get("month"), f.getMonthFrom()))
+                    ));
+                } else {
+                    ps.add(cb.greaterThanOrEqualTo(root.get("year"), f.getYearFrom()));
+                }
+            }
+            if (f.getYearTo()!=null) {
+                if (f.getMonthTo()!=null) {
+                    ps.add(cb.or(
+                            cb.lessThan(root.get("year"), f.getYearTo()),
+                            cb.and(cb.equal(root.get("year"), f.getYearTo()),
+                                    cb.lessThanOrEqualTo(root.get("month"), f.getMonthTo()))
+                    ));
+                } else {
+                    ps.add(cb.lessThanOrEqualTo(root.get("year"), f.getYearTo()));
+                }
+            }
             return ps.isEmpty()? cb.conjunction() : cb.and(ps.toArray(new Predicate[0]));
         };
     }

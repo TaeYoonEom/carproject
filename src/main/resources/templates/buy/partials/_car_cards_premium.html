@@ -1,0 +1,30 @@
+<!-- ✅ buy/partials/_car_cards_premium.html -->
+<div th:fragment="premium-list" class="encar-premium-list" xmlns:th="http://www.w3.org/1999/xhtml">
+    <div class="section-title">우대등록</div>
+    <table class="premium-table">
+        <thead>
+        <tr><th>사진</th><th>차량정보</th><th>가격</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="car, stat : ${carList}" th:if="${stat.index} < 8"
+            th:with="cidInt=${car.carId != null ? car.carId : 0}">
+            <td class="thumb-cell">
+                <a th:href="@{/cars/{id}(id=${cidInt})}">
+                    <img class="thumb"
+                         th:src="${car.frontViewUrl != null ? car.frontViewUrl : '/img/default.jpg'}"
+                         alt="">
+                </a>
+            </td>
+            <td>
+                <div class="encar-title" th:text="${car.carName}">차량명</div>
+                <div class="encar-category"
+                     th:text="${car.year} + '년 | ' + ${car.mileage} + 'km | ' + ${car.saleLocation}">정보</div>
+            </td>
+            <td>
+                <div class="encar-price"
+                     th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'"></div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

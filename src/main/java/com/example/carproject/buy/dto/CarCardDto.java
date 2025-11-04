@@ -1,21 +1,27 @@
 package com.example.carproject.buy.dto;
 
 import com.example.carproject.buy.domain.CarSale;
+import com.example.carproject.domain.AllCarSale;
 import com.example.carproject.domain.CarImage;
-import lombok.Getter;
+import java.util.Optional;
+import lombok.*;
 
 @Getter
+@Setter
 public class CarCardDto {
-    private final CarSale car;
-    private final String frontViewUrl;
+    private Integer carId;
+    private CarSale car;
+    private String frontViewUrl;
 
     public CarCardDto(CarSale car) {
         this.car = car;
-        this.frontViewUrl = car.getAllCarSale()
-                .getRepresentativeImage()
+        this.carId = car.getCarId(); // ✅ 추가 필수
+        this.frontViewUrl = Optional.ofNullable(car.getAllCarSale())
+                .flatMap(AllCarSale::getRepresentativeImage)
                 .map(CarImage::getFrontViewUrl)
                 .orElse("/img/default.jpg");
     }
+
     // CarCardDto.java
     public String getCarName() { return car.getCarName(); }
     public int getYear() { return car.getYear(); }

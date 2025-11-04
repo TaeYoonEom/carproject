@@ -16,19 +16,46 @@ public class FacetViewService {
     private final CarSaleRepository repo;
 
     public LinkedHashMap<String, Long> carTypeCountsZero() {
+        // 1️⃣ 고정된 표기 순서 (UI 표시 순서)
         List<String> order = List.of(
                 "경차","소형차","준중형차","중형차","대형차","스포츠카",
                 "SUV","RV","경승합차","승합차","화물차","기타"
         );
-        Map<String, Long> raw = new HashMap<>();
+        Set<String> KNOWN = new HashSet<>(order);
+
+        // 2️⃣ 버킷 초기화
+        Map<String, Long> bucket = new HashMap<>();
+
+        // 3️⃣ DB 결과 순회 → 정규화 후 집계
         repo.countByCarType().forEach(r -> {
-            String k = r.getVal() == null ? "기타" : r.getVal();
-            raw.merge(k, r.getCnt(), Long::sum);
+            String raw = safe(r.getVal());
+            String norm = normalizeCarType(raw);
+            String key = (norm.isBlank() || !KNOWN.contains(norm)) ? "기타" : norm;
+            bucket.merge(key, r.getCnt(), Long::sum);
         });
+
+        // 4️⃣ Zero-fill (없는 항목은 0)
         LinkedHashMap<String, Long> out = new LinkedHashMap<>();
-        for (String k : order) out.put(k, raw.getOrDefault(k, 0L));
+        for (String k : order) out.put(k, bucket.getOrDefault(k, 0L));
         return out;
     }
+
+    //차종 정규화 (공백, 오타, 영문 등 처리)
+    private String normalizeCarType(String v) {
+        if (v == null) return "";
+        String s = v.trim();
+
+        // 대표 치환 규칙
+        if (s.equalsIgnoreCase("suv")) return "SUV";
+        if (s.equalsIgnoreCase("rv")) return "RV";
+        if (s.equalsIgnoreCase("sports") || s.equals("스포츠")) return "스포츠카";
+        if (s.equalsIgnoreCase("승합")) return "승합차";
+        if (s.equalsIgnoreCase("경승합")) return "경승합차";
+        if (s.equalsIgnoreCase("truck") || s.equals("트럭")) return "화물차";
+
+        return s;
+    }
+
 
     public LinkedHashMap<String, Long> manufacturerCountsWithOthers(int topN) {
         var rows = repo.countByManufacturer(); // List<FacetAgg> (val, cnt)

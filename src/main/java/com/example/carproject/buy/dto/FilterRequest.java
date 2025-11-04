@@ -28,6 +28,8 @@ public class FilterRequest {
     private Integer priceMax;   // 단위: 만원 단위면 프런트에서 변환
     private Integer yearFrom;
     private Integer yearTo;
+    private Integer monthFrom;
+    private Integer monthTo;
     private Integer mileageMin;
     private Integer mileageMax;
 }

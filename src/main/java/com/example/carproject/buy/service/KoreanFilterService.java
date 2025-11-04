@@ -1,6 +1,7 @@
 package com.example.carproject.buy.service;
 
 import com.example.carproject.buy.domain.CarSale;
+import com.example.carproject.buy.dto.CarCardDto;
 import com.example.carproject.buy.dto.FilterRequest;
 import com.example.carproject.buy.repository.CarSaleRepository;
 import com.example.carproject.buy.spec.CarSaleSpecs;
@@ -16,6 +17,8 @@ import java.util.stream.Collectors;
 public class KoreanFilterService {
 
     private final CarSaleRepository repo;
+    private final FacetViewService facetViewService;
+    private final CarSaleService carSaleService;
 
     // 좌측 필터용 distinct 값 로딩
     public Map<String, List<?>> loadFilterOptions() {
@@ -36,11 +39,26 @@ public class KoreanFilterService {
         map.put("seatColors", repo.distinctSeatColors());
         return map;
     }
+    public List<CarCardDto> searchWithTopMakers(FilterRequest req) {
+        // ✅ 상위 7개 제조사 추출
+        var topMap = facetViewService.manufacturerCountsWithOthers(7);
+        var topSet = topMap.keySet().stream()
+                .filter(k -> !"기타 제조사".equals(k))
+                .collect(Collectors.toSet());
 
-    // 필터 조건 검색
-    public List<CarSale> search(FilterRequest req) {
-        return repo.findAll(CarSaleSpecs.from(req), Sort.by(Sort.Direction.DESC, "createdAt"));
+        // ✅ 수정된 Spec 호출
+        var cars = repo.findAll(
+                CarSaleSpecs.from(req, topSet),
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
+
+        return carSaleService.toCardDtos(cars);
     }
+    //----- 필터 조건 검색
+    //public List<CarSale> search(FilterRequest req) {
+    //    return repo.findAll(CarSaleSpecs.from(req), Sort.by(Sort.Direction.DESC, "createdAt"));
+    //}
+
 
 }
 

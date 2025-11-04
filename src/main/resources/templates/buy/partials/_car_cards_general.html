@@ -1,0 +1,98 @@
+<!-- ✅ buy/partials/_car_cards_general.html -->
+<div th:fragment="general-list" class="encar-general-list" xmlns:th="http://www.w3.org/1999/xhtml">
+
+    <!-- 정렬 탭 -->
+    <div class="general-list">
+    <div class="section-title">일반등록</div>
+
+        <!-- ✅ 한 줄 정렬용 flex -->
+        <div class="list-controls d-flex align-items-center justify-content-between mb-3">
+
+            <!-- 왼쪽 정렬 버튼 영역 -->
+            <div class="sort-btns">
+                <button class="sort-btn"
+                        th:classappend="${currentSort}=='recent' ? ' active' : ''"
+                        data-sort="recent">최근 등록일순</button>
+                <span class="divider">|</span>
+
+                <button class="sort-btn"
+                        th:classappend="${currentSort}=='priceAsc' ? ' active' : ''"
+                        data-sort="priceAsc">낮은 가격순</button>
+                <span class="divider">|</span>
+
+                <button class="sort-btn"
+                        th:classappend="${currentSort}=='priceDesc' ? ' active' : ''"
+                        data-sort="priceDesc">높은 가격순</button>
+                <span class="divider">|</span>
+
+                <button class="sort-btn"
+                        th:classappend="${currentSort}=='mileageAsc' ? ' active' : ''"
+                        data-sort="mileageAsc">낮은 주행거리순</button>
+                <span class="divider">|</span>
+
+                <button class="sort-btn"
+                        th:classappend="${currentSort}=='mileageDesc' ? ' active' : ''"
+                        data-sort="mileageDesc">높은 주행거리순</button>
+                <span class="divider">|</span>
+
+                <button class="sort-btn"
+                        th:classappend="${currentSort}=='yearDesc' ? ' active' : ''"
+                        data-sort="yearDesc">최신 연식순</button>
+            </div>
+
+
+            <!-- 오른쪽 select 영역 -->
+            <div class="view-options">
+                <select id="viewCountSelect" class="view-select">
+                    <option value="20" th:selected="${currentSize == 20}">20개씩</option>
+                    <option value="30" th:selected="${currentSize == 30}">30개씩</option>
+                    <option value="40" th:selected="${currentSize == 40}">40개씩</option>
+                    <option value="50" th:selected="${currentSize == 50}">50개씩</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="encar-general-list">
+        <!-- 일반등록 리스트 -->
+        <table class="premium-table" id="generalCarTable">
+            <thead>
+            <tr><th>사진</th><th>차량정보</th><th>가격</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="car : ${carList}" th:with="cidInt=${car.carId != null ? car.carId : 0}">
+                <td class="thumb-cell">
+                    <a th:href="@{/cars/{id}(id=${cidInt})}">
+                        <img class="thumb" th:src="${car.frontViewUrl != null ? car.frontViewUrl : '/img/default.jpg'}">
+                    </a>
+                </td>
+                <td>
+                    <div class="encar-title" th:text="${car.carName}">차량명</div>
+                    <div class="encar-category"
+                         th:text="${car.year} + '년 | ' + ${car.mileage} + 'km | ' + ${car.saleLocation}">정보</div>
+                </td>
+                <td>
+                    <div class="encar-price"
+                         th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'"></div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- 페이지네이션 -->
+        <div class="pagination-container" th:if="${page != null and page.totalPages > 1}">
+            <ul class="encar-pagination">
+                <li th:if="${page.hasPrevious()}">
+                    <a href="#" class="page-link prev" th:data-page="${page.number}">이전</a>
+                </li>
+                <li th:each="p : ${#numbers.sequence(1, page.totalPages)}"
+                    th:classappend="${p == page.number + 1} ? 'active'">
+                    <a href="#" class="page-link" th:data-page="${p}" th:text="${p}"></a>
+                </li>
+                <li th:if="${page.hasNext()}">
+                    <a href="#" class="page-link next" th:data-page="${page.number + 2}">다음</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

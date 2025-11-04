@@ -29,16 +29,16 @@ public class CarSale {
     private String seatColor;
     private String driveType;
     private String saleLocation;
-    private int price;
-    private int mileage;
-    private int year;
-    private int month;
+    private Integer price;
+    private Integer mileage;
+    private Integer year;
+    private Integer month;
     private LocalDateTime createdAt;
 
     @Column(length = 50)
     private String carType;
     private String carGrade;
-    private int capacity; //인승
+    private Integer capacity; //인승
     private String saleType;
     private String fuelType;
 

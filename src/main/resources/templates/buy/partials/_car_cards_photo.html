@@ -1,0 +1,42 @@
+<!-- ✅ buy/partials/_car_cards_photo.html -->
+<div th:fragment="photo-list" class="encar-photo-list" xmlns:th="http://www.w3.org/1999/xhtml">
+
+    <div class="section-title">사진우대</div>
+    <div class="encar-grid">
+        <article class="encar-card"
+                 th:each="car : ${#lists.size(carList) > 8 ? carList.subList(0,8) : carList}"
+                 th:with="cidInt=${car.carId != null ? car.carId : 0}"
+                 th:data-url="@{/cars/{id}(id=${cidInt})}"
+                 style="cursor:pointer">
+
+            <button type="button" class="wish-btn"
+                    th:data-car-id="${cidInt}"
+                    th:classappend="${wishSet != null and wishSet.contains(cidInt)} ? ' on' : ''"
+                    aria-label="찜하기" title="찜하기">
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                    <path d="M12 21c-.3 0-.6-.1-.8-.3C9 19 3 14.6 3 9.4C3 6.5 5.3 4 8.1 4
+                   c1.6 0 3.1.8 3.9 2.1C12.8 4.8 14.3 4 15.9 4
+                   C18.7 4 21 6.5 21 9.4c0 5.2-6 9.6-8.2 11.3
+                   -.2.2-.5.3-.8.3z"
+                          fill="none" stroke="currentColor" stroke-width="2"
+                          stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+
+            <a th:href="@{/cars/{id}(id=${cidInt})}">
+                <img class="encar-img"
+                     th:src="${car.frontViewUrl != null ? car.frontViewUrl : '/img/default.jpg'}"
+                     alt="차량 이미지">
+            </a>
+
+            <div class="encar-info">
+                <a class="encar-title" th:text="${car.carName}">차량명</a>
+                <div class="encar-category"
+                     th:utext="${car.year} + '년 | ' + ${car.mileage} + 'km<br/>' + ${car.driveType} + ' | ' + ${car.saleLocation}">
+                </div>
+                <div class="encar-price"
+                     th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'"></div>
+            </div>
+        </article>
+    </div>
+</div>

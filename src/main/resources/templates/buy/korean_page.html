@@ -78,116 +78,85 @@
                 <div id="facet-models" hidden></div>
             </details>
 
-            <!-- 연식 -->
+            <!-- ✅ 연식 -->
             <details class="filter-group" open>
                 <summary>연식</summary>
-                <div class="range-rows">
+                <div class="filter-range styled-range">
                     <div class="range-row">
                         <div class="selects">
-                            <select name="year_from_y" id="year_from_y">
+                            <select id="yearFrom" class="styled-select">
                                 <option value="">년</option>
-
                             </select>
-                            <select name="year_from_m" id="year_from_m">
+                            <select id="monthFrom" class="styled-select">
                                 <option value="">월</option>
-
                             </select>
+                            <span class="suffix">부터</span>
                         </div>
-                        <span class="suffix">부터</span>
                     </div>
+
                     <div class="range-row">
                         <div class="selects">
-                            <select name="year_to_y" id="year_to_y">
+                            <select id="yearTo" class="styled-select">
                                 <option value="">년</option>
-
                             </select>
-                            <select name="year_to_m" id="year_to_m">
+                            <select id="monthTo" class="styled-select">
                                 <option value="">월</option>
-
                             </select>
+                            <span class="suffix">까지</span>
                         </div>
-                        <span class="suffix">까지</span>
                     </div>
-                    <button type="button" class="btn-interval">구간선택 열기</button>
                 </div>
             </details>
 
-            <!-- 주행거리 -->
+            <!-- ✅ 주행거리 -->
             <details class="filter-group" open>
                 <summary>주행거리</summary>
-                <div class="range-rows">
+                <div class="filter-range styled-range">
                     <div class="range-row">
                         <div class="selects">
-                            <select name="mile_from">
+                            <select id="mileageFrom" class="styled-selected">
                                 <option value="">선택</option>
-                                <option value="0">0km</option>
-                                <option value="10000">1만</option>
-                                <option value="30000">3만</option>
-                                <option value="50000">5만</option>
-                                <option value="100000">10만</option>
                             </select>
+                            <span class="suffix">부터</span>
                         </div>
-                        <span class="suffix">부터</span>
                     </div>
+
                     <div class="range-row">
                         <div class="selects">
-                            <select name="mile_to">
+                            <select id="mileageTo" class="styled-selected">
                                 <option value="">선택</option>
-                                <option value="30000">3만</option>
-                                <option value="50000">5만</option>
-                                <option value="100000">10만</option>
-                                <option value="150000">15만</option>
-                                <option value="200000">20만</option>
                             </select>
+                            <span class="suffix">까지</span>
                         </div>
-                        <span class="suffix">까지</span>
                     </div>
-                    <button type="button" class="btn-interval">구간선택 열기</button>
+
+                    <!--<button type="button" class="btn-interval">구간선택 열기</button>-->
                 </div>
             </details>
 
-            <!-- 가격 -->
+            <!-- ✅ 가격 -->
             <details class="filter-group" open>
                 <summary>가격</summary>
-                <div class="range-rows">
+                <div class="filter-range styled-range">
                     <div class="range-row">
                         <div class="selects">
-                            <select name="price_from">
+                            <select id="priceFrom" class="styled-selected">
                                 <option value="">선택</option>
-                                <option value="0">0만원</option>
-                                <option value="500">500</option>
-                                <option value="1000">1,000</option>
-                                <option value="2000">2,000</option>
-                                <option value="3000">3,000</option>
                             </select>
+                            <span class="suffix">부터</span>
                         </div>
-                        <span class="suffix">부터</span>
                     </div>
+
                     <div class="range-row">
                         <div class="selects">
-                            <select name="price_to">
+                            <select id="priceTo" class="styled-selected">
                                 <option value="">선택</option>
-                                <option value="1000">1,000</option>
-                                <option value="2000">2,000</option>
-                                <option value="3000">3,000</option>
-                                <option value="5000">5,000</option>
-                                <option value="10000">10,000</option>
                             </select>
+                            <span class="suffix">까지</span>
                         </div>
-                        <span class="suffix">까지</span>
                     </div>
 
-                    <label class="manual">
-                        <input type="checkbox" id="price-direct"> 직접입력
-                    </label>
-
-                    <div class="manual-inputs" hidden>
-                        <input type="number" name="price_from_input" placeholder="최소 만원">
-                        <span class="tilde">~</span>
-                        <input type="number" name="price_to_input" placeholder="최대 만원">
-                    </div>
-
-                    <button type="button" class="btn-interval">구간선택 열기</button>
+                    <!--<button type="button" class="btn-interval">구간선택 열기</button>-->
                 </div>
             </details>
 
@@ -352,152 +321,11 @@
             </details>
         </aside>
 
-        <!-- 가운데 차량 카드 영역 -->
+        <!-- 중앙 배너 영역 -->
         <main class="content">
-            <div class="section-title">사진우대</div>
-            <div class="encar-grid">
-                <article class="encar-card"
-                         th:each="car : ${carList.subList(0, 8)}"
-                         th:with="
-               cidRaw=${car.car != null and car.car.carId != null ? car.car.carId : (car.carId != null ? car.carId : 0)},
-               cidInt=${T(java.lang.Integer).valueOf(cidRaw)}
-             "
-                         th:data-url="@{/cars/{id}(id=${cidInt})}"
-                         style="cursor:pointer">
-
-                    <!-- 하트 버튼 -->
-                    <button type="button"
-                            class="wish-btn"
-                            th:data-car-id="${cidInt}"
-                            th:classappend="${wishSet != null and wishSet.contains(cidInt)} ? ' on' : ''"
-                            aria-label="찜하기" title="찜하기">
-                        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-                            <path d="M12 21c-.3 0-.6-.1-.8-.3C9 19 3 14.6 3 9.4 3 6.5 5.3 4 8.1 4c1.6 0 3.1.8 3.9 2.1C12.8 4.8 14.3 4 15.9 4 18.7 4 21 6.5 21 9.4c0 5.2-6 9.6-8.2 11.3-.2.2-.5.3-.8.3z"
-                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-
-                    <!-- 차량 이미지 -->
-                    <a th:href="@{/cars/{id}(id=${cidInt})}">
-                        <img class="encar-img" th:src="@{${car.frontViewUrl}}" alt="차량 이미지">
-                    </a>
-
-                    <div class="encar-info">
-                        <a class="encar-title"
-                           th:href="@{/cars/{id}(id=${cidInt})}"
-                           th:text="${car.car != null ? car.car.carName : (car.carName != null ? car.carName : '차량명')}">차량명</a>
-
-                        <div class="encar-category"
-                             th:utext="${car.year} + '년 | ' + ${car.mileage} + 'km<br/>' + ${car.driveType} + ' | ' + ${car.saleLocation}">
-                        </div>
-
-                        <div class="encar-price"
-                             th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'"></div>
-                    </div>
-                </article>
+            <div class="car-list">
+                <div th:replace="buy/partials/_car_cards :: list"></div>
             </div>
-
-            <!-- 우대등록 -->
-            <div class="section-title">우대등록</div>
-            <table class="premium-table">
-                <thead>
-                <tr><th>사진</th><th>차량정보</th><th>가격</th></tr>
-                </thead>
-                <tbody>
-                <tr th:each="car, stat : ${carList}"
-                    th:if="${stat.index} < 8"
-                    th:with="
-                  cidRaw=${car.car != null && car.car.carId != null ? car.car.carId : (car.carId != null ? car.carId : 0)},
-                  cidInt=${T(java.lang.Integer).valueOf(cidRaw)}
-                ">
-                    <td class="thumb-cell">
-                        <!-- 하트 버튼 -->
-                        <button type="button"
-                                class="wish-btn small"
-                                th:data-car-id="${cidInt}"
-                                th:classappend="${wishSet != null and wishSet.contains(cidInt)} ? ' on' : ''"
-                                aria-label="찜하기" title="찜하기">
-                            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-                                <path d="M12 21c-.3 0-.6-.1-.8-.3C9 19 3 14.6 3 9.4 3 6.5 5.3 4 8.1 4c1.6 0 3.1.8 3.9 2.1C12.8 4.8 14.3 4 15.9 4 18.7 4 21 6.5 21 9.4c0 5.2-6 9.6-8.2 11.3-.2.2-.5.3-.8.3z"
-                                      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
-                        <a class="cell-link" th:href="@{/cars/{id}(id=${cidInt})}">
-                            <img class="thumb" th:src="@{${car.frontViewUrl}}"
-                                 th:alt="${car.car != null ? car.car.carName : (car.carName != null ? car.carName : '차량 이미지')}">
-                        </a>
-                    </td>
-                    <td>
-                        <a class="cell-link" th:href="@{/cars/{id}(id=${cidInt})}">
-                            <div class="encar-title"
-                                 th:text="${car.car != null ? car.car.carName : (car.carName != null ? car.carName : '차량명')}">차량명</div>
-                            <div class="encar-category"
-                                 th:text="${car.year} + '년 | ' + ${car.mileage} + 'km | ' + ${car.saleLocation}">정보</div>
-                            <div class="encar-tag">
-                                <span class="tag" th:if="${car.ownershipStatus == '소유중'}">무사고</span>
-                                <span class="tag">1인소유</span>
-                            </div>
-                        </a>
-                    </td>
-                    <td>
-                        <a class="cell-link" th:href="@{/cars/{id}(id=${cidInt})}">
-          <span class="encar-price"
-                th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'">가격</span>
-                        </a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
-            <!-- 일반등록 -->
-            <div class="section-title">일반등록</div>
-            <table class="premium-table">
-                <thead>
-                <tr><th>사진</th><th>차량정보</th><th>가격</th></tr>
-                </thead>
-                <tbody>
-                <tr th:each="car : ${carList}"
-                    th:with="
-                  cidRaw=${car.car != null && car.car.carId != null ? car.car.carId : (car.carId != null ? car.carId : 0)},
-                  cidInt=${T(java.lang.Integer).valueOf(cidRaw)}
-                ">
-                    <td class="thumb-cell">
-                        <button type="button"
-                                class="wish-btn small"
-                                th:data-car-id="${cidInt}"
-                                th:classappend="${wishSet != null and wishSet.contains(cidInt)} ? ' on' : ''"
-                                aria-label="찜하기" title="찜하기">
-                            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-                                <path d="M12 21c-.3 0-.6-.1-.8-.3C9 19 3 14.6 3 9.4 3 6.5 5.3 4 8.1 4c1.6 0 3.1.8 3.9 2.1C12.8 4.8 14.3 4 15.9 4 18.7 4 21 6.5 21 9.4c0 5.2-6 9.6-8.2 11.3-.2.2-.5.3-.8.3z"
-                                      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
-                        <a class="cell-link" th:href="@{/cars/{id}(id=${cidInt})}">
-                            <img class="thumb" th:src="@{${car.frontViewUrl}}"
-                                 th:alt="${car.car != null ? car.car.carName : (car.carName != null ? car.carName : '차량 이미지')}">
-                        </a>
-                    </td>
-                    <td>
-                        <a class="cell-link" th:href="@{/cars/{id}(id=${cidInt})}">
-                            <div class="encar-title"
-                                 th:text="${car.car != null ? car.car.carName : (car.carName != null ? car.carName : '차량명')}">차량명</div>
-                            <div class="encar-category"
-                                 th:text="${car.year} + '년 | ' + ${car.mileage} + 'km | ' + ${car.saleLocation}">정보</div>
-                            <div class="encar-tag">
-                                <span class="tag" th:if="${car.ownershipStatus == '소유중'}">무사고</span>
-                                <span class="tag">1인소유</span>
-                            </div>
-                        </a>
-                    </td>
-                    <td>
-                        <a class="cell-link" th:href="@{/cars/{id}(id=${cidInt})}">
-          <span class="encar-price"
-                th:text="${#numbers.formatInteger(car.price / 10000, 1, 'COMMA')} + '만원'">가격</span>
-                        </a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
         </main>
 
         <!-- 📦 우측 배너 영역 -->
@@ -522,10 +350,12 @@
     ⓒ 2025 N카. All rights reserved.
 </div>
 
-<script defer src="/js/base.js"></script>
-<script defer src="/js/wishlist.js"></script>
+<th:block layout:fragment="script">
+    <script defer src="/js/base.js"></script>
+    <script defer src="/js/wishlist.js"></script>
+    <script defer src="/js/filter_init.js"></script>
+    <script defer src="/js/korean-filter.js"></script>
+</th:block>
 
-<script src="/js/korean-filter.js" defer></script>
-<script defer src="/js/year-month.js"></script>
 </body>
 </html>
