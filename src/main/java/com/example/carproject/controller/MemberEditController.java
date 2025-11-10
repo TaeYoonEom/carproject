@@ -53,6 +53,27 @@ public class MemberEditController {
         return "info";
     }
 
+    @PostMapping("/info/update")
+    public String updateMember(@RequestParam String phone,
+                               @RequestParam String address,
+                               @RequestParam(required = false) String detailAddress, // 상세주소 추가
+                               Authentication auth,
+                               Model model) {
+
+        Member member = memberRepository.findByLoginId(auth.getName())
+                .orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
+
+        member.setPhone(phone);
+        // ✅ 주소는 상세주소까지 합쳐서 저장
+        member.setAddress(address + (detailAddress != null ? " " + detailAddress : ""));
+        memberRepository.save(member);
+
+        model.addAttribute("member", member);
+        model.addAttribute("message", "회원정보가 수정되었습니다!");
+        return "redirect:/mypage";
+    }
+
+
     @PostMapping("/withdraw")
     public String processWithdrawal(
             @RequestParam String password,
