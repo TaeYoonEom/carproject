@@ -709,7 +709,7 @@
                                 </div>
                             </a>
                         </td>
-                        <td th:text="${saleOn > 0} ? '판매중' : '판매대기'">판매대기</td>
+                        <td th:text="${s.carId != null} ? '판매대기' : '등록중'">판매대기</td>
                         <td>-</td>
                         <td>
                             <a th:href="${s.carId} != null ? @{/cars/{id}(id=${s.carId})}

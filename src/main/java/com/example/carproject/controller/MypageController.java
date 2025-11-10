@@ -63,21 +63,23 @@ public class MypageController {
         Member member = resolveMember(authentication);
         Integer memberId = member.getMemberId();
 
-        // 1) 찜 데이터
+        // ✅ 찜 목록
         List<WishMini> wishMini = allCarSaleRepository2.findWishAll(memberId);
         List<WishCarDto> wishlistCars = wishlistService.myWishlistCars(memberId);
         int wishCount = wishlistService.count(memberId);
 
-        // 2) 판매대기(Draft) + car_detail 이동용 carId 매핑
-        List<CarEntryDraft> sellWaiting = carEntryDraftRepository
-                .findByMemberIdAndIsSubmittedTrueOrderByCreatedAtDesc(memberId);
+        // ✅ 판매대기 (Draft)
+        List<CarEntryDraft> sellWaiting =
+                carEntryDraftRepository.findByMemberIdAndIsSubmittedTrueOrderByCreatedAtDesc(memberId);
         int saleWaiting = sellWaiting.size();
 
         List<SellDraftCardVm> sellCards = sellWaiting.stream()
                 .map(d -> new SellDraftCardVm(
                         d.getId(),
                         allCarSaleRepository2.findCarIdByDraftId(d.getId()).orElse(null),
-                        d.getFrontViewUrl(),
+                        (d.getFrontViewUrl() != null && !d.getFrontViewUrl().isEmpty())
+                                ? d.getFrontViewUrl()
+                                : "/img/common/noimage.png", // ✅ 기본이미지 처리
                         d.getModelName(),
                         d.getCarNumber(),
                         d.getManufactureDate(),
@@ -86,35 +88,35 @@ public class MypageController {
                 ))
                 .collect(Collectors.toList());
 
-        // 3) 판매 상태 (car_sold)
-        int saleOn       = carSoldService.count(memberId, CarSold.Status.판매중);
-        int saleDone     = carSoldService.count(memberId, CarSold.Status.판매완료);
+        // ✅ 판매 상태 (car_sold)
+        int saleOn = carSoldService.count(memberId, CarSold.Status.판매중);
+        int saleDone = carSoldService.count(memberId, CarSold.Status.판매완료);
         int saleWithdraw = carSoldService.count(memberId, CarSold.Status.철회);
+        int saleDeleted = 0; // ✅ HTML에서 참조하므로 기본값 추가
 
-        int totalSellCars = saleWaiting + saleOn + saleDone; // 철회 제외
+        int totalSellCars = saleWaiting + saleOn + saleDone;
 
-        // 4) 모델 바인딩
+        // ✅ 모델 등록
         model.addAttribute("member", member);
-
         model.addAttribute("wishCount", wishCount);
         model.addAttribute("wishMini", wishMini);
         model.addAttribute("wishlistCars", wishlistCars);
-
         model.addAttribute("sellWaiting", sellWaiting);
         model.addAttribute("saleWaiting", saleWaiting);
-        model.addAttribute("sellDrafts", sellWaiting);  // 기존 템플릿 호환
-        model.addAttribute("sellCards", sellCards);     // car_detail 링크용
-
+        model.addAttribute("sellDrafts", sellWaiting);
+        model.addAttribute("sellCards", sellCards);
         model.addAttribute("saleOn", saleOn);
         model.addAttribute("saleDone", saleDone);
         model.addAttribute("saleWithdraw", saleWithdraw);
+        model.addAttribute("saleDeleted", saleDeleted); // ✅ 추가
         model.addAttribute("totalSellCars", totalSellCars);
 
-        CouponSummary  couponSummary = couponPointService.getCouponSummary(memberId);
-        List<CouponRow>  couponValid   = couponPointService.getUsableCoupons(memberId);
-        List<CouponRow>  couponExpired = couponPointService.getUsedOrExpiredCoupons(memberId);
-        PointSummary     pointSummary  = couponPointService.getPointSummary(memberId);
-        List<PointRow>   pointRows     = couponPointService.getPointHistory(memberId);
+        // ✅ 쿠폰 & 포인트
+        CouponSummary couponSummary = couponPointService.getCouponSummary(memberId);
+        List<CouponRow> couponValid = couponPointService.getUsableCoupons(memberId);
+        List<CouponRow> couponExpired = couponPointService.getUsedOrExpiredCoupons(memberId);
+        PointSummary pointSummary = couponPointService.getPointSummary(memberId);
+        List<PointRow> pointRows = couponPointService.getPointHistory(memberId);
 
         model.addAttribute("couponSummary", couponSummary);
         model.addAttribute("couponValid", couponValid);
@@ -124,6 +126,7 @@ public class MypageController {
 
         return "mypage";
     }
+
 
     private Member resolveMember(Authentication authentication) {
         Object principal = authentication.getPrincipal();
