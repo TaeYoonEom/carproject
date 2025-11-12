@@ -6,6 +6,7 @@
 
 <head>
     <title>마이페이지</title>
+    <link rel="stylesheet" th:href="@{/css/mypage.css}" layout:fragment="style"/>
 </head>
 
 <body>
@@ -188,15 +189,16 @@
             <!-- 국산/수입차 콘텐츠 -->
             <div id="tab-normal" class="vehicle-tab-content">
                 <section class="car-status">
-                    <!-- ✅ 찜한 차량 미니리스트 (car-box로 변경) -->
+                    <!-- ✅ 찜한 차량 리스트 -->
                     <div class="car-box car-box--wish">
+                        <h4>찜한 차량 리스트</h4>
                         <!-- 헤더 -->
                         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ddd; padding-bottom:6px; margin-bottom:8px;">
                             <div>
                                 • 찜한 차량
                                 <span th:if="${wishCount != null}" style="color:red;">
-                                총 <span th:text="${wishCount}">0</span>대
-                              </span>
+                                    총 <span th:text="${wishCount}">0</span>대
+                                </span>
                             </div>
                             <a href="/mypage#wish" style="color:#666; text-decoration:none;">더보기 &gt;</a>
                         </div>
@@ -225,49 +227,47 @@
                     </div>
 
 
-                    <!-- ✅ 내차 판매 -->
-                    <div class="car-box">
-                        <h4>내차 판매</h4>
-                        <ul style="font-size: 13px; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 6px;">
-                            <!-- '판매중'은 아직 0, 필요 시 로직 확장 -->
-                            <li> 판매중 차량 <span style="color: red;">총 <span th:text="${saleOn}">0</span>대</span>
-                                <span style="float: right;">더보기 &gt;</span></li>
-                        </ul>
+                    <!-- ✅ 내차 판매 리스트 (찜한 차량 디자인 동일 적용) -->
+                    <div class="car-box car-box--wish">
+                        <h4>내차 판매 리스트</h4>
+                        <!-- 헤더 -->
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ddd; padding-bottom:6px; margin-bottom:8px;">
+                            <div>
+                                • 판매중 차량
+                                <span th:if="${saleOn != null}" style="color:red;">
+                                    총 <span th:text="${saleOn}">0</span>대
+                                </span>
+                            </div>
+                            <a href="/mypage#sell" style="color:#666; text-decoration:none;">더보기 &gt;</a>
+                        </div>
 
-                        <!-- 판매중 0이면 기존 문구 유지 -->
+                        <!-- 판매중 차량 없을 때 -->
                         <p class="no-data" th:if="${saleOn == 0}">
                             <span style="color: orange;">판매중 차량</span>이 없습니다.
                         </p>
 
-                        <!-- (옵션) 판매대기 간단 미리보기 -->
-                        <div style="margin-top: 10px;" th:if="${saleWaiting > 0}">
-                            <strong style="font-size: 13px;">• 판매대기</strong>
-
-                            <!-- 기존: th:each="s : ${sellDrafts}" -->
-                            <div class="wish-mini" style="margin-top:6px;" th:if="${saleWaiting > 0}">
-                                <div class="wish-mini-grid">
-                                    <a th:each="s : ${sellCards}"
-                                       th:href="${s.carId} != null ? @{/cars/{id}(id=${s.carId})}
-                                  : @{|/sell/detail/view?carNumber=${s.carNumber}|}"
-                                       class="wish-mini-card">
-                                        <div class="thumb">
-                                            <img th:src="${s.frontViewUrl} ?: @{/img/common/noimage.png}" alt="">
+                        <!-- 판매중 차량 리스트 (wish-mini 동일 스타일) -->
+                        <div th:if="${saleOn > 0}" class="wish-mini">
+                            <div class="wish-mini-grid">
+                                <a th:each="s : ${sellOnCards}"
+                                   th:href="${s.carId} != null ? @{/cars/{id}(id=${s.carId})}
+                                        : @{|/sell/detail/view?carNumber=${s.carNumber}|}"
+                                   class="wish-mini-card">
+                                    <div class="thumb">
+                                        <img th:src="${s.frontViewUrl} ?: @{/img/common/noimage.png}" alt="">
+                                    </div>
+                                    <div class="txt">
+                                        <div class="name" th:text="${s.modelName}">모델명</div>
+                                        <div class="price"
+                                             th:text="${s.price != null ? #numbers.formatInteger(s.price/10000, 1, 'COMMA') + '만원' : '가격 미정'}">
+                                            0만원
                                         </div>
-                                        <div class="txt">
-                                            <div class="name" th:text="${s.modelName}">모델명</div>
-                                            <div class="price">
-                                                <span th:text="${s.carNumber}">12가 1234</span>
-                                                <span style="margin-left:6px;"
-                                                      th:text="${#temporals.format(s.manufactureDate,'yyyy-MM')}">2023-05</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
+                                    </div>
+                                </a>
                             </div>
                         </div>
 
-
-                        <!-- 비교견적 신청내역 -->
+                    <!-- 비교견적 신청내역 -->
                         <div style="margin-top: 16px;">
                             <br>
                             <strong style="font-size: 13px;">• 비교견적 신청내역</strong>
@@ -617,8 +617,9 @@
 
             <!-- ########## 내차 판매 ################## -->
             <!-- 판매차량 관리 콘텐츠 -->
-            <div id="sell-car-section" class="hidden">
-                <h3>판매차량 관리</h3>
+            <div id="sell-car-section"
+                 th:classappend="${currentSection}=='sell-car-section' ? '' : 'hidden'">
+            <h3>판매차량 관리</h3>
                 <p class="info-gray">차량의 광고 상태(판매중, 판매대기, 판매완료, 삭제 등)에 따라 차량을 <strong style="color: red;">편리하게</strong> 관리할 수 있습니다.</p>
 
                 <!-- 이용중인 서비스 (그대로) -->
@@ -662,19 +663,29 @@
 
                     <!-- 하위 탭 (판매중, 대기 등) -->
                     <div class="tab-buttons sub-tab-buttons">
-                        <button class="tab-btn active"
-                                th:text="|판매중 (${saleOn != null ? saleOn : 0}대)|">판매중 (0대)</button>
-                        <button class="tab-btn"
-                                th:text="|판매대기 (${saleWaiting != null ? saleWaiting : #lists.size(sellDrafts)}대)|">판매대기 (0대)</button>
-                        <button class="tab-btn"
-                                th:text="|판매완료 (${saleDone != null ? saleDone : 0}대)|">판매완료 (0대)</button>
-                        <button class="tab-btn"
-                                th:text="|삭제 (${saleDeleted != null ? saleDeleted : 0}대)|">삭제 (0대)</button>
-                        <button class="tab-btn">허위매물신고 (0대)</button>
-                    </div>
-                </div>
+                        <a th:href="@{/mypage(section='sell-car-section', tab='판매중')}"
+                           class="tab-btn"
+                           th:classappend="${currentTab == '판매중'} ? 'active' : ''">판매중 (<span th:text="${saleOn}">0</span>대)</a>
 
-                <!-- 테이블 -->
+                        <a th:href="@{/mypage(section='sell-car-section', tab='판매대기')}"
+                           class="tab-btn"
+                           th:classappend="${currentTab == '판매대기'} ? 'active' : ''">판매대기 (<span th:text="${saleWaiting}">0</span>대)</a>
+
+                        <a th:href="@{/mypage(section='sell-car-section', tab='판매완료')}"
+                           class="tab-btn"
+                           th:classappend="${currentTab == '판매완료'} ? 'active' : ''">판매완료 (<span th:text="${saleDone}">0</span>대)</a>
+
+                        <a th:href="@{/mypage(section='sell-car-section', tab='삭제')}"
+                           class="tab-btn"
+                           th:classappend="${currentTab == '삭제'} ? 'active' : ''">삭제 (<span th:text="${saleDeleted}">0</span>대)</a>
+
+                        <!-- 오타 수정: 허위매물신L신고 -> 허위매물신고 -->
+                        <a th:href="@{/mypage(section='sell-car-section', tab='허위매물신고')}"
+                           class="tab-btn"
+                           th:classappend="${currentTab == '허위매물신고'} ? 'active' : ''">허위매물신고 (0대)</a>
+                    </div>
+
+                    <!-- 테이블 -->
                 <table class="simple-table">
                     <thead>
                     <tr>
@@ -685,40 +696,66 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <!-- 판매대기/판매중이 하나도 없을 때 -->
-                    <tr th:if="${#lists.isEmpty(sellDrafts)}">
-                        <td colspan="4" style="text-align: center;">판매대기 차량이 없습니다.</td>
-                    </tr>
+                    <th:block th:if="${currentTab == '판매대기'}">
+                        <tr th:if="${#lists.isEmpty(sellCards)}">
+                            <td colspan="4" style="text-align: center;">판매대기 차량이 없습니다.</td>
+                        </tr>
+                        <tr th:each="s : ${sellCards}">
+                            <td>
+                                <a th:href="${s.carId} != null ? @{/cars/{id}(id=${s.carId})}
+                               : @{|/sell/detail/view?carNumber=${s.carNumber}|}"
+                                   style="display:flex; gap:10px; align-items:center; text-decoration:none; color:inherit;">
+                                    <img th:src="${s.frontViewUrl} ?: '/img/common/noimage.png'"
+                                         alt="" style="width:100px; height:70px; object-fit:cover; border-radius:6px;">
+                                    <div>
+                                        <div style="font-weight:600;" th:text="${s.modelName}">모델명</div>
+                                        <small>
+                                            <span th:text="${s.carNumber}">12가1234</span> ·
+                                            <span th:text="${#temporals.format(s.manufactureDate,'yyyy-MM')}">2022-05</span> ·
+                                            <span th:text="${s.mileage} + ' km'">0 km</span> ·
+                                            <span th:text="${s.region}">지역</span>
+                                        </small>
+                                    </div>
+                                </a>
+                            </td>
+                            <td th:text="${s.carId != null} ? '판매대기' : '등록중'">판매대기</td>
+                            <td>-</td>
+                            <td>
+                                <a th:href="${s.carId} != null ? @{/cars/{id}(id=${s.carId})}
+                               : @{|/sell/detail/view?carNumber=${s.carNumber}|}"
+                                   class="btn-gray-small">보기</a>
+                                <a th:href="@{|/sell/detail/photo?carId=${s.draftId}|}" class="btn-gray-small">사진수정</a>
+                            </td>
+                        </tr>
+                    </th:block>
 
-                    <!-- (기존 th:each="s : ${sellDrafts}" → sellCards로 변경, 링크도 동일 로직) -->
-                    <tr th:each="s : ${sellCards}">
-                        <td>
-                            <a th:href="${s.carId} != null ? @{/cars/{id}(id=${s.carId})}
-                                   : @{|/sell/detail/view?carNumber=${s.carNumber}|}"
-                               style="display:flex; gap:10px; align-items:center; text-decoration:none; color:inherit;">
-                                <img th:src="${s.frontViewUrl} ?: '/img/common/noimage.png'"
-                                     alt="" style="width:100px; height:70px; object-fit:cover; border-radius:6px;">
-                                <div>
-                                    <div style="font-weight:600;" th:text="${s.modelName}">모델명</div>
-                                    <small>
-                                        <span th:text="${s.carNumber}">12가1234</span> ·
-                                        <span th:text="${#temporals.format(s.manufactureDate,'yyyy-MM')}">2022-05</span> ·
-                                        <span th:text="${s.mileage} + ' km'">0 km</span> ·
-                                        <span th:text="${s.region}">지역</span>
-                                    </small>
-                                </div>
-                            </a>
+                    <th:block th:if="${currentTab != '판매대기'}">
+                        <tr th:if="${#lists.isEmpty(sellOnCards)}">
+                            <td colspan="4" style="text-align: center;" th:text="|${currentTab} 차량이 없습니다.|">판매중 차량이 없습니다.</td>
+                        </tr>
+                        <tr th:each="s : ${sellOnCards}">
+                            <td>
+                                <a th:href="@{/cars/{id}(id=${s.carId})}"
+                                   style="display:flex; gap:10px; align-items:center; text-decoration:none; color:inherit;">
+                                    <img th:src="${s.frontViewUrl} ?: '/img/common/noimage.png'"
+                                         alt="" style="width:100px; height:70px; object-fit:cover; border-radius:6px;">
+                                    <div>
+                                        <div style="font-weight:600;" th:text="${s.modelName}">모델명</div>
+                                        <small>
+                                            <span th:text="${s.carNumber}">12가1234</span> ·
+                                            <span th:text="${s.manufactureDate != null ? #temporals.format(s.manufactureDate,'yyyy-MM') : '연식미상'}">2022-05</span> ·
+                                            <span th:text="${s.mileage} + ' km'">0 km</span> ·
+                                            <span th:text="${s.region}">지역</span>
+                                        </small>
+                                    </div>
+                                </a>
+                            </td>
+                            <td th:text="${currentTab}">판매중</td>
+                            <td>-</td> <td>
+                            <a th:href="@{/cars/{id}(id=${s.carId})}" class="btn-gray-small">보기</a>
                         </td>
-                        <td th:text="${s.carId != null} ? '판매대기' : '등록중'">판매대기</td>
-                        <td>-</td>
-                        <td>
-                            <a th:href="${s.carId} != null ? @{/cars/{id}(id=${s.carId})}
-                                   : @{|/sell/detail/view?carNumber=${s.carNumber}|}"
-                               class="btn-gray-small">보기</a>
-                            <!-- 사진수정은 draftId 기준 유지 -->
-                            <a th:href="@{|/sell/detail/photo?carId=${s.draftId}|}" class="btn-gray-small">사진수정</a>
-                        </td>
-                    </tr>
+                        </tr>
+                    </th:block>
                     </tbody>
                 </table>
 
@@ -736,6 +773,8 @@
                     - 자동업데이트 항목은 제외됩니다.
                 </div>
             </div>
+            </div>
+
 
             <!-- 🚗 나의 설명글 관리 -->
             <div class="description-wrapper hidden" id="description-wrapper">
@@ -1426,293 +1465,261 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const mypageButtons = document.querySelectorAll(".mypage-btn");
-        const sidebarLinks = document.querySelectorAll(".sidebar-link, .sidebar-category[data-target]");
-        const contentSections = document.querySelectorAll(".mypage-main > div");
 
-        // ✅ 상단 버튼 클릭 이벤트
-        mypageButtons.forEach(btn => {
-          btn.addEventListener("click", function (e) {
-            const text = this.textContent.trim();
-            const href = this.getAttribute("href") || "#";
-            const isHome = href === "/mypage";
+      document.querySelectorAll(".sub-tab-buttons a").forEach(a => {
+        a.addEventListener("click", function (e) {
+          const href = this.getAttribute("href") || "";
 
-            // 홈은 기본 이동
-            if (isHome) return;
+          // ✅ 클릭 이벤트가 상위(myPageButtons)로 전파되지 않게 차단
+          e.stopPropagation();
 
-            // 회원정보관리 → 별도 페이지로 이동
-            if (text === "회원정보관리") {
-              e.preventDefault();                  // ✅ 기본 이동 취소(중복 방지)
-              window.location.href = "/mypage/verify";
-              return;
-            }
+          // ✅ 판매차량관리 탭은 서버 이동 허용
+          if (href.includes("/mypage") && href.includes("section=sell-car-section")) {
+            return; // 기본 이동 허용
+          }
 
-            // SPA 전환(내차 구매/판매/결제/쿠폰/수출시세)
+          // 그 외 탭은 SPA 처리이므로 페이지 이동 방지
+          e.preventDefault();
+        });
+      });
+
+
+      /* ===============================
+         2️⃣ 공통 DOM 셀렉터 정의
+         =============================== */
+      const mypageButtons = document.querySelectorAll(".mypage-btn");
+      const sidebarLinks = document.querySelectorAll(".sidebar-link, .sidebar-category[data-target]");
+      const contentSections = document.querySelectorAll(".mypage-main > div");
+
+
+      /* ===============================
+         3️⃣ 상단 버튼 클릭 이벤트 (내차판매/결제 등)
+         =============================== */
+      mypageButtons.forEach(btn => {
+        btn.addEventListener("click", function (e) {
+          const text = this.textContent.trim();
+          const href = this.getAttribute("href") || "#";
+          const isHome = href === "/mypage" && !window.location.search;
+
+          // ✅ 완전한 /mypage (쿼리스트링 없는 경우)만 홈으로 간주
+          if (isHome) return;
+
+          // ✅ 회원정보관리 → 별도 페이지 이동
+          if (text === "회원정보관리") {
             e.preventDefault();
+            window.location.href = "/mypage/verify";
+            return;
+          }
 
-            // 상단 버튼 active 처리
-            mypageButtons.forEach(b => b.classList.remove("active"));
-            this.classList.add("active");
+          // ✅ 나머지는 SPA 전환 처리
+          e.preventDefault();
 
-            // 탭→섹션 매핑
-            const tabToContentMap = {
-              "내차 구매": "interested-cars-section",
-              "내차 판매": "sell-car-section",
-              "결제 관리": "payment-history-section",
-              "쿠폰/포인트": "coupon-history-section",
-              "수출시세": "export-price-section"
-              // "회원정보관리": "member-info-section"  // ← 별도 페이지로 이동하므로 여기선 불필요
-            };
+          // 상단 버튼 active 처리
+          mypageButtons.forEach(b => b.classList.remove("active"));
+          this.classList.add("active");
 
-            const targetId = tabToContentMap[text];
-            if (!targetId) return;
+          // 탭 → 섹션 매핑
+          const tabToContentMap = {
+            "내차 구매": "interested-cars-section",
+            "내차 판매": "sell-car-section",
+            "결제 관리": "payment-history-section",
+            "쿠폰/포인트": "coupon-history-section",
+            "수출시세": "export-price-section"
+          };
 
-            // 콘텐츠 전환
-            contentSections.forEach(section => section.classList.add("hidden"));
-            document.getElementById(targetId)?.classList.remove("hidden");
+          const targetId = tabToContentMap[text];
+          if (!targetId) return;
 
-            // 사이드바 active 연동
-            sidebarLinks.forEach(link => link.classList.remove("active"));
-            document.querySelector(`.sidebar-link[data-target="${targetId}"]`)?.classList.add("active");
+          // 콘텐츠 전환
+          contentSections.forEach(section => section.classList.add("hidden"));
+          document.getElementById(targetId)?.classList.remove("hidden");
+
+          // 사이드바 active 연동
+          sidebarLinks.forEach(link => link.classList.remove("active"));
+          document.querySelector(`.sidebar-link[data-target="${targetId}"]`)?.classList.add("active");
+        });
+      });
+
+
+      /* ===============================
+         4️⃣ 사이드바 클릭 이벤트
+         =============================== */
+      sidebarLinks.forEach(link => {
+        link.addEventListener("click", function (e) {
+          const targetId = this.dataset.target;
+
+          // ✅ data-target이 없으면 페이지 이동 허용
+          if (!targetId) return;
+
+          // ✅ 회원정보관리 전용 페이지 이동
+          if (targetId === "member-info-section") {
+            window.location.href = "/mypage/verify";
+            return;
+          }
+
+          e.preventDefault();
+
+          // 콘텐츠 전환
+          contentSections.forEach(section => section.classList.add("hidden"));
+          const targetSection = document.getElementById(targetId);
+          if (targetSection) targetSection.classList.remove("hidden");
+
+          // 사이드바 active 처리
+          sidebarLinks.forEach(link => link.classList.remove("active"));
+          this.classList.add("active");
+
+          // 상단 탭 연동
+          const sidebarToTabMap = {
+            "interested-cars-section": "내차 구매",
+            "accident-history-section": "내차 구매",
+            "warranty-section": "내차 구매",
+            "trust-visit-section": "내차 구매",
+            "trust-delivery-section": "내차 구매",
+            "sell-car-section": "내차 판매",
+            "description-wrapper": "내차 판매",
+            "purchase-inquiry-section": "내차 판매",
+            "payment-section": "결제 관리",
+            "refund-info-section": "결제 관리",
+            "coupon-history-section": "쿠폰/포인트",
+            "point-history-section": "쿠폰/포인트",
+            "coupon-guide-section": "쿠폰/포인트",
+            "export-price-section": "수출시세",
+            "member-info-section": "회원정보관리",
+            "member-delete-section": "회원정보관리"
+          };
+
+          const topTabText = sidebarToTabMap[targetId];
+          if (topTabText) {
+            mypageButtons.forEach(btn => {
+              btn.classList.remove("active");
+              if (btn.textContent.includes(topTabText)) btn.classList.add("active");
+            });
+          }
+        });
+      });
+
+
+      /* ===============================
+         5️⃣ 내차팔기 / 내차사기 탭 전환
+         =============================== */
+      const tabToggles = document.querySelectorAll(".btn-tab");
+      const tabSell = document.getElementById("tab-sell");
+      const tabBuy = document.getElementById("tab-buy");
+      const btnSell = document.getElementById("btn-sell");
+      const btnBuy = document.getElementById("btn-buy");
+
+      tabToggles.forEach(btn => {
+        btn.addEventListener("click", function (e) {
+          e.preventDefault();
+          tabToggles.forEach(b => b.classList.remove("active"));
+          this.classList.add("active");
+
+          const target = this.dataset.target;
+          if (target === "sell") {
+            tabSell.classList.remove("hidden");
+            tabBuy.classList.add("hidden");
+            btnSell.classList.remove("hidden");
+            btnBuy.classList.add("hidden");
+          } else if (target === "buy") {
+            tabSell.classList.add("hidden");
+            tabBuy.classList.remove("hidden");
+            btnSell.classList.add("hidden");
+            btnBuy.classList.remove("hidden");
+          }
+        });
+      });
+
+
+      /* ===============================
+         6️⃣ 엔카믿고 방문 / 배송 탭 전환
+         =============================== */
+      const visitTabs = document.querySelectorAll(".visit-tab-btn");
+      const visitContents = document.querySelectorAll(".visit-tab-content");
+      visitTabs.forEach(btn => {
+        btn.addEventListener("click", function () {
+          visitTabs.forEach(b => b.classList.remove("active"));
+          this.classList.add("active");
+          const target = this.dataset.target;
+          visitContents.forEach(c => c.classList.add("hidden"));
+          document.getElementById(target).classList.remove("hidden");
+        });
+      });
+
+      const deliveryTabs = document.querySelectorAll(".delivery-tab-btn");
+      const deliveryContents = document.querySelectorAll(".delivery-tab-content");
+      deliveryTabs.forEach(btn => {
+        btn.addEventListener("click", function () {
+          deliveryTabs.forEach(b => b.classList.remove("active"));
+          this.classList.add("active");
+          const target = this.dataset.target;
+          deliveryContents.forEach(c => c.classList.add("hidden"));
+          document.getElementById(target).classList.remove("hidden");
+        });
+      });
+
+
+      /* ===============================
+         7️⃣ 결제/입금대기 탭 전환
+         =============================== */
+      document.querySelectorAll('#payment-history-section .tab-buttons .tab-btn').forEach(tab => {
+        tab.addEventListener("click", function () {
+          document.querySelectorAll('#payment-history-section .tab-buttons .tab-btn')
+            .forEach(btn => btn.classList.remove("active"));
+          this.classList.add("active");
+          const targetId = this.dataset.target;
+          document.querySelectorAll('#payment-history-section .payment-box')
+            .forEach(box => box.classList.add("hidden"));
+          document.getElementById(targetId).classList.remove("hidden");
+        });
+      });
+
+
+      /* ===============================
+         8️⃣ 공통 탭 전환 함수 (방문/배송/쿠폰 등 재사용)
+         =============================== */
+      function handleTabToggle(containerSelector, tabSelector, contentSelector, activeClass = "active", hiddenClass = "hidden") {
+        const tabs = document.querySelectorAll(`${containerSelector} ${tabSelector}`);
+        const contents = document.querySelectorAll(`${containerSelector} ${contentSelector}`);
+
+        tabs.forEach(tab => {
+          tab.addEventListener("click", function () {
+            tabs.forEach(btn => btn.classList.remove(activeClass));
+            contents.forEach(content => content.classList.add(hiddenClass));
+            this.classList.add(activeClass);
+            const targetId = this.dataset.target;
+            const targetContent = document.getElementById(targetId);
+            if (targetContent) targetContent.classList.remove(hiddenClass);
           });
         });
 
-
-
-        // ✅ 사이드바 클릭 이벤트
-        sidebarLinks.forEach(link => {
-            link.addEventListener("click", function (e) {
-                const targetId = this.dataset.target;
-
-                // ✅ data-target이 없으면 페이지 이동 허용
-                if (!targetId) return;
-
-                // ✅ 여기 아래 조건 추가!
-                if (targetId === "member-info-section") {
-                    window.location.href = "/mypage/verify";
-                    return;
-                }
-
-                e.preventDefault();
-
-                // 콘텐츠 전환
-                contentSections.forEach(section => section.classList.add("hidden"));
-                const targetSection = document.getElementById(targetId);
-                if (targetSection) targetSection.classList.remove("hidden");
-
-                // 사이드바 스타일
-                sidebarLinks.forEach(link => link.classList.remove("active"));
-                this.classList.add("active");
-
-                // 상단 탭 연동
-                const sidebarToTabMap = {
-                    "interested-cars-section": "내차 구매",
-                    "accident-history-section": "내차 구매",
-                    "warranty-section": "내차 구매",
-                    "trust-visit-section": "내차 구매",
-                    "trust-delivery-section": "내차 구매",
-                    "sell-car-section": "내차 판매",
-                    "description-wrapper": "내차 판매",
-                    "purchase-inquiry-section": "내차 판매",
-                    "payment-section": "결제 관리",
-                    "refund-info-section": "결제 관리",
-                    "coupon-history-section": "쿠폰/포인트",
-                    "point-history-section": "쿠폰/포인트",
-                    "coupon-guide-section": "쿠폰/포인트",
-                    "export-price-section": "수출시세",
-                    "member-info-section": "회원정보관리",
-                    "member-delete-section": "회원정보관리"
-                };
-
-                const topTabText = sidebarToTabMap[targetId];
-                if (topTabText) {
-                    mypageButtons.forEach(btn => {
-                        btn.classList.remove("active");
-                        if (btn.textContent.includes(topTabText)) {
-                            btn.classList.add("active");
-                        }
-                    });
-                }
-            });
-        });
-
-        // ✅ 내차팔기 / 내차사기 탭
-        const tabToggles = document.querySelectorAll(".btn-tab");
-        const tabSell = document.getElementById("tab-sell");
-        const tabBuy = document.getElementById("tab-buy");
-        const btnSell = document.getElementById("btn-sell");
-        const btnBuy = document.getElementById("btn-buy");
-
-        tabToggles.forEach(btn => {
-            btn.addEventListener("click", function (e) {
-            e.preventDefault();
-
-            tabToggles.forEach(b => b.classList.remove("active"));
-            this.classList.add("active");
-
-            const target = this.dataset.target;
-            if (target === "sell") {
-                tabSell.classList.remove("hidden");
-                tabBuy.classList.add("hidden");
-                btnSell.classList.remove("hidden");
-                btnBuy.classList.add("hidden");
-            } else if (target === "buy") {
-                tabSell.classList.add("hidden");
-                tabBuy.classList.remove("hidden");
-                btnSell.classList.add("hidden");
-                btnBuy.classList.remove("hidden");
-            }
-            });
-        });
-
-        // ✅ 국산/수입차 탭 전환
-        const tabButtons = document.querySelectorAll(".tab-btn");
-        const tabContents = document.querySelectorAll(".vehicle-tab-content");
-
-        tabButtons.forEach(button => {
-            button.addEventListener("click", function () {
-            tabButtons.forEach(btn => btn.classList.remove("active"));
-            this.classList.add("active");
-
-            const targetId = this.getAttribute("data-target");
-            tabContents.forEach(content => content.classList.add("hidden"));
-            document.getElementById(targetId).classList.remove("hidden");
-            });
-        });
-
-        // 🚗 엔카믿고 방문 탭 전환
-        const visitTabs = document.querySelectorAll(".visit-tab-btn");
-        const visitContents = document.querySelectorAll(".visit-tab-content");
-
-        visitTabs.forEach(btn => {
-          btn.addEventListener("click", function () {
-            visitTabs.forEach(b => b.classList.remove("active"));
-            this.classList.add("active");
-
-            const target = this.dataset.target;
-            visitContents.forEach(c => c.classList.add("hidden"));
-            document.getElementById(target).classList.remove("hidden");
-          });
-        });
-
-        // 🚚 엔카믿고 배송 탭 전환
-        const deliveryTabs = document.querySelectorAll(".delivery-tab-btn");
-        const deliveryContents = document.querySelectorAll(".delivery-tab-content");
-
-        deliveryTabs.forEach(btn => {
-          btn.addEventListener("click", function () {
-            deliveryTabs.forEach(b => b.classList.remove("active"));
-            this.classList.add("active");
-
-            const target = this.dataset.target;
-            deliveryContents.forEach(c => c.classList.add("hidden"));
-            document.getElementById(target).classList.remove("hidden");
-          });
-        });
-
-
-        // ✅ 결제/입금대기 탭 전환
-        document.querySelectorAll('#payment-history-section .tab-buttons .tab-btn').forEach(tab => {
-            tab.addEventListener("click", function () {
-                // 모든 탭에서 active 제거 후 현재 탭에만 active
-                document.querySelectorAll('#payment-history-section .tab-buttons .tab-btn').forEach(btn => btn.classList.remove("active"));
-                this.classList.add("active");
-
-                // 모든 박스 숨기고 해당 타겟만 보이게
-                const targetId = this.dataset.target;
-                document.querySelectorAll('#payment-history-section .payment-box').forEach(box => box.classList.add("hidden"));
-                document.getElementById(targetId).classList.remove("hidden");
-            });
-        });
-
-        // ✅ 공통 탭 전환 처리 함수 (전역에서 재사용)
-        function handleTabToggle(containerSelector, tabSelector, contentSelector, activeClass = "active", hiddenClass = "hidden") {
-            const tabs = document.querySelectorAll(`${containerSelector} ${tabSelector}`);
-            const contents = document.querySelectorAll(`${containerSelector} ${contentSelector}`);
-
-            tabs.forEach(tab => {
-                tab.addEventListener("click", function () {
-                    // 스타일 초기화
-                    tabs.forEach(btn => btn.classList.remove(activeClass));
-                    contents.forEach(content => content.classList.add(hiddenClass));
-
-                    // 선택한 탭 활성화
-                    this.classList.add(activeClass);
-                    const targetId = this.dataset.target;
-                    const targetContent = document.getElementById(targetId);
-                    if (targetContent) targetContent.classList.remove(hiddenClass);
-                });
-            });
-
-            // ✅ 초기에 active 클래스가 붙어 있는 버튼이 존재하면 그에 맞게 콘텐츠 표시
-            const initiallyActiveTab = Array.from(tabs).find(tab => tab.classList.contains(activeClass));
-            if (initiallyActiveTab) {
-                const initialTarget = initiallyActiveTab.dataset.target;
-                contents.forEach(content => content.classList.add(hiddenClass));
-                const initialContent = document.getElementById(initialTarget);
-                if (initialContent) initialContent.classList.remove(hiddenClass);
-            }
+        const initiallyActiveTab = Array.from(tabs).find(tab => tab.classList.contains(activeClass));
+        if (initiallyActiveTab) {
+          const initialTarget = initiallyActiveTab.dataset.target;
+          contents.forEach(content => content.classList.add(hiddenClass));
+          const initialContent = document.getElementById(initialTarget);
+          if (initialContent) initialContent.classList.remove(hiddenClass);
         }
+      }
 
+      handleTabToggle('#trust-visit-section', '.vehicle-tabs .tab-btn', '.visit-tab-content');
+      handleTabToggle('#trust-delivery-section', '.vehicle-tabs .tab-btn', '.delivery-tab-content');
+      handleTabToggle('#purchase-inquiry-section', '.vehicle-tabs .tab-btn', '.inquiry-box');
+      handleTabToggle('#payment-history-section', '.vehicle-tabs .tab-btn', '.payment-box');
+      handleTabToggle('#coupon-history-section', '.vehicle-tabs .tab-btn', '.coupon-box');
+      handleTabToggle('#coupon-guide-section', '.vehicle-tabs .tab-btn', '.coupon-guide-box');
 
-
-        // 🚗 엔카믿고 방문 탭 전환 (자동 숨김/표시)
-        handleTabToggle(
-          '#trust-visit-section',
-          '.vehicle-tabs .tab-btn',
-          '.visit-tab-content'
-        );
-
-
-        // 🚚 엔카믿고 배송 탭 전환 (통일)
-        handleTabToggle(
-            '#trust-delivery-section',
-            '.vehicle-tabs .tab-btn',        // ✅ 정확한 선택자
-            '.delivery-tab-content'
-        );
-
-
-        // 🛒 구매문의 탭 전환 (탭 전환만)
-        handleTabToggle(
-          '#purchase-inquiry-section',        // ✅ 부모 ID
-          '.vehicle-tabs .tab-btn',           // ✅ 버튼 위치
-          '.inquiry-box'                      // ✅ 전환할 콘텐츠
-        );
-
-        // 라디오 버튼 초기화만 따로 처리
-        document.querySelectorAll('#purchase-inquiry-section .tab-buttons .tab-btn').forEach(tab => {
-            tab.addEventListener("click", function () {
-                const targetId = this.dataset.target;
-                const radios = document.querySelectorAll(`#${targetId} input[type="radio"]`);
-                if (radios.length > 0) {
-                    radios[0].checked = true;
-                }
-            });
+      /* ✅ 구매문의 탭의 라디오 초기화 */
+      document.querySelectorAll('#purchase-inquiry-section .tab-buttons .tab-btn').forEach(tab => {
+        tab.addEventListener("click", function () {
+          const targetId = this.dataset.target;
+          const radios = document.querySelectorAll(`#${targetId} input[type="radio"]`);
+          if (radios.length > 0) radios[0].checked = true;
         });
+      });
 
-
-        // 💳 결제 내역 / 입금대기 내역 탭
-        handleTabToggle(
-            '#payment-history-section',
-            '.vehicle-tabs .tab-btn',
-            '.payment-box'
-        );
-
-        // 🎟️ 쿠폰 탭 (보유/만료) - vehicle-tabs로 변경
-        handleTabToggle(
-            '#coupon-history-section',
-            '.vehicle-tabs .tab-btn',
-            '.coupon-box'
-        );
-
-        // 🧾 쿠폰/포인트 이용안내 탭 - vehicle-tabs로 변경
-        handleTabToggle(
-            '#coupon-guide-section',
-            '.vehicle-tabs .tab-btn',
-            '.coupon-guide-box'
-        );
     });
 </script>
+
 <script>
     function showWithdrawReason() {
       const checkbox = document.getElementById("agree-withdraw");
@@ -1729,6 +1736,7 @@
       document.getElementById("withdraw-step2").classList.add("hidden");
       document.getElementById("member-delete-section").classList.remove("hidden");
     }
+
 </script>
 <script>
     // 내용 초기화 기능(마이페이지/내차판매/나의 상담글 관리)
@@ -1876,3 +1884,95 @@
       });
     })();
 </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // ✅ 기본 탭 자동 설정
+      const url = new URL(window.location.href);
+
+      // section이 sell-car-section인데 tab이 없으면 → 기본 탭을 '판매중'으로 강제
+      if (url.searchParams.get("section") === "sell-car-section" && !url.searchParams.get("tab")) {
+        url.searchParams.set("tab", "판매중");
+        history.replaceState({}, "", url.toString());
+      }
+
+      // ✅ 하위 탭: 판매중/판매대기/완료/삭제 를 SPA로 교체 로딩
+      (function () {
+        const sellSection = document.getElementById("sell-car-section");
+        if (!sellSection) return;
+
+        const tableSelector = "#sell-car-section .simple-table";
+        const tbodySelector = "#sell-car-section .simple-table tbody";
+
+        function showLoading() {
+          if (sellSection.querySelector(".ajax-loading")) return;
+          const div = document.createElement("div");
+          div.className = "ajax-loading";
+          div.style.cssText = "padding:12px 0;color:#666;font-size:13px;";
+          div.textContent = "불러오는 중...";
+          const table = sellSection.querySelector(tableSelector);
+          table?.parentNode?.insertBefore(div, table);
+        }
+        function hideLoading() {
+          sellSection.querySelector(".ajax-loading")?.remove();
+        }
+
+        async function swapSellList(url, pushState = true) {
+          try {
+            showLoading();
+            const res = await fetch(url, { headers: { "X-Requested-With": "fetch" } });
+            if (!res.ok) throw new Error("네트워크 오류");
+            const html = await res.text();
+
+            const doc = new DOMParser().parseFromString(html, "text/html");
+
+            const newTabs = doc.querySelector(".sub-tab-buttons");
+            const oldTabs = sellSection.querySelector(".sub-tab-buttons");
+            if (newTabs && oldTabs) oldTabs.replaceWith(newTabs);
+
+            const newTbody = doc.querySelector(tbodySelector);
+            const curTbody = sellSection.querySelector(tbodySelector);
+            if (newTbody && curTbody) curTbody.replaceWith(newTbody);
+
+            if (pushState) history.pushState({ __sellTabSwap: true }, "", url);
+
+            rebindSubTabEvents();
+          } catch (e) {
+            console.error(e);
+            alert("목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
+            window.location.href = url;
+          } finally {
+            hideLoading();
+          }
+        }
+
+        function handleSubTabClick(e) {
+          const a = e.target.closest("a");
+          if (!a) return;
+          const href = a.getAttribute("href") || "";
+          if (!href) return;
+          e.preventDefault();
+          e.stopPropagation();
+          swapSellList(href, true);
+        }
+
+        function rebindSubTabEvents() {
+          const newWrap = sellSection.querySelector(".sub-tab-buttons");
+          if (!newWrap) return;
+          newWrap.querySelectorAll("a").forEach(a => {
+            a.addEventListener("click", handleSubTabClick);
+          });
+        }
+
+        rebindSubTabEvents();
+
+        window.addEventListener("popstate", () => {
+          const url = location.href;
+          if (url.includes("/mypage") && url.includes("section=sell-car-section") && url.includes("tab=")) {
+            swapSellList(url, false);
+          }
+        });
+      })();
+    });
+</script>
+

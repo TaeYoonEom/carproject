@@ -2,16 +2,15 @@ package com.example.carproject.controller;
 
 import com.example.carproject.domain.Member;
 import com.example.carproject.domain.CarEntryDraft;
-import com.example.carproject.repository.MemberRepository;
-import com.example.carproject.repository.CarEntryDraftRepository;
+import com.example.carproject.domain.CarSold;
+import com.example.carproject.repository.*;
 import com.example.carproject.repository.WishMini;
-import com.example.carproject.repository.AllCarSaleRepository2; // ★ 리포지토리 이름/패키지 맞춤
+import com.example.carproject.repository.SellOnMini;
 import com.example.carproject.service.WishlistService;
 import com.example.carproject.service.WishlistService.WishCarDto;
-import com.example.carproject.domain.CarSold;
 import com.example.carproject.service.CarSoldService;
 
-// 쿠폰/포인트
+// ✅ 쿠폰 / 포인트 관련
 import com.example.carproject.service.CouponPointService;
 import com.example.carproject.dto.CouponSummary;
 import com.example.carproject.dto.CouponRow;
@@ -24,6 +23,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -33,45 +33,49 @@ import java.util.stream.Collectors;
 public class MypageController {
 
     private final MemberRepository memberRepository;
-    private final AllCarSaleRepository2 allCarSaleRepository2; // ★ 필드명/타입 일치
+    private final AllCarSaleRepository2 allCarSaleRepository2;
     private final WishlistService wishlistService;
     private final CarSoldService carSoldService;
-
     private final CarEntryDraftRepository carEntryDraftRepository;
     private final CouponPointService couponPointService;
 
     public MypageController(MemberRepository memberRepository,
-                            AllCarSaleRepository2 allCarSaleRepository2, // ★ 주입 타입/이름 일치
+                            AllCarSaleRepository2 allCarSaleRepository2,
                             WishlistService wishlistService,
+                            CarSoldService carSoldService,
                             CarEntryDraftRepository carEntryDraftRepository,
-                            CouponPointService couponPointService,
-                            CarSoldService carSoldService) {
+                            CouponPointService couponPointService) {
         this.memberRepository = memberRepository;
         this.allCarSaleRepository2 = allCarSaleRepository2;
         this.wishlistService = wishlistService;
+        this.carSoldService = carSoldService;
         this.carEntryDraftRepository = carEntryDraftRepository;
         this.couponPointService = couponPointService;
-        this.carSoldService = carSoldService;
     }
 
+    // ✅ 상태별 탭 필터링 (판매중 / 대기 / 완료 / 삭제)
     @GetMapping("/mypage")
-    public String mypage(Model model, Authentication authentication) {
+    public String mypage(@RequestParam(defaultValue = "home") String section,
+                         @RequestParam(defaultValue = "판매중") String tab, // 현재 탭 상태값
+                         Model model, Authentication authentication) {
+
         if (authentication == null || authentication.getPrincipal() == null) {
             throw new IllegalStateException("인증되지 않은 사용자입니다.");
         }
 
+        // 🔹 로그인 사용자 정보
         Member member = resolveMember(authentication);
         Integer memberId = member.getMemberId();
 
-        // ✅ 찜 목록
+        // 🔹 찜한 차량
         List<WishMini> wishMini = allCarSaleRepository2.findWishAll(memberId);
         List<WishCarDto> wishlistCars = wishlistService.myWishlistCars(memberId);
         int wishCount = wishlistService.count(memberId);
 
-        // ✅ 판매대기 (Draft)
+        // 🔹 판매대기 (CarEntryDraft 기반, is_submitted = false)
         List<CarEntryDraft> sellWaiting =
-                carEntryDraftRepository.findByMemberIdAndIsSubmittedTrueOrderByCreatedAtDesc(memberId);
-        int saleWaiting = sellWaiting.size();
+                carEntryDraftRepository.findByMemberIdAndIsSubmittedFalseOrderByCreatedAtDesc(memberId);
+
 
         List<SellDraftCardVm> sellCards = sellWaiting.stream()
                 .map(d -> new SellDraftCardVm(
@@ -79,39 +83,73 @@ public class MypageController {
                         allCarSaleRepository2.findCarIdByDraftId(d.getId()).orElse(null),
                         (d.getFrontViewUrl() != null && !d.getFrontViewUrl().isEmpty())
                                 ? d.getFrontViewUrl()
-                                : "/img/common/noimage.png", // ✅ 기본이미지 처리
+                                : "/img/common/noimage.png",
                         d.getModelName(),
                         d.getCarNumber(),
                         d.getManufactureDate(),
                         d.getMileage(),
-                        d.getRegion()
+                        d.getRegion(),
+                        d.getPrice()
                 ))
                 .collect(Collectors.toList());
 
-        // ✅ 판매 상태 (car_sold)
-        int saleOn = carSoldService.count(memberId, CarSold.Status.판매중);
-        int saleDone = carSoldService.count(memberId, CarSold.Status.판매완료);
+        // ✅ 판매중 / 완료 / 삭제 차량 (car_sold 기반)
+        List<SellOnMini> soldRows = allCarSaleRepository2.findCarsByMemberAndStatus(memberId, tab);
+
+        List<SellDraftCardVm> sellOnCards = soldRows.stream()
+                .map(r -> new SellDraftCardVm(
+                        null,
+                        r.getCarId(),
+                        (r.getFrontViewUrl() != null && !r.getFrontViewUrl().isEmpty())
+                                ? r.getFrontViewUrl()
+                                : "/img/common/noimage.png",
+                        r.getCarName(),
+                        r.getCarNumber(),
+                        (r.getYear() != null ? LocalDate.of(r.getYear(), 1, 1) : null),
+                        r.getMileage(),
+                        r.getSaleLocation(),
+                        r.getPrice()
+                ))
+                .toList();
+
+        // ✅ 판매대기 카운트 (이미 등록된 차량 제외)
+        int saleWaiting = (int) sellCards.stream()
+                .filter(d -> !allCarSaleRepository2.existsByCarEntryDraftId(d.getDraftId()))
+                .count();
+
+        // 🔹 상태별 차량 카운트
+        int saleOn       = carSoldService.count(memberId, CarSold.Status.판매중);
+        int saleDone     = carSoldService.count(memberId, CarSold.Status.판매완료);
         int saleWithdraw = carSoldService.count(memberId, CarSold.Status.철회);
-        int saleDeleted = 0; // ✅ HTML에서 참조하므로 기본값 추가
+        int saleDeleted  = carSoldService.count(memberId, CarSold.Status.삭제);
 
-        int totalSellCars = saleWaiting + saleOn + saleDone;
+        int totalSellCars = saleOn + saleWaiting + saleDone;
 
-        // ✅ 모델 등록
+        // ✅ 탭에 따라 표시 데이터 분기
+        if (tab.equals("판매대기")) {
+            model.addAttribute("sellCards", sellCards);   // Draft 기반
+            model.addAttribute("sellOnCards", List.of()); // 빈 리스트
+        } else {
+            model.addAttribute("sellOnCards", sellOnCards); // 판매중/완료/삭제
+            model.addAttribute("sellCards", List.of());     // 빈 리스트
+        }
+
+        // ✅ 공통 모델 데이터
         model.addAttribute("member", member);
         model.addAttribute("wishCount", wishCount);
         model.addAttribute("wishMini", wishMini);
         model.addAttribute("wishlistCars", wishlistCars);
-        model.addAttribute("sellWaiting", sellWaiting);
-        model.addAttribute("saleWaiting", saleWaiting);
-        model.addAttribute("sellDrafts", sellWaiting);
-        model.addAttribute("sellCards", sellCards);
+
         model.addAttribute("saleOn", saleOn);
+        model.addAttribute("saleWaiting", saleWaiting);
         model.addAttribute("saleDone", saleDone);
         model.addAttribute("saleWithdraw", saleWithdraw);
-        model.addAttribute("saleDeleted", saleDeleted); // ✅ 추가
+        model.addAttribute("saleDeleted", saleDeleted);
         model.addAttribute("totalSellCars", totalSellCars);
+        model.addAttribute("currentTab", tab);           // 현재 탭 상태 유지용
+        model.addAttribute("currentSection", section);
 
-        // ✅ 쿠폰 & 포인트
+        // ✅ 쿠폰 & 포인트 데이터
         CouponSummary couponSummary = couponPointService.getCouponSummary(memberId);
         List<CouponRow> couponValid = couponPointService.getUsableCoupons(memberId);
         List<CouponRow> couponExpired = couponPointService.getUsedOrExpiredCoupons(memberId);
@@ -128,6 +166,7 @@ public class MypageController {
     }
 
 
+    // ✅ 로그인된 Member 조회
     private Member resolveMember(Authentication authentication) {
         Object principal = authentication.getPrincipal();
 
@@ -144,20 +183,22 @@ public class MypageController {
         throw new IllegalStateException("인증되지 않은 사용자입니다.");
     }
 
-    // 화면 전용 VM
+    // ✅ 화면 출력용 VM (판매대기 + 판매중 공용)
     public static class SellDraftCardVm {
         private final Integer draftId;
-        private final Integer carId; // null이면 폴백
-        private final String  frontViewUrl;
-        private final String  modelName;
-        private final String  carNumber;
+        private final Integer carId;
+        private final String frontViewUrl;
+        private final String modelName;
+        private final String carNumber;
         private final LocalDate manufactureDate;
         private final Integer mileage;
-        private final String  region;
+        private final String region;
+        private final Integer price;
 
         public SellDraftCardVm(Integer draftId, Integer carId, String frontViewUrl,
                                String modelName, String carNumber,
-                               LocalDate manufactureDate, Integer mileage, String region) {
+                               LocalDate manufactureDate, Integer mileage,
+                               String region, Integer price) {
             this.draftId = draftId;
             this.carId = carId;
             this.frontViewUrl = frontViewUrl;
@@ -166,6 +207,8 @@ public class MypageController {
             this.manufactureDate = manufactureDate;
             this.mileage = mileage;
             this.region = region;
+            this.price = price;
+
         }
 
         public Integer getDraftId() { return draftId; }
@@ -176,5 +219,7 @@ public class MypageController {
         public LocalDate getManufactureDate() { return manufactureDate; }
         public Integer getMileage() { return mileage; }
         public String getRegion() { return region; }
+        public String getSaleLocation() { return region; } // region 재활용
+        public Integer getPrice() { return price; }
     }
 }

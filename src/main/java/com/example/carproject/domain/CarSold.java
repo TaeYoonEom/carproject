@@ -23,7 +23,7 @@ public class CarSold {
     @Column(name = "car_id", nullable = false)
     private int carId;     // ✅ int(11)
 
-    public enum Status { 판매중, 판매완료, 철회 }
+    public enum Status { 판매중, 판매완료, 삭제, 판매대기, 철회 }
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 10)

@@ -1,0 +1,792 @@
+/* ------------------------------
+   마이페이지 공통
+------------------------------ */
+.mypage-wrapper {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* ✅ 마이페이지 상단 버튼 스타일 */
+.mypage-menu-buttons {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 20px 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;         /* 혹시 길어질 경우 스크롤 허용 */
+    margin-bottom: 20px;
+}
+
+.mypage-btn {
+    padding: 10px 18px;
+    border: 1px solid #ccc;
+    background-color: #f7f7f7;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: 14px;
+    white-space: nowrap;
+    transition: background-color 0.2s;
+}
+
+.mypage-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.mypage-btn.active {
+    background-color: #d20000;
+    color: white;
+    border-color: #d20000;
+}
+
+/* ------------------------------
+   마이페이지 사이드바
+------------------------------ */
+.mypage-sidebar {
+    width: 220px;
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.sidebar-section {
+    margin-bottom: 18px;
+}
+
+.sidebar-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: red;
+    margin-bottom: 8px;
+}
+
+a.sidebar-category {
+    display: inline-block;
+    font-weight: bold;
+    font-size: 13px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 4px;
+    margin-bottom: 6px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+a.sidebar-category:hover {
+    color: red;
+    background-color: #f9f9f9;
+}
+
+
+.sidebar-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.sidebar-list li {
+    margin: 4px 0;
+}
+
+.sidebar-list a {
+    font-size: 12.5px;
+    color: #333;
+    text-decoration: none;
+}
+
+.sidebar-list a:hover {
+    text-decoration: underline;
+}
+
+.label-up {
+    font-size: 10px;
+    color: red;
+    font-weight: bold;
+}
+
+.label-new {
+    font-size: 10px;
+    background: orange;
+    color: white;
+    padding: 1px 4px;
+    border-radius: 4px;
+    margin-left: 2px;
+}
+
+.btn-inquiry {
+    display: block;
+    padding: 8px;
+    background: #f9f9f9;
+    border: 1px solid #ccc;
+    text-align: center;
+    color: #333;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.btn-inquiry:hover {
+    background: #eee;
+}
+
+/* 사이드바 링크 활성화 (JS 연동) */
+.sidebar-link.active {
+  color: #d32f2f;
+  font-weight: bold;
+  border-left: 3px solid #d32f2f;
+  padding-left: 6px;
+}
+
+
+/* ------------------------------
+   마이페이지 메인 콘텐츠
+------------------------------ */
+.mypage-main {
+    flex: 1;
+    padding: 10px;
+}
+
+/* 상단 회원정보 */
+.member-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    gap: 20px;
+}
+
+.member-info-left {
+    flex: 1;
+}
+
+.member-header .badge {
+    background: black;
+    color: white;
+    padding: 2px 6px;
+    font-size: 12px;
+    margin-left: 5px;
+}
+
+.info-gray {
+    color: gray;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.text-red {
+    color: red;
+}
+
+.member-meta {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #333;
+}
+
+.member-meta .meta-label {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.member-meta .btn-edit {
+    margin-left: 10px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    padding: 2px 6px;
+    text-decoration: none;
+    color: #333;
+    background-color: #f9f9f9;
+    border-radius: 3px;
+}
+
+/* 상단 회원정보 우측 버튼 */
+.member-buttons-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+.button-box {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  padding: 9px 11px;
+  display: inline-block;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+}
+
+.tab-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.tab-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.btn-tab {
+  font-size: 14px;
+  text-decoration: none;
+  font-weight: bold;
+  color: #888;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.btn-tab.active {
+  color: #d20000;
+  background-color: #fff;
+}
+
+.tab-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: auto;
+}
+
+.tab-right {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: center;
+  min-width: auto;
+}
+
+.tab-right a {
+  font-size: 13px;
+  color: #666;
+  text-decoration: none;
+}
+
+.tab-right a:hover {
+  text-decoration: underline;
+}
+
+/* 공통 tab-content 적용 */
+.tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* 이용중인 서비스 */
+.service-section {
+  margin-top: 30px;
+  font-size: 14px;
+}
+
+.service-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+
+.dot.red {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background-color: red;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.service-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 8px;
+}
+
+.service-table th,
+.service-table td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.service-table th {
+  background-color: #f9f9f9;
+  font-weight: bold;
+}
+
+.btn-detail {
+  font-size: 13px;
+  color: #333;
+  text-decoration: underline;
+}
+
+.service-note {
+  font-size: 12px;
+  color: #888;
+  margin-top: 4px;
+}
+
+/* ------------------------------
+   마이페이지 탭 스타일 (공통)
+------------------------------ */
+
+/* 차량 탭 영역 (국산/수입차, 찜한차량/최근본, ...) */
+.vehicle-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid #d20000; /* 얇은 레드 라인 */
+  margin-bottom: 20px;
+}
+
+/* 기본 탭 버튼 스타일 */
+.tab-btn {
+  padding: 6px 16px;
+  font-weight: bold;
+  font-size: 13px;
+  color: #666;
+  background-color: #f6f6f6;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  cursor: pointer;
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  top: 1px;
+  margin-right: -1px; /* 버튼들 붙이기 */
+  transition: all 0.2s ease;
+}
+
+/* 활성화된 탭 버튼 */
+.tab-btn.active {
+  background-color: #fff;
+  color: #d32f2f;
+  border: 1px solid #d32f2f;
+  border-bottom: 2px solid white;
+  z-index: 2;
+}
+
+/* 방문 탭 특화 스타일 보정 */
+#trust-visit-section .tab-buttons {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 8px;
+}
+
+#trust-visit-section .tab-btn {
+  border-radius: 4px 4px 0 0;
+  margin-right: 4px;
+}
+
+/* 판매차량 관리 탭 (테두리 통합) */
+.tab-buttons-wrapper {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-top: 10px;
+  background-color: #fff;
+  padding: 0;
+  overflow: hidden;
+}
+
+.tab-buttons.top-tab-buttons {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  background-color: #f9f9f9;
+}
+
+.tab-buttons.sub-tab-buttons {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  gap: 6px;
+  background-color: #fdfdfd;
+}
+
+.tab-buttons .float-right {
+  margin-left: auto;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 4px;
+}
+
+/* .tab-buttons 내부 탭 버튼 */
+.tab-buttons .tab-btn {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    color: #333;
+    padding: 8px 20px;
+    margin-right: 6px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-buttons .tab-btn:hover {
+    background-color: #e0e0e0;
+    border-color: #999;
+}
+
+/* 탭 버튼 활성화 (공통) */
+.tab-buttons .tab-btn.active,
+.vehicle-tabs .tab-btn.active {
+    background-color: #fff;
+    border: 2px solid #d32f2f;
+    color: #d32f2f;
+    font-weight: bold;
+}
+
+/* 수출시세 - 제조사 탭 */
+.manufacturer-tabs .tab-btn {
+    border: none;
+    background: none;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-weight: bold;
+    border-bottom: 2px solid transparent;
+}
+
+.manufacturer-tabs .tab-btn.active {
+    border-bottom: 2px solid #d32f2f;
+    color: #d32f2f;
+}
+
+/* ------------------------------
+   마이페이지 홈 (찜/판매)
+------------------------------ */
+.car-status {
+    display: flex;
+    gap: 30px;
+}
+
+.vehicle-tab-content {
+  padding: 15px 0;
+  border-top: none;
+}
+
+/* 차량 정보 박스 */
+.car-box {
+  flex: 1;
+  border: 1px solid #ccc;
+  padding: 15px;
+  background: #fff;
+  min-height: 300px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.car-box h4 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+/* 찜 박스 (wish) 스타일은 flex-direction만 유지 */
+.car-box--wish {
+    display: flex;
+    flex-direction: column;
+}
+
+/*
+  '찜한 차량'과 '내차 판매' 박스 내부의
+  wish-mini 영역에 동일한 높이와 스크롤을 적용합니다.
+*/
+.car-status .car-box .wish-mini {
+    height: 400px;
+    overflow-y: scroll;  /* ✅ 'auto'에서 'scroll'로 변경 */
+    overflow-x: hidden;  /* ✅ 가로 스크롤은 생기지 않도록 방지 */
+}
+/* 미니 카드 그리드/카드 (찜, 판매 공통) */
+.wish-mini-grid {
+  display: flex;       /* ✅ grid를 flex로 변경 */
+  flex-wrap: wrap;     /* ✅ 카드가 많으면 줄바꿈 */
+  gap: 7px;
+}
+.wish-mini-card {
+  display: block;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 6px;
+  text-decoration: none;
+  color: inherit;
+  font-size: 12px;
+
+  /* --- 이 부분이 핵심 --- */
+  width: 92px;  /* ✅ 카드의 너비를 92px로 고정 */
+  box-sizing: border-box; /* ✅ 패딩을 포함해 너비 계산 */
+  /* -------------------- */
+}
+.wish-mini-card .thumb {
+  width: 100%;
+  height: 60px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #f6f6f6;
+}
+.wish-mini-card .thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.wish-mini-card .txt { margin-top: 4px; line-height: 1.2; }
+.wish-mini-card .name {
+  font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.wish-mini-card .price { color: #555; }
+
+
+.no-data {
+  color: orange;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* 홈 - 가이드/주의사항 */
+.guide-wrapper {
+    display: flex;
+    border: 1px solid #ddd;
+    margin-top: 16px;
+    padding: 12px;
+    gap: 16px;
+    background-color: #fff;
+    max-width: 750px;
+    margin-left: 0;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+.guide-box {
+    flex: 1;
+    border-right: 1px solid #eee;
+    padding-right: 10px;
+    font-size: 11.5px;
+    max-width: 250px;
+    box-sizing: border-box;
+}
+
+.guide-box:last-child {
+    border-right: none;
+    padding-right: 0;
+}
+
+.guide-box h4 {
+    font-size: 12.5px;
+    font-weight: bold;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.guide-box ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.guide-box ul li {
+    line-height: 1.4;
+    color: #333;
+    font-size: 11.5px;
+}
+
+.guide-info-text {
+    font-size: 11px;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.warning-list li {
+    font-size: 11.5px;
+    color: #333;
+    line-height: 1.4;
+}
+
+.more {
+    font-size: 10.5px;
+    color: #888;
+    font-weight: normal;
+}
+
+
+/* ------------------------------
+   마이페이지 SPA 콘텐츠 (테이블 등)
+------------------------------ */
+
+/* 찜한차량 - 테이블 */
+.car-table {
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    font-size: 13px;
+    background: #fff;
+    padding: 12px;
+}
+
+.car-table-header {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.car-list-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 6px;
+}
+
+.car-list-table th,
+.car-list-table td {
+    border: 1px solid #ddd;
+    padding: 6px;
+    text-align: center;
+}
+
+/* 판매차량 관리 - 테이블 */
+.simple-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+.simple-table th, .simple-table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+}
+
+/* 나의 상담글 관리 */
+.description-wrapper {
+  border: 1px solid #ccc;
+  padding: 20px;
+  background-color: #fff;
+}
+
+.description-controls select,
+.description-controls input[type="text"] {
+  padding: 5px;
+  font-size: 13px;
+}
+
+.description-mode label {
+  font-size: 13px;
+}
+
+.description-area textarea {
+  font-family: inherit;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+/* 쿠폰/포인트 */
+.section-box {
+    border: 1px solid #ccc;
+    padding: 16px;
+    margin-top: 16px;
+    background-color: #fafafa;
+}
+.gray-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+.gray-table th, .gray-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
+.gray-table th {
+    background-color: #f6f6f6;
+}
+.empty-message {
+    text-align: center;
+    padding: 30px 0;
+    color: #666;
+}
+.info-box {
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    padding: 12px;
+    margin-top: 20px;
+    font-size: 13px;
+}
+.info-box b {
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* 수출시세 */
+.alert-box.red {
+    background: #fce4e4;
+    border: 1px solid #d32f2f;
+    padding: 10px;
+    font-weight: bold;
+    color: #d32f2f;
+    border-radius: 4px;
+}
+
+.export-search-box {
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.export-search-box .search-header {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.export-search-box .search-form label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* ------------------------------
+   공통 유틸리티
+------------------------------ */
+
+/* 공통 버튼 (회원탈퇴 등) */
+.btn {
+  display: inline-block;
+  text-align: center;
+  padding: 12px 0;
+  width: 48%;
+  border: 1px solid #ccc;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #fff;
+  color: #333;
+  text-decoration: none;
+}
+
+.btn-red {
+  background-color: #d20000;
+  color: white;
+  padding: 10px 15px;
+  font-weight: bold;
+  font-size: 13px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.btn-gray-small {
+    background: #f4f4f4;
+    border: 1px solid #ccc;
+    font-size: 10px;
+    padding: 2px 5px;
+    cursor: pointer;
+    margin-left: 6px;
+}
+
+/* 숨김 처리 */
+.hidden {
+  display: none !important;
+}
