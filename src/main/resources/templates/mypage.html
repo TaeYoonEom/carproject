@@ -751,7 +751,8 @@
                                 </a>
                             </td>
                             <td th:text="${currentTab}">판매중</td>
-                            <td>-</td> <td>
+                            <td th:text="${s.price != null ? #numbers.formatInteger(s.price/10000, 1, 'COMMA') + '만원' : '-'}">-</td>
+                            <td>
                             <a th:href="@{/cars/{id}(id=${s.carId})}" class="btn-gray-small">보기</a>
                         </td>
                         </tr>
@@ -1466,43 +1467,46 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
 
+      // ===============================
+      // 1) 판매차량관리 하위 탭(a) 클릭 제어
+      // ===============================
       document.querySelectorAll(".sub-tab-buttons a").forEach(a => {
         a.addEventListener("click", function (e) {
           const href = this.getAttribute("href") || "";
 
-          // ✅ 클릭 이벤트가 상위(myPageButtons)로 전파되지 않게 차단
+          // 상위 전파 차단 (다른 상단/사이드 이벤트에 영향 방지)
           e.stopPropagation();
 
-          // ✅ 판매차량관리 탭은 서버 이동 허용
-          if (href.includes("/mypage") && href.includes("section=sell-car-section")) {
-            return; // 기본 이동 허용
-          }
+          // 판매차량관리 섹션으로 가는 서버 이동은 허용
+          if (href.includes("/mypage") && href.includes("section=sell-car-section")) return;
 
-          // 그 외 탭은 SPA 처리이므로 페이지 이동 방지
+          // 그 외는 SPA 처리
           e.preventDefault();
         });
       });
 
-
-      /* ===============================
-         2️⃣ 공통 DOM 셀렉터 정의
-         =============================== */
-      const mypageButtons = document.querySelectorAll(".mypage-btn");
-      const sidebarLinks = document.querySelectorAll(".sidebar-link, .sidebar-category[data-target]");
+      // ===============================
+      // 2) 공통 셀렉터
+      // ===============================
+      const mypageButtons   = document.querySelectorAll(".mypage-btn");
+      const sidebarLinks    = document.querySelectorAll(".sidebar-link, .sidebar-category[data-target]");
       const contentSections = document.querySelectorAll(".mypage-main > div");
 
-
-      /* ===============================
-         3️⃣ 상단 버튼 클릭 이벤트 (내차판매/결제 등)
-         =============================== */
+      // ===============================
+      // 3) 상단 버튼 클릭 (내차판매/결제 등)
+      //    - '마이페이지 홈'을 가장 먼저 분기 처리
+      // ===============================
       mypageButtons.forEach(btn => {
         btn.addEventListener("click", function (e) {
           const text = this.textContent.trim();
           const href = this.getAttribute("href") || "#";
-          const isHome = href === "/mypage" && !window.location.search;
 
-          // ✅ 완전한 /mypage (쿼리스트링 없는 경우)만 홈으로 간주
-          if (isHome) return;
+          // ✅ '마이페이지 홈' 버튼: 항상 완전한 /mypage 로 이동(쿼리스트링 초기화)
+          if (text.includes("마이페이지 홈") || href === "/mypage") {
+            e.preventDefault();
+            window.location.href = "/mypage";
+            return;
+          }
 
           // ✅ 회원정보관리 → 별도 페이지 이동
           if (text === "회원정보관리") {
@@ -1514,7 +1518,7 @@
           // ✅ 나머지는 SPA 전환 처리
           e.preventDefault();
 
-          // 상단 버튼 active 처리
+          // active 처리
           mypageButtons.forEach(b => b.classList.remove("active"));
           this.classList.add("active");
 
@@ -1540,18 +1544,17 @@
         });
       });
 
-
-      /* ===============================
-         4️⃣ 사이드바 클릭 이벤트
-         =============================== */
+      // ===============================
+      // 4) 사이드바 클릭 (SPA 전환)
+      // ===============================
       sidebarLinks.forEach(link => {
         link.addEventListener("click", function (e) {
           const targetId = this.dataset.target;
 
-          // ✅ data-target이 없으면 페이지 이동 허용
+          // data-target 없으면 기본 이동 허용
           if (!targetId) return;
 
-          // ✅ 회원정보관리 전용 페이지 이동
+          // 회원정보관리 → 별도 페이지 이동
           if (targetId === "member-info-section") {
             window.location.href = "/mypage/verify";
             return;
@@ -1568,7 +1571,7 @@
           sidebarLinks.forEach(link => link.classList.remove("active"));
           this.classList.add("active");
 
-          // 상단 탭 연동
+          // 상단 탭 동기화
           const sidebarToTabMap = {
             "interested-cars-section": "내차 구매",
             "accident-history-section": "내차 구매",
@@ -1598,15 +1601,14 @@
         });
       });
 
-
-      /* ===============================
-         5️⃣ 내차팔기 / 내차사기 탭 전환
-         =============================== */
+      // ===============================
+      // 5) 내차팔기 / 내차사기 탭 전환
+      // ===============================
       const tabToggles = document.querySelectorAll(".btn-tab");
       const tabSell = document.getElementById("tab-sell");
-      const tabBuy = document.getElementById("tab-buy");
+      const tabBuy  = document.getElementById("tab-buy");
       const btnSell = document.getElementById("btn-sell");
-      const btnBuy = document.getElementById("btn-buy");
+      const btnBuy  = document.getElementById("btn-buy");
 
       tabToggles.forEach(btn => {
         btn.addEventListener("click", function (e) {
@@ -1629,10 +1631,9 @@
         });
       });
 
-
-      /* ===============================
-         6️⃣ 엔카믿고 방문 / 배송 탭 전환
-         =============================== */
+      // ===============================
+      // 6) 엔카믿고 방문 / 배송 탭 전환
+      // ===============================
       const visitTabs = document.querySelectorAll(".visit-tab-btn");
       const visitContents = document.querySelectorAll(".visit-tab-content");
       visitTabs.forEach(btn => {
@@ -1657,10 +1658,9 @@
         });
       });
 
-
-      /* ===============================
-         7️⃣ 결제/입금대기 탭 전환
-         =============================== */
+      // ===============================
+      // 7) 결제/입금대기 탭 전환
+      // ===============================
       document.querySelectorAll('#payment-history-section .tab-buttons .tab-btn').forEach(tab => {
         tab.addEventListener("click", function () {
           document.querySelectorAll('#payment-history-section .tab-buttons .tab-btn')
@@ -1673,10 +1673,9 @@
         });
       });
 
-
-      /* ===============================
-         8️⃣ 공통 탭 전환 함수 (방문/배송/쿠폰 등 재사용)
-         =============================== */
+      // ===============================
+      // 8) 공통 탭 토글 유틸
+      // ===============================
       function handleTabToggle(containerSelector, tabSelector, contentSelector, activeClass = "active", hiddenClass = "hidden") {
         const tabs = document.querySelectorAll(`${containerSelector} ${tabSelector}`);
         const contents = document.querySelectorAll(`${containerSelector} ${contentSelector}`);
@@ -1701,14 +1700,14 @@
         }
       }
 
-      handleTabToggle('#trust-visit-section', '.vehicle-tabs .tab-btn', '.visit-tab-content');
+      handleTabToggle('#trust-visit-section', '.vehicle-tabs .tab-btn',  '.visit-tab-content');
       handleTabToggle('#trust-delivery-section', '.vehicle-tabs .tab-btn', '.delivery-tab-content');
       handleTabToggle('#purchase-inquiry-section', '.vehicle-tabs .tab-btn', '.inquiry-box');
       handleTabToggle('#payment-history-section', '.vehicle-tabs .tab-btn', '.payment-box');
       handleTabToggle('#coupon-history-section', '.vehicle-tabs .tab-btn', '.coupon-box');
       handleTabToggle('#coupon-guide-section', '.vehicle-tabs .tab-btn', '.coupon-guide-box');
 
-      /* ✅ 구매문의 탭의 라디오 초기화 */
+      // 구매문의 탭 라디오 초기화
       document.querySelectorAll('#purchase-inquiry-section .tab-buttons .tab-btn').forEach(tab => {
         tab.addEventListener("click", function () {
           const targetId = this.dataset.target;
@@ -1719,6 +1718,7 @@
 
     });
 </script>
+
 
 <script>
     function showWithdrawReason() {
