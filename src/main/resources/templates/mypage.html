@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:xhtml="http://www.w3.org/1999/xhtml"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      lang="ko"
-      layout:decorate="~{base}">
+      layout:decorate="~{base}" >
 
 <head>
     <title>마이페이지</title>
@@ -720,11 +721,18 @@
                             </td>
                             <td th:text="${s.carId != null} ? '판매대기' : '등록중'">판매대기</td>
                             <td>-</td>
-                            <td>
+                            <td style="text-align:center; white-space: nowrap;">
+                                <!-- 보기 버튼 -->
                                 <a th:href="${s.carId} != null ? @{/cars/{id}(id=${s.carId})}
-                               : @{|/sell/detail/view?carNumber=${s.carNumber}|}"
-                                   class="btn-gray-small">보기</a>
-                                <a th:href="@{|/sell/detail/photo?carId=${s.draftId}|}" class="btn-gray-small">사진수정</a>
+                                            : @{|/sell/detail/view?carNumber=${s.carNumber}|}"
+                                   class="btn-view">
+                                    상세보기
+                                </a>
+                                <!-- 사진수정 버튼 -->
+                                <a th:href="@{|/sell/detail/photo?carId=${s.draftId}|}"
+                                   class="btn-edit-photo">
+                                    사진수정
+                                </a>
                             </td>
                         </tr>
                     </th:block>
@@ -753,8 +761,8 @@
                             <td th:text="${currentTab}">판매중</td>
                             <td th:text="${s.price != null ? #numbers.formatInteger(s.price/10000, 1, 'COMMA') + '만원' : '-'}">-</td>
                             <td>
-                            <a th:href="@{/cars/{id}(id=${s.carId})}" class="btn-gray-small">보기</a>
-                        </td>
+                                <a th:href="@{/cars/{id}(id=${s.carId})}" class="btn-view">보기</a>
+                            </td>
                         </tr>
                     </th:block>
                     </tbody>
@@ -786,13 +794,24 @@
 
                 <!-- 설명글 상단 메뉴 -->
                 <div class="description-controls">
-                    <label>나의 설명글 수 :</label> <span style="color: #d32f2f;">총 0개</span>
+                    <label>나의 설명글 수 :</label>
+                    <span style="color: #d32f2f;">
+                        총 <span th:text="${#lists.size(myConsultations)}">0</span>개
+                    </span>
+
                     <div style="margin-top: 8px;">
-                        <select>
-                            <option>나의 설명글 선택▼</option>
+                        <select id="consultationSelect">
+                            <option value="">나의 설명글 선택▼</option>
+                            <option th:each="c : ${myConsultations}"
+                                    th:value="${c.id}"
+                                    th:text="${c.title}">
+                            </option>
                         </select>
-                        <input type="text" maxlength="24" placeholder="최대 12자까지 입력 가능" style="margin-left: 4px; width: 180px;">
-                        <button class="btn-gray-small" style="margin-left: 8px;">설명글삭제</button>
+                        <input id="consultationTitle"
+                               type="text" maxlength="24"
+                               placeholder="최대 12자까지 입력 가능"
+                               style="margin-left: 4px; width: 180px;">
+                        <button id="deleteBtn" class="btn-gray-small">설명글삭제</button>
                     </div>
                 </div>
 
@@ -805,7 +824,10 @@
 
                 <!-- 설명글 입력 textarea -->
                 <div class="description-area">
-        <textarea rows="20" style="width: 100%; padding: 10px; font-size: 13px; border: 1px solid #ccc;">
+                <textarea id="consultationContent"
+                          rows="20"
+                          style="width: 100%; padding: 10px; font-size: 13px; border: 1px solid #ccc;">
+
 ▶ 차주 정보 및 차량 운행 용도
 -
 
@@ -828,7 +850,8 @@
 
                 <!-- 저장 버튼 -->
                 <div style="margin-top: 10px; text-align: right;">
-                    <button class="btn-gray-small">다른이름으로 저장하기</button>
+                    <button id="saveBtn" class="btn-gray-small" style="margin-right:8px;">저장하기</button>
+                    <button id="saveAsBtn" class="btn-gray-small">다른이름으로 저장하기</button>
                 </div>
             </div>
 
@@ -839,7 +862,10 @@
 
                 <!-- 탭 버튼 -->
                 <div class="vehicle-tabs" style="margin-top: 10px; border-bottom: 2px solid #ccc;">
-                    <button class="tab-btn active" data-target="inquiry-normal-box">국산/수입차(총 0건)</button>
+                    <button class="tab-btn active" data-target="inquiry-normal-box">
+                        국산/수입차(총
+                        <span th:text="${#lists.size(myInquiries)}">0</span>건)
+                    </button>
                     <button class="tab-btn" data-target="inquiry-truck-box">화물•특장•버스(총 0건)</button>
                 </div>
 
@@ -850,7 +876,9 @@
                         <label><input type="radio" name="inquiry_filter_normal" checked> 전체</label>
                         <label style="margin-left: 10px;"><input type="radio" name="inquiry_filter_normal"> 판매중</label>
                         <label style="margin-left: 10px;"><input type="radio" name="inquiry_filter_normal"> 대기차량</label>
-                        <span style="margin-left: 20px;">총 0건 문의</span>
+                        <span style="margin-left: 20px;">
+                            총 <span th:text="${#lists.size(myInquiries)}">0</span>건 문의
+                        </span>
                     </div>
 
                     <table class="simple-table" style="margin-top: 16px;">
@@ -862,7 +890,20 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr><td colspan="3" style="text-align:center;">구매문의 내역이 없습니다.</td></tr>
+                        <tr th:if="${#lists.isEmpty(myInquiries)}">
+                            <td colspan="3" style="text-align:center;">구매문의 내역이 없습니다.</td>
+                        </tr>
+
+                        <tr th:each="inq : ${myInquiries}">
+                            <td>
+                                <a th:href="@{/car/detail/{id}(id=${inq.carId})}" class="btn-gray-small">보기</a>
+                            </td>
+                            <td>
+                                <div th:text="${inq.car.modelName}">모델명</div>
+                                <div th:text="${inq.car.carNumber}" style="font-size:12px; color:#666;">차량번호</div>
+                            </td>
+                            <td th:text="${inq.message}"></td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -1461,518 +1502,594 @@
         </main>
     </div>
 </div>
-</body>
-</html>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", () => {
 
-      // ===============================
-      // 1) 판매차량관리 하위 탭(a) 클릭 제어
-      // ===============================
-      document.querySelectorAll(".sub-tab-buttons a").forEach(a => {
-        a.addEventListener("click", function (e) {
-          const href = this.getAttribute("href") || "";
+            const textarea = document.getElementById("consultationContent");
+            const titleInput = document.getElementById("consultationTitle");
+            const clearBtn = document.querySelector(".description-mode .btn-gray-small");
+            const select = document.getElementById("consultationSelect");
+            const saveBtn = document.getElementById("saveBtn");
+            const saveAsBtn = document.getElementById("saveAsBtn");
+            const deleteBtn = document.getElementById("deleteBtn");
+            const modeRadios = document.querySelectorAll('input[name="desc_mode"]');
 
-          // 상위 전파 차단 (다른 상단/사이드 이벤트에 영향 방지)
-          e.stopPropagation();
+            const consultations = /*[[${myConsultations}]]*/ [];
 
-          // 판매차량관리 섹션으로 가는 서버 이동은 허용
-          if (href.includes("/mypage") && href.includes("section=sell-car-section")) return;
+            const defaultContent = `▶ 차주 정보 및 차량 운행 용도
+        -
 
-          // 그 외는 SPA 처리
-          e.preventDefault();
-        });
-      });
+        ▶ 차량 구입 시 추가로 장착한 옵션
+        -
 
-      // ===============================
-      // 2) 공통 셀렉터
-      // ===============================
-      const mypageButtons   = document.querySelectorAll(".mypage-btn");
-      const sidebarLinks    = document.querySelectorAll(".sidebar-link, .sidebar-category[data-target]");
-      const contentSections = document.querySelectorAll(".mypage-main > div");
+        ▶ 소모품 점검 및 교환 내역, 시기 (예: 타이밍 벨트, 브레이크 패드, 타이어, 오일 류 등)
+        -
 
-      // ===============================
-      // 3) 상단 버튼 클릭 (내차판매/결제 등)
-      //    - '마이페이지 홈'을 가장 먼저 분기 처리
-      // ===============================
-      mypageButtons.forEach(btn => {
-        btn.addEventListener("click", function (e) {
-          const text = this.textContent.trim();
-          const href = this.getAttribute("href") || "#";
+        ▶ 사고나 수리 내역
+        -
 
-          // ✅ '마이페이지 홈' 버튼: 항상 완전한 /mypage 로 이동(쿼리스트링 초기화)
-          if (text.includes("마이페이지 홈") || href === "/mypage") {
-            e.preventDefault();
-            window.location.href = "/mypage";
-            return;
-          }
+        ▶ 기타 강조하고 싶은 점
+        -
 
-          // ✅ 회원정보관리 → 별도 페이지 이동
-          if (text === "회원정보관리") {
-            e.preventDefault();
-            window.location.href = "/mypage/verify";
-            return;
-          }
+        ▶ 차량 확인이 가능한 지역
+        -`;
 
-          // ✅ 나머지는 SPA 전환 처리
-          e.preventDefault();
-
-          // active 처리
-          mypageButtons.forEach(b => b.classList.remove("active"));
-          this.classList.add("active");
-
-          // 탭 → 섹션 매핑
-          const tabToContentMap = {
-            "내차 구매": "interested-cars-section",
-            "내차 판매": "sell-car-section",
-            "결제 관리": "payment-history-section",
-            "쿠폰/포인트": "coupon-history-section",
-            "수출시세": "export-price-section"
-          };
-
-          const targetId = tabToContentMap[text];
-          if (!targetId) return;
-
-          // 콘텐츠 전환
-          contentSections.forEach(section => section.classList.add("hidden"));
-          document.getElementById(targetId)?.classList.remove("hidden");
-
-          // 사이드바 active 연동
-          sidebarLinks.forEach(link => link.classList.remove("active"));
-          document.querySelector(`.sidebar-link[data-target="${targetId}"]`)?.classList.add("active");
-        });
-      });
-
-      // ===============================
-      // 4) 사이드바 클릭 (SPA 전환)
-      // ===============================
-      sidebarLinks.forEach(link => {
-        link.addEventListener("click", function (e) {
-          const targetId = this.dataset.target;
-
-          // data-target 없으면 기본 이동 허용
-          if (!targetId) return;
-
-          // 회원정보관리 → 별도 페이지 이동
-          if (targetId === "member-info-section") {
-            window.location.href = "/mypage/verify";
-            return;
-          }
-
-          e.preventDefault();
-
-          // 콘텐츠 전환
-          contentSections.forEach(section => section.classList.add("hidden"));
-          const targetSection = document.getElementById(targetId);
-          if (targetSection) targetSection.classList.remove("hidden");
-
-          // 사이드바 active 처리
-          sidebarLinks.forEach(link => link.classList.remove("active"));
-          this.classList.add("active");
-
-          // 상단 탭 동기화
-          const sidebarToTabMap = {
-            "interested-cars-section": "내차 구매",
-            "accident-history-section": "내차 구매",
-            "warranty-section": "내차 구매",
-            "trust-visit-section": "내차 구매",
-            "trust-delivery-section": "내차 구매",
-            "sell-car-section": "내차 판매",
-            "description-wrapper": "내차 판매",
-            "purchase-inquiry-section": "내차 판매",
-            "payment-section": "결제 관리",
-            "refund-info-section": "결제 관리",
-            "coupon-history-section": "쿠폰/포인트",
-            "point-history-section": "쿠폰/포인트",
-            "coupon-guide-section": "쿠폰/포인트",
-            "export-price-section": "수출시세",
-            "member-info-section": "회원정보관리",
-            "member-delete-section": "회원정보관리"
-          };
-
-          const topTabText = sidebarToTabMap[targetId];
-          if (topTabText) {
-            mypageButtons.forEach(btn => {
-              btn.classList.remove("active");
-              if (btn.textContent.includes(topTabText)) btn.classList.add("active");
-            });
-          }
-        });
-      });
-
-      // ===============================
-      // 5) 내차팔기 / 내차사기 탭 전환
-      // ===============================
-      const tabToggles = document.querySelectorAll(".btn-tab");
-      const tabSell = document.getElementById("tab-sell");
-      const tabBuy  = document.getElementById("tab-buy");
-      const btnSell = document.getElementById("btn-sell");
-      const btnBuy  = document.getElementById("btn-buy");
-
-      tabToggles.forEach(btn => {
-        btn.addEventListener("click", function (e) {
-          e.preventDefault();
-          tabToggles.forEach(b => b.classList.remove("active"));
-          this.classList.add("active");
-
-          const target = this.dataset.target;
-          if (target === "sell") {
-            tabSell.classList.remove("hidden");
-            tabBuy.classList.add("hidden");
-            btnSell.classList.remove("hidden");
-            btnBuy.classList.add("hidden");
-          } else if (target === "buy") {
-            tabSell.classList.add("hidden");
-            tabBuy.classList.remove("hidden");
-            btnSell.classList.add("hidden");
-            btnBuy.classList.remove("hidden");
-          }
-        });
-      });
-
-      // ===============================
-      // 6) 엔카믿고 방문 / 배송 탭 전환
-      // ===============================
-      const visitTabs = document.querySelectorAll(".visit-tab-btn");
-      const visitContents = document.querySelectorAll(".visit-tab-content");
-      visitTabs.forEach(btn => {
-        btn.addEventListener("click", function () {
-          visitTabs.forEach(b => b.classList.remove("active"));
-          this.classList.add("active");
-          const target = this.dataset.target;
-          visitContents.forEach(c => c.classList.add("hidden"));
-          document.getElementById(target).classList.remove("hidden");
-        });
-      });
-
-      const deliveryTabs = document.querySelectorAll(".delivery-tab-btn");
-      const deliveryContents = document.querySelectorAll(".delivery-tab-content");
-      deliveryTabs.forEach(btn => {
-        btn.addEventListener("click", function () {
-          deliveryTabs.forEach(b => b.classList.remove("active"));
-          this.classList.add("active");
-          const target = this.dataset.target;
-          deliveryContents.forEach(c => c.classList.add("hidden"));
-          document.getElementById(target).classList.remove("hidden");
-        });
-      });
-
-      // ===============================
-      // 7) 결제/입금대기 탭 전환
-      // ===============================
-      document.querySelectorAll('#payment-history-section .tab-buttons .tab-btn').forEach(tab => {
-        tab.addEventListener("click", function () {
-          document.querySelectorAll('#payment-history-section .tab-buttons .tab-btn')
-            .forEach(btn => btn.classList.remove("active"));
-          this.classList.add("active");
-          const targetId = this.dataset.target;
-          document.querySelectorAll('#payment-history-section .payment-box')
-            .forEach(box => box.classList.add("hidden"));
-          document.getElementById(targetId).classList.remove("hidden");
-        });
-      });
-
-      // ===============================
-      // 8) 공통 탭 토글 유틸
-      // ===============================
-      function handleTabToggle(containerSelector, tabSelector, contentSelector, activeClass = "active", hiddenClass = "hidden") {
-        const tabs = document.querySelectorAll(`${containerSelector} ${tabSelector}`);
-        const contents = document.querySelectorAll(`${containerSelector} ${contentSelector}`);
-
-        tabs.forEach(tab => {
-          tab.addEventListener("click", function () {
-            tabs.forEach(btn => btn.classList.remove(activeClass));
-            contents.forEach(content => content.classList.add(hiddenClass));
-            this.classList.add(activeClass);
-            const targetId = this.dataset.target;
-            const targetContent = document.getElementById(targetId);
-            if (targetContent) targetContent.classList.remove(hiddenClass);
-          });
-        });
-
-        const initiallyActiveTab = Array.from(tabs).find(tab => tab.classList.contains(activeClass));
-        if (initiallyActiveTab) {
-          const initialTarget = initiallyActiveTab.dataset.target;
-          contents.forEach(content => content.classList.add(hiddenClass));
-          const initialContent = document.getElementById(initialTarget);
-          if (initialContent) initialContent.classList.remove(hiddenClass);
-        }
-      }
-
-      handleTabToggle('#trust-visit-section', '.vehicle-tabs .tab-btn',  '.visit-tab-content');
-      handleTabToggle('#trust-delivery-section', '.vehicle-tabs .tab-btn', '.delivery-tab-content');
-      handleTabToggle('#purchase-inquiry-section', '.vehicle-tabs .tab-btn', '.inquiry-box');
-      handleTabToggle('#payment-history-section', '.vehicle-tabs .tab-btn', '.payment-box');
-      handleTabToggle('#coupon-history-section', '.vehicle-tabs .tab-btn', '.coupon-box');
-      handleTabToggle('#coupon-guide-section', '.vehicle-tabs .tab-btn', '.coupon-guide-box');
-
-      // 구매문의 탭 라디오 초기화
-      document.querySelectorAll('#purchase-inquiry-section .tab-buttons .tab-btn').forEach(tab => {
-        tab.addEventListener("click", function () {
-          const targetId = this.dataset.target;
-          const radios = document.querySelectorAll(`#${targetId} input[type="radio"]`);
-          if (radios.length > 0) radios[0].checked = true;
-        });
-      });
-
-    });
-</script>
-
-
-<script>
-    function showWithdrawReason() {
-      const checkbox = document.getElementById("agree-withdraw");
-      if (!checkbox.checked) {
-        alert("안내사항에 동의하셔야 다음 단계로 진행할 수 있습니다.");
-        return;
-      }
-
-      document.getElementById("member-delete-section").classList.add("hidden");
-      document.getElementById("withdraw-step2").classList.remove("hidden");
-    }
-
-    function showWithdrawStep1() {
-      document.getElementById("withdraw-step2").classList.add("hidden");
-      document.getElementById("member-delete-section").classList.remove("hidden");
-    }
-
-</script>
-<script>
-    // 내용 초기화 기능(마이페이지/내차판매/나의 상담글 관리)
-    // ✅ 요소 선택
-    const textarea = document.querySelector(".description-area textarea");
-    const titleInput = document.querySelector(".description-controls input");
-    const clearBtn = document.querySelector(".description-mode .btn-gray-small");
-    const saveBtn = document.querySelector(".description-wrapper > div:last-of-type button");
-    const modeRadios = document.querySelectorAll('input[name="desc_mode"]');
-
-    // ✅ 기본 설명글 템플릿
-    const defaultContent = `▶ 차주 정보 및 차량 운행 용도
-    -
-
-    ▶ 차량 구입 시 추가로 장착한 옵션
-    -
-
-    ▶ 소모품 점검 및 교환 내역, 시기 (예: 타이밍 벨트, 브레이크 패드, 타이어, 오일 류 등)
-    -
-
-    ▶ 사고나 수리 내역
-    -
-
-    ▶ 기타 강조하고 싶은 점
-    -
-
-    ▶ 차량 확인이 가능한 지역
-    -`;
-
-    // ✅ "내용 초기화" 버튼 클릭 시 기본 내용 삽입
-    clearBtn.addEventListener("click", function () {
-        textarea.value = defaultContent;
-    });
-
-    // ✅ 저장 버튼 클릭 시 처리
-    saveBtn.addEventListener("click", function () {
-        const content = textarea.value.trim();
-        const title = titleInput.value.trim();
-
-        if (!title) {
-            alert("설명글 이름을 입력해주세요.");
-            return;
-        }
-
-        // 임시 저장 처리 예시
-        console.log("📂 저장한 설명글 제목:", title);
-        console.log("📝 설명글 내용:\n" + content);
-        alert(`'${title}' 이름으로 설명글이 저장되었습니다.`);
-    });
-
-    // ✅ 라디오 버튼에 따라 textarea 내용 변경
-    modeRadios.forEach(radio => {
-        radio.addEventListener("change", function () {
-            const labelText = this.parentElement.textContent.trim();
-            if (labelText.includes("직접입력")) {
-                textarea.value = "";
-            } else if (labelText.includes("설명글 가이드")) {
+            function resetForm() {
                 textarea.value = defaultContent;
+                titleInput.value = "";
+                select.value = "";
             }
+
+            // 🔥 select 선택 → 내용 표시
+            select.addEventListener("change", () => {
+                const id = select.value;
+                if (!id) {
+                    resetForm();
+                    return;
+                }
+                const item = consultations.find(c => c.id == id);
+                if (item) {
+                    textarea.value = item.content;
+                    titleInput.value = item.title;
+                }
+            });
+
+            // 🔥 저장 요청 (신규/수정 모두 처리)
+            function requestSave(id, title, content) {
+
+                fetch("/mypage/consultation/save", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        title: title,
+                        content: content
+                    })
+                })
+                .then(res => res.text())
+                .then(result => {
+                    if (result === "OK") {
+                        alert("저장되었습니다!");
+                        location.reload();
+                    }
+                });
+            }
+
+            // 🔥 저장하기 (수정 모드 가능)
+            saveBtn.addEventListener("click", () => {
+
+                const id = select.value ? Number(select.value) : null;
+                const title = titleInput.value.trim();
+                const content = textarea.value.trim();
+
+                if (!title) {
+                    alert("설명글 이름을 입력해주세요.");
+                    return;
+                }
+
+                requestSave(id, title, content);  // ⭐ 기존 id 있으면 수정
+            });
+
+            // 🔥 다른이름으로 저장하기 (항상 신규 저장)
+            saveAsBtn.addEventListener("click", () => {
+                const title = prompt("새로운 설명글 이름을 입력해주세요:");
+                if (!title) return;
+
+                const content = textarea.value.trim();
+                requestSave(null, title, content);
+            });
+
+            // 🔥 삭제 기능
+            deleteBtn.addEventListener("click", () => {
+                const id = select.value;
+
+                if (!id) {
+                    alert("삭제할 설명글을 먼저 선택해주세요.");
+                    return;
+                }
+
+                if (!confirm("정말 삭제하시겠습니까?")) return;
+
+                fetch(`/mypage/consultation/delete/${id}`, {
+                    method: "DELETE"
+                })
+                .then(res => res.text())
+                .then(result => {
+                    if (result === "OK") {
+                        alert("삭제되었습니다.");
+                        location.reload();
+                    }
+                });
+            });
+
+            // 🔥 설명글 가이드 / 직접 입력
+            modeRadios.forEach(radio => {
+                radio.addEventListener("change", function () {
+                    if (this.parentElement.textContent.includes("직접입력"))
+                        textarea.value = "";
+                    else
+                        textarea.value = defaultContent;
+                });
+            });
+
         });
-    });
+    </script>
 
-</script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
 
-<script>
-    (function() {
-      // 유틸
-      const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
-      const $ = (sel, root=document) => root.querySelector(sel);
+          // ===============================
+          // 1) 판매차량관리 하위 탭(a) 클릭 제어
+          // ===============================
+          document.querySelectorAll(".sub-tab-buttons a").forEach(a => {
+            a.addEventListener("click", function (e) {
+              const href = this.getAttribute("href") || "";
 
-      // 영역이 없으면 패스
-      const root = document.getElementById('interested-cars-section');
-      if (!root) return;
+              // 상위 전파 차단 (다른 상단/사이드 이벤트에 영향 방지)
+              e.stopPropagation();
 
-      const checkAllTop = $('#wish-check-all', root);
-      const checkAllBottom = $('#wish-bottom-check-all', root);
-      const rowChecks = () => $$('input[name="wish-row"]', root);
+              // 판매차량관리 섹션으로 가는 서버 이동은 허용
+              if (href.includes("/mypage") && href.includes("section=sell-car-section")) return;
 
-      function setAll(checked) {
-        rowChecks().forEach(ch => ch.checked = checked);
-        if (checkAllTop) checkAllTop.checked = checked;
-        if (checkAllBottom) checkAllBottom.checked = checked;
-      }
-
-      // 전체선택 상/하 동기화
-      checkAllTop?.addEventListener('change', e => setAll(e.target.checked));
-      checkAllBottom?.addEventListener('change', e => setAll(e.target.checked));
-
-      // 행 체크 변동 시 전체선택 상태 업데이트
-      rowChecks().forEach(ch => ch.addEventListener('change', () => {
-        const rows = rowChecks();
-        const allOn = rows.length > 0 && rows.every(x => x.checked);
-        if (checkAllTop) checkAllTop.checked = allOn;
-        if (checkAllBottom) checkAllBottom.checked = allOn;
-      }));
-
-      // 단건 삭제
-      $$('.wish-remove-one', root).forEach(btn => {
-        if (btn.dataset.bound) return;
-        btn.dataset.bound = '1';
-        btn.addEventListener('click', async () => {
-          const id = btn.dataset.id;
-          if (!id) return;
-          if (!confirm('해당 차량을 찜 목록에서 삭제할까요?')) return;
-
-          const res = await fetch('/wishlist/remove-selected', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({ carIds: [id] })
+              // 그 외는 SPA 처리
+              e.preventDefault();
+            });
           });
-          if (res.ok) location.reload();
-          else alert('삭제 중 오류가 발생했습니다.');
+
+          // ===============================
+          // 2) 공통 셀렉터
+          // ===============================
+          const mypageButtons   = document.querySelectorAll(".mypage-btn");
+          const sidebarLinks    = document.querySelectorAll(".sidebar-link, .sidebar-category[data-target]");
+          const contentSections = document.querySelectorAll(".mypage-main > div");
+
+          // ===============================
+          // 3) 상단 버튼 클릭 (내차판매/결제 등)
+          //    - '마이페이지 홈'을 가장 먼저 분기 처리
+          // ===============================
+          mypageButtons.forEach(btn => {
+            btn.addEventListener("click", function (e) {
+              const text = this.textContent.trim();
+              const href = this.getAttribute("href") || "#";
+
+              // ✅ '마이페이지 홈' 버튼: 항상 완전한 /mypage 로 이동(쿼리스트링 초기화)
+              if (text.includes("마이페이지 홈") || href === "/mypage") {
+                e.preventDefault();
+                window.location.href = "/mypage";
+                return;
+              }
+
+              // ✅ 회원정보관리 → 별도 페이지 이동
+              if (text === "회원정보관리") {
+                e.preventDefault();
+                window.location.href = "/mypage/verify";
+                return;
+              }
+
+              // ✅ 나머지는 SPA 전환 처리
+              e.preventDefault();
+
+              // active 처리
+              mypageButtons.forEach(b => b.classList.remove("active"));
+              this.classList.add("active");
+
+              // 탭 → 섹션 매핑
+              const tabToContentMap = {
+                "내차 구매": "interested-cars-section",
+                "내차 판매": "sell-car-section",
+                "결제 관리": "payment-history-section",
+                "쿠폰/포인트": "coupon-history-section",
+                "수출시세": "export-price-section"
+              };
+
+              const targetId = tabToContentMap[text];
+              if (!targetId) return;
+
+              // 콘텐츠 전환
+              contentSections.forEach(section => section.classList.add("hidden"));
+              document.getElementById(targetId)?.classList.remove("hidden");
+
+              // 사이드바 active 연동
+              sidebarLinks.forEach(link => link.classList.remove("active"));
+              document.querySelector(`.sidebar-link[data-target="${targetId}"]`)?.classList.add("active");
+            });
+          });
+
+          // ===============================
+          // 4) 사이드바 클릭 (SPA 전환)
+          // ===============================
+          sidebarLinks.forEach(link => {
+            link.addEventListener("click", function (e) {
+              const targetId = this.dataset.target;
+
+              // data-target 없으면 기본 이동 허용
+              if (!targetId) return;
+
+              // 회원정보관리 → 별도 페이지 이동
+              if (targetId === "member-info-section") {
+                window.location.href = "/mypage/verify";
+                return;
+              }
+
+              e.preventDefault();
+
+              // 콘텐츠 전환
+              contentSections.forEach(section => section.classList.add("hidden"));
+              const targetSection = document.getElementById(targetId);
+              if (targetSection) targetSection.classList.remove("hidden");
+
+              // 사이드바 active 처리
+              sidebarLinks.forEach(link => link.classList.remove("active"));
+              this.classList.add("active");
+
+              // 상단 탭 동기화
+              const sidebarToTabMap = {
+                "interested-cars-section": "내차 구매",
+                "accident-history-section": "내차 구매",
+                "warranty-section": "내차 구매",
+                "trust-visit-section": "내차 구매",
+                "trust-delivery-section": "내차 구매",
+                "sell-car-section": "내차 판매",
+                "description-wrapper": "내차 판매",
+                "purchase-inquiry-section": "내차 판매",
+                "payment-section": "결제 관리",
+                "refund-info-section": "결제 관리",
+                "coupon-history-section": "쿠폰/포인트",
+                "point-history-section": "쿠폰/포인트",
+                "coupon-guide-section": "쿠폰/포인트",
+                "export-price-section": "수출시세",
+                "member-info-section": "회원정보관리",
+                "member-delete-section": "회원정보관리"
+              };
+
+              const topTabText = sidebarToTabMap[targetId];
+              if (topTabText) {
+                mypageButtons.forEach(btn => {
+                  btn.classList.remove("active");
+                  if (btn.textContent.includes(topTabText)) btn.classList.add("active");
+                });
+              }
+            });
+          });
+
+          // ===============================
+          // 5) 내차팔기 / 내차사기 탭 전환
+          // ===============================
+          const tabToggles = document.querySelectorAll(".btn-tab");
+          const tabSell = document.getElementById("tab-sell");
+          const tabBuy  = document.getElementById("tab-buy");
+          const btnSell = document.getElementById("btn-sell");
+          const btnBuy  = document.getElementById("btn-buy");
+
+          tabToggles.forEach(btn => {
+            btn.addEventListener("click", function (e) {
+              e.preventDefault();
+              tabToggles.forEach(b => b.classList.remove("active"));
+              this.classList.add("active");
+
+              const target = this.dataset.target;
+              if (target === "sell") {
+                tabSell.classList.remove("hidden");
+                tabBuy.classList.add("hidden");
+                btnSell.classList.remove("hidden");
+                btnBuy.classList.add("hidden");
+              } else if (target === "buy") {
+                tabSell.classList.add("hidden");
+                tabBuy.classList.remove("hidden");
+                btnSell.classList.add("hidden");
+                btnBuy.classList.remove("hidden");
+              }
+            });
+          });
+
+          // ===============================
+          // 6) 엔카믿고 방문 / 배송 탭 전환
+          // ===============================
+          const visitTabs = document.querySelectorAll(".visit-tab-btn");
+          const visitContents = document.querySelectorAll(".visit-tab-content");
+          visitTabs.forEach(btn => {
+            btn.addEventListener("click", function () {
+              visitTabs.forEach(b => b.classList.remove("active"));
+              this.classList.add("active");
+              const target = this.dataset.target;
+              visitContents.forEach(c => c.classList.add("hidden"));
+              document.getElementById(target).classList.remove("hidden");
+            });
+          });
+
+          const deliveryTabs = document.querySelectorAll(".delivery-tab-btn");
+          const deliveryContents = document.querySelectorAll(".delivery-tab-content");
+          deliveryTabs.forEach(btn => {
+            btn.addEventListener("click", function () {
+              deliveryTabs.forEach(b => b.classList.remove("active"));
+              this.classList.add("active");
+              const target = this.dataset.target;
+              deliveryContents.forEach(c => c.classList.add("hidden"));
+              document.getElementById(target).classList.remove("hidden");
+            });
+          });
+
+          // ===============================
+          // 7) 결제/입금대기 탭 전환
+          // ===============================
+          document.querySelectorAll('#payment-history-section .tab-buttons .tab-btn').forEach(tab => {
+            tab.addEventListener("click", function () {
+              document.querySelectorAll('#payment-history-section .tab-buttons .tab-btn')
+                .forEach(btn => btn.classList.remove("active"));
+              this.classList.add("active");
+              const targetId = this.dataset.target;
+              document.querySelectorAll('#payment-history-section .payment-box')
+                .forEach(box => box.classList.add("hidden"));
+              document.getElementById(targetId).classList.remove("hidden");
+            });
+          });
+
+          // ===============================
+          // 8) 공통 탭 토글 유틸
+          // ===============================
+          function handleTabToggle(containerSelector, tabSelector, contentSelector, activeClass = "active", hiddenClass = "hidden") {
+            const tabs = document.querySelectorAll(`${containerSelector} ${tabSelector}`);
+            const contents = document.querySelectorAll(`${containerSelector} ${contentSelector}`);
+
+            tabs.forEach(tab => {
+              tab.addEventListener("click", function () {
+                tabs.forEach(btn => btn.classList.remove(activeClass));
+                contents.forEach(content => content.classList.add(hiddenClass));
+                this.classList.add(activeClass);
+                const targetId = this.dataset.target;
+                const targetContent = document.getElementById(targetId);
+                if (targetContent) targetContent.classList.remove(hiddenClass);
+              });
+            });
+
+            const initiallyActiveTab = Array.from(tabs).find(tab => tab.classList.contains(activeClass));
+            if (initiallyActiveTab) {
+              const initialTarget = initiallyActiveTab.dataset.target;
+              contents.forEach(content => content.classList.add(hiddenClass));
+              const initialContent = document.getElementById(initialTarget);
+              if (initialContent) initialContent.classList.remove(hiddenClass);
+            }
+          }
+
+          handleTabToggle('#trust-visit-section', '.vehicle-tabs .tab-btn',  '.visit-tab-content');
+          handleTabToggle('#trust-delivery-section', '.vehicle-tabs .tab-btn', '.delivery-tab-content');
+          handleTabToggle('#purchase-inquiry-section', '.vehicle-tabs .tab-btn', '.inquiry-box');
+          handleTabToggle('#payment-history-section', '.vehicle-tabs .tab-btn', '.payment-box');
+          handleTabToggle('#coupon-history-section', '.vehicle-tabs .tab-btn', '.coupon-box');
+          handleTabToggle('#coupon-guide-section', '.vehicle-tabs .tab-btn', '.coupon-guide-box');
+
+          // 구매문의 탭 라디오 초기화
+          document.querySelectorAll('#purchase-inquiry-section .tab-buttons .tab-btn').forEach(tab => {
+            tab.addEventListener("click", function () {
+              const targetId = this.dataset.target;
+              const radios = document.querySelectorAll(`#${targetId} input[type="radio"]`);
+              if (radios.length > 0) radios[0].checked = true;
+            });
+          });
+
         });
-      });
+    </script>
 
-      // 선택 삭제
-      const removeSelectedBtn = $('.wish-remove-selected', root);
-      removeSelectedBtn?.addEventListener('click', async () => {
-        const ids = rowChecks().filter(x=>x.checked).map(x=>x.value);
-        if (ids.length === 0) return alert('삭제할 차량을 선택하세요.');
-        if (!confirm(`${ids.length}대를 찜 목록에서 삭제할까요?`)) return;
 
-        const res = await fetch('/wishlist/remove-selected', {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({ carIds: ids })
-        });
-        if (res.ok) location.reload();
-        else alert('삭제 중 오류가 발생했습니다.');
-      });
+    <script>
+        function showWithdrawReason() {
+          const checkbox = document.getElementById("agree-withdraw");
+          if (!checkbox.checked) {
+            alert("안내사항에 동의하셔야 다음 단계로 진행할 수 있습니다.");
+            return;
+          }
 
-      // (옵션) 비교/정렬 버튼은 추후 구현
-      $('.wish-compare-selected', root)?.addEventListener('click', () => {
-        const ids = rowChecks().filter(x=>x.checked).map(x=>x.value);
-        if (ids.length < 2) return alert('비교하려면 2대 이상 선택하세요.');
-        // TODO: 비교 페이지로 이동 혹은 모달 오픈
-        console.log('비교 ids:', ids);
-      });
-
-      $('.wish-sort', root)?.addEventListener('click', (e) => {
-        e.preventDefault();
-        // 서버에서 최근 찜한순으로 정렬된 데이터를 내려주는 방식 권장
-        // 현재는 placeholder
-        alert('최근 찜한순 정렬은 서버 정렬로 구현하세요 (ORDER BY w.created_at DESC).');
-      });
-    })();
-</script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-      // ✅ 기본 탭 자동 설정
-      const url = new URL(window.location.href);
-
-      // section이 sell-car-section인데 tab이 없으면 → 기본 탭을 '판매중'으로 강제
-      if (url.searchParams.get("section") === "sell-car-section" && !url.searchParams.get("tab")) {
-        url.searchParams.set("tab", "판매중");
-        history.replaceState({}, "", url.toString());
-      }
-
-      // ✅ 하위 탭: 판매중/판매대기/완료/삭제 를 SPA로 교체 로딩
-      (function () {
-        const sellSection = document.getElementById("sell-car-section");
-        if (!sellSection) return;
-
-        const tableSelector = "#sell-car-section .simple-table";
-        const tbodySelector = "#sell-car-section .simple-table tbody";
-
-        function showLoading() {
-          if (sellSection.querySelector(".ajax-loading")) return;
-          const div = document.createElement("div");
-          div.className = "ajax-loading";
-          div.style.cssText = "padding:12px 0;color:#666;font-size:13px;";
-          div.textContent = "불러오는 중...";
-          const table = sellSection.querySelector(tableSelector);
-          table?.parentNode?.insertBefore(div, table);
-        }
-        function hideLoading() {
-          sellSection.querySelector(".ajax-loading")?.remove();
+          document.getElementById("member-delete-section").classList.add("hidden");
+          document.getElementById("withdraw-step2").classList.remove("hidden");
         }
 
-        async function swapSellList(url, pushState = true) {
-          try {
-            showLoading();
-            const res = await fetch(url, { headers: { "X-Requested-With": "fetch" } });
-            if (!res.ok) throw new Error("네트워크 오류");
-            const html = await res.text();
+        function showWithdrawStep1() {
+          document.getElementById("withdraw-step2").classList.add("hidden");
+          document.getElementById("member-delete-section").classList.remove("hidden");
+        }
 
-            const doc = new DOMParser().parseFromString(html, "text/html");
+    </script>
 
-            const newTabs = doc.querySelector(".sub-tab-buttons");
-            const oldTabs = sellSection.querySelector(".sub-tab-buttons");
-            if (newTabs && oldTabs) oldTabs.replaceWith(newTabs);
+    <script>
+        (function() {
+          // 유틸
+          const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+          const $ = (sel, root=document) => root.querySelector(sel);
 
-            const newTbody = doc.querySelector(tbodySelector);
-            const curTbody = sellSection.querySelector(tbodySelector);
-            if (newTbody && curTbody) curTbody.replaceWith(newTbody);
+          // 영역이 없으면 패스
+          const root = document.getElementById('interested-cars-section');
+          if (!root) return;
 
-            if (pushState) history.pushState({ __sellTabSwap: true }, "", url);
+          const checkAllTop = $('#wish-check-all', root);
+          const checkAllBottom = $('#wish-bottom-check-all', root);
+          const rowChecks = () => $$('input[name="wish-row"]', root);
+
+          function setAll(checked) {
+            rowChecks().forEach(ch => ch.checked = checked);
+            if (checkAllTop) checkAllTop.checked = checked;
+            if (checkAllBottom) checkAllBottom.checked = checked;
+          }
+
+          // 전체선택 상/하 동기화
+          checkAllTop?.addEventListener('change', e => setAll(e.target.checked));
+          checkAllBottom?.addEventListener('change', e => setAll(e.target.checked));
+
+          // 행 체크 변동 시 전체선택 상태 업데이트
+          rowChecks().forEach(ch => ch.addEventListener('change', () => {
+            const rows = rowChecks();
+            const allOn = rows.length > 0 && rows.every(x => x.checked);
+            if (checkAllTop) checkAllTop.checked = allOn;
+            if (checkAllBottom) checkAllBottom.checked = allOn;
+          }));
+
+          // 단건 삭제
+          $$('.wish-remove-one', root).forEach(btn => {
+            if (btn.dataset.bound) return;
+            btn.dataset.bound = '1';
+            btn.addEventListener('click', async () => {
+              const id = btn.dataset.id;
+              if (!id) return;
+              if (!confirm('해당 차량을 찜 목록에서 삭제할까요?')) return;
+
+              const res = await fetch('/wishlist/remove-selected', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ carIds: [id] })
+              });
+              if (res.ok) location.reload();
+              else alert('삭제 중 오류가 발생했습니다.');
+            });
+          });
+
+          // 선택 삭제
+          const removeSelectedBtn = $('.wish-remove-selected', root);
+          removeSelectedBtn?.addEventListener('click', async () => {
+            const ids = rowChecks().filter(x=>x.checked).map(x=>x.value);
+            if (ids.length === 0) return alert('삭제할 차량을 선택하세요.');
+            if (!confirm(`${ids.length}대를 찜 목록에서 삭제할까요?`)) return;
+
+            const res = await fetch('/wishlist/remove-selected', {
+              method: 'POST',
+              headers: {'Content-Type':'application/json'},
+              body: JSON.stringify({ carIds: ids })
+            });
+            if (res.ok) location.reload();
+            else alert('삭제 중 오류가 발생했습니다.');
+          });
+
+          // (옵션) 비교/정렬 버튼은 추후 구현
+          $('.wish-compare-selected', root)?.addEventListener('click', () => {
+            const ids = rowChecks().filter(x=>x.checked).map(x=>x.value);
+            if (ids.length < 2) return alert('비교하려면 2대 이상 선택하세요.');
+            // TODO: 비교 페이지로 이동 혹은 모달 오픈
+            console.log('비교 ids:', ids);
+          });
+
+          $('.wish-sort', root)?.addEventListener('click', (e) => {
+            e.preventDefault();
+            // 서버에서 최근 찜한순으로 정렬된 데이터를 내려주는 방식 권장
+            // 현재는 placeholder
+            alert('최근 찜한순 정렬은 서버 정렬로 구현하세요 (ORDER BY w.created_at DESC).');
+          });
+        })();
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          // ✅ 기본 탭 자동 설정
+          const url = new URL(window.location.href);
+
+          // section이 sell-car-section인데 tab이 없으면 → 기본 탭을 '판매중'으로 강제
+          if (url.searchParams.get("section") === "sell-car-section" && !url.searchParams.get("tab")) {
+            url.searchParams.set("tab", "판매중");
+            history.replaceState({}, "", url.toString());
+          }
+
+          // ✅ 하위 탭: 판매중/판매대기/완료/삭제 를 SPA로 교체 로딩
+          (function () {
+            const sellSection = document.getElementById("sell-car-section");
+            if (!sellSection) return;
+
+            const tableSelector = "#sell-car-section .simple-table";
+            const tbodySelector = "#sell-car-section .simple-table tbody";
+
+            function showLoading() {
+              if (sellSection.querySelector(".ajax-loading")) return;
+              const div = document.createElement("div");
+              div.className = "ajax-loading";
+              div.style.cssText = "padding:12px 0;color:#666;font-size:13px;";
+              div.textContent = "불러오는 중...";
+              const table = sellSection.querySelector(tableSelector);
+              table?.parentNode?.insertBefore(div, table);
+            }
+            function hideLoading() {
+              sellSection.querySelector(".ajax-loading")?.remove();
+            }
+
+            async function swapSellList(url, pushState = true) {
+              try {
+                showLoading();
+                const res = await fetch(url, { headers: { "X-Requested-With": "fetch" } });
+                if (!res.ok) throw new Error("네트워크 오류");
+                const html = await res.text();
+
+                const doc = new DOMParser().parseFromString(html, "text/html");
+
+                const newTabs = doc.querySelector(".sub-tab-buttons");
+                const oldTabs = sellSection.querySelector(".sub-tab-buttons");
+                if (newTabs && oldTabs) oldTabs.replaceWith(newTabs);
+
+                const newTbody = doc.querySelector(tbodySelector);
+                const curTbody = sellSection.querySelector(tbodySelector);
+                if (newTbody && curTbody) curTbody.replaceWith(newTbody);
+
+                if (pushState) history.pushState({ __sellTabSwap: true }, "", url);
+
+                rebindSubTabEvents();
+              } catch (e) {
+                console.error(e);
+                alert("목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
+                window.location.href = url;
+              } finally {
+                hideLoading();
+              }
+            }
+
+            function handleSubTabClick(e) {
+              const a = e.target.closest("a");
+              if (!a) return;
+              const href = a.getAttribute("href") || "";
+              if (!href) return;
+              e.preventDefault();
+              e.stopPropagation();
+              swapSellList(href, true);
+            }
+
+            function rebindSubTabEvents() {
+              const newWrap = sellSection.querySelector(".sub-tab-buttons");
+              if (!newWrap) return;
+              newWrap.querySelectorAll("a").forEach(a => {
+                a.addEventListener("click", handleSubTabClick);
+              });
+            }
 
             rebindSubTabEvents();
-          } catch (e) {
-            console.error(e);
-            alert("목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
-            window.location.href = url;
-          } finally {
-            hideLoading();
-          }
-        }
 
-        function handleSubTabClick(e) {
-          const a = e.target.closest("a");
-          if (!a) return;
-          const href = a.getAttribute("href") || "";
-          if (!href) return;
-          e.preventDefault();
-          e.stopPropagation();
-          swapSellList(href, true);
-        }
-
-        function rebindSubTabEvents() {
-          const newWrap = sellSection.querySelector(".sub-tab-buttons");
-          if (!newWrap) return;
-          newWrap.querySelectorAll("a").forEach(a => {
-            a.addEventListener("click", handleSubTabClick);
-          });
-        }
-
-        rebindSubTabEvents();
-
-        window.addEventListener("popstate", () => {
-          const url = location.href;
-          if (url.includes("/mypage") && url.includes("section=sell-car-section") && url.includes("tab=")) {
-            swapSellList(url, false);
-          }
+            window.addEventListener("popstate", () => {
+              const url = location.href;
+              if (url.includes("/mypage") && url.includes("section=sell-car-section") && url.includes("tab=")) {
+                swapSellList(url, false);
+              }
+            });
+          })();
         });
-      })();
-    });
-</script>
+    </script>
+</th:block>
+
+</body>
+</html>
 

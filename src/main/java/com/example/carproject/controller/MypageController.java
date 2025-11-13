@@ -1,29 +1,21 @@
 package com.example.carproject.controller;
 
-import com.example.carproject.domain.Member;
-import com.example.carproject.domain.CarEntryDraft;
-import com.example.carproject.domain.CarSold;
+import com.example.carproject.domain.*;
+import com.example.carproject.dto.*;
 import com.example.carproject.repository.*;
 import com.example.carproject.repository.WishMini;
 import com.example.carproject.repository.SellOnMini;
-import com.example.carproject.service.WishlistService;
+import com.example.carproject.service.*;
 import com.example.carproject.service.WishlistService.WishCarDto;
-import com.example.carproject.service.CarSoldService;
 
 // ✅ 쿠폰 / 포인트 관련
-import com.example.carproject.service.CouponPointService;
-import com.example.carproject.dto.CouponSummary;
-import com.example.carproject.dto.CouponRow;
-import com.example.carproject.dto.PointSummary;
-import com.example.carproject.dto.PointRow;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -38,44 +30,57 @@ public class MypageController {
     private final CarSoldService carSoldService;
     private final CarEntryDraftRepository carEntryDraftRepository;
     private final CouponPointService couponPointService;
+    private final UserConsultationService userConsultationService;
+    private final InquiryService inquiryService;
 
     public MypageController(MemberRepository memberRepository,
                             AllCarSaleRepository2 allCarSaleRepository2,
                             WishlistService wishlistService,
                             CarSoldService carSoldService,
                             CarEntryDraftRepository carEntryDraftRepository,
-                            CouponPointService couponPointService) {
+                            CouponPointService couponPointService,
+                            UserConsultationService userConsultationService,
+                            InquiryService inquiryService) {
+
         this.memberRepository = memberRepository;
         this.allCarSaleRepository2 = allCarSaleRepository2;
         this.wishlistService = wishlistService;
         this.carSoldService = carSoldService;
         this.carEntryDraftRepository = carEntryDraftRepository;
         this.couponPointService = couponPointService;
+        this.userConsultationService = userConsultationService;
+        this.inquiryService = inquiryService;
     }
+
 
     // ✅ 상태별 탭 필터링 (판매중 / 대기 / 완료 / 삭제)
     @GetMapping("/mypage")
-    public String mypage(@RequestParam(defaultValue = "home") String section,
-                         @RequestParam(defaultValue = "판매중") String tab, // 현재 탭 상태값
-                         Model model, Authentication authentication) {
+    public String mypage(
+            @RequestParam(defaultValue = "home") String section,
+            @RequestParam(defaultValue = "판매중") String tab,
+            Model model,
+            Authentication authentication
+    ) {
 
         if (authentication == null || authentication.getPrincipal() == null) {
             throw new IllegalStateException("인증되지 않은 사용자입니다.");
         }
 
-        // 🔹 로그인 사용자 정보
         Member member = resolveMember(authentication);
         Integer memberId = member.getMemberId();
 
-        // 🔹 찜한 차량
+        /* ============================================================
+           🔹 1) 찜한 차량
+           ============================================================ */
         List<WishMini> wishMini = allCarSaleRepository2.findWishAll(memberId);
         List<WishCarDto> wishlistCars = wishlistService.myWishlistCars(memberId);
         int wishCount = wishlistService.count(memberId);
 
-        // 🔹 판매대기 (CarEntryDraft 기반, is_submitted = false)
+        /* ============================================================
+           🔹 2) 판매대기 차량
+           ============================================================ */
         List<CarEntryDraft> sellWaiting =
                 carEntryDraftRepository.findByMemberIdAndIsSubmittedFalseOrderByCreatedAtDesc(memberId);
-
 
         List<SellDraftCardVm> sellCards = sellWaiting.stream()
                 .map(d -> new SellDraftCardVm(
@@ -93,7 +98,9 @@ public class MypageController {
                 ))
                 .collect(Collectors.toList());
 
-        // ✅ 판매중 / 완료 / 삭제 차량 (car_sold 기반)
+        /* ============================================================
+           🔹 3) 판매중 / 완료 / 삭제 차량
+           ============================================================ */
         List<SellOnMini> soldRows = allCarSaleRepository2.findCarsByMemberAndStatus(memberId, tab);
 
         List<SellDraftCardVm> sellOnCards = soldRows.stream()
@@ -112,12 +119,13 @@ public class MypageController {
                 ))
                 .toList();
 
-        // ✅ 판매대기 카운트 (이미 등록된 차량 제외)
+        /* ============================================================
+           🔹 카운트 계산
+           ============================================================ */
         int saleWaiting = (int) sellCards.stream()
                 .filter(d -> !allCarSaleRepository2.existsByCarEntryDraftId(d.getDraftId()))
                 .count();
 
-        // 🔹 상태별 차량 카운트
         int saleOn       = carSoldService.count(memberId, CarSold.Status.판매중);
         int saleDone     = carSoldService.count(memberId, CarSold.Status.판매완료);
         int saleWithdraw = carSoldService.count(memberId, CarSold.Status.철회);
@@ -125,16 +133,20 @@ public class MypageController {
 
         int totalSellCars = saleOn + saleWaiting + saleDone;
 
-        // ✅ 탭에 따라 표시 데이터 분기
+        /* ============================================================
+           🔹 탭 분기
+           ============================================================ */
         if (tab.equals("판매대기")) {
-            model.addAttribute("sellCards", sellCards);   // Draft 기반
-            model.addAttribute("sellOnCards", List.of()); // 빈 리스트
+            model.addAttribute("sellCards", sellCards);
+            model.addAttribute("sellOnCards", List.of());
         } else {
-            model.addAttribute("sellOnCards", sellOnCards); // 판매중/완료/삭제
-            model.addAttribute("sellCards", List.of());     // 빈 리스트
+            model.addAttribute("sellOnCards", sellOnCards);
+            model.addAttribute("sellCards", List.of());
         }
 
-        // ✅ 공통 모델 데이터
+        /* ============================================================
+           🔹 공통 모델
+           ============================================================ */
         model.addAttribute("member", member);
         model.addAttribute("wishCount", wishCount);
         model.addAttribute("wishMini", wishMini);
@@ -146,24 +158,38 @@ public class MypageController {
         model.addAttribute("saleWithdraw", saleWithdraw);
         model.addAttribute("saleDeleted", saleDeleted);
         model.addAttribute("totalSellCars", totalSellCars);
-        model.addAttribute("currentTab", tab);           // 현재 탭 상태 유지용
+
+        model.addAttribute("currentTab", tab);
         model.addAttribute("currentSection", section);
 
-        // ✅ 쿠폰 & 포인트 데이터
-        CouponSummary couponSummary = couponPointService.getCouponSummary(memberId);
-        List<CouponRow> couponValid = couponPointService.getUsableCoupons(memberId);
-        List<CouponRow> couponExpired = couponPointService.getUsedOrExpiredCoupons(memberId);
-        PointSummary pointSummary = couponPointService.getPointSummary(memberId);
-        List<PointRow> pointRows = couponPointService.getPointHistory(memberId);
+        /* ============================================================
+           🔹 쿠폰 & 포인트
+           ============================================================ */
+        model.addAttribute("couponSummary", couponPointService.getCouponSummary(memberId));
+        model.addAttribute("couponValid", couponPointService.getUsableCoupons(memberId));
+        model.addAttribute("couponExpired", couponPointService.getUsedOrExpiredCoupons(memberId));
+        model.addAttribute("pointSummary", couponPointService.getPointSummary(memberId));
+        model.addAttribute("pointRows", couponPointService.getPointHistory(memberId));
 
-        model.addAttribute("couponSummary", couponSummary);
-        model.addAttribute("couponValid", couponValid);
-        model.addAttribute("couponExpired", couponExpired);
-        model.addAttribute("pointSummary", pointSummary);
-        model.addAttribute("pointRows", pointRows);
+        /* ============================================================
+           🔥 9) 나의 상담글 (user_consultation)
+           ============================================================ */
+        List<UserConsultation> myConsultations =
+                userConsultationService.getMyConsultations(memberId);
+
+        model.addAttribute("myConsultations", myConsultations);
+
+        /* ============================================================
+           🔥 10) 구매문의 (inquiry)
+           ============================================================ */
+        List<Inquiry> myInquiries =
+                inquiryService.getMyInquiries(memberId);
+
+        model.addAttribute("myInquiries", myInquiries);
 
         return "mypage";
     }
+
 
 
     // ✅ 로그인된 Member 조회
@@ -222,4 +248,41 @@ public class MypageController {
         public String getSaleLocation() { return region; } // region 재활용
         public Integer getPrice() { return price; }
     }
+
+    @PostMapping("/mypage/consultation/save")
+    @ResponseBody
+    public String saveConsultation(
+            @RequestBody UserConsultationDto dto,
+            Authentication authentication) {
+
+        if (authentication == null || authentication.getPrincipal() == null) {
+            return "ERROR";
+        }
+
+        Member member = resolveMember(authentication);
+
+        userConsultationService.save(
+                member.getMemberId(),
+                dto.getId(),     // ⭐ 수정 버전
+                dto.getTitle(),
+                dto.getContent()
+        );
+
+        return "OK";
+    }
+
+    @DeleteMapping("/mypage/consultation/delete/{id}")
+    @ResponseBody
+    public String deleteConsultation(@PathVariable Integer id,
+                                     Authentication authentication) {
+
+        if (authentication == null || authentication.getPrincipal() == null) {
+            return "ERROR";
+        }
+
+        userConsultationService.delete(id);
+        return "OK";
+    }
+
+
 }
