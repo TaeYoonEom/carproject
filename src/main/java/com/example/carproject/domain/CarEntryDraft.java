@@ -188,21 +188,20 @@ public class CarEntryDraft {
     protected void onCreate() {
         if (createdAt == null) createdAt = LocalDateTime.now();
         if (isSubmitted == null) isSubmitted = Boolean.FALSE;
-        if (origin == null) origin = 0; // 기본 국산
+        if (origin == null) origin = 0;
         if (isEcoFriendly == null) isEcoFriendly = Boolean.FALSE;
 
-        // ✅ NOT NULL 방어 기본값
         if (accidentRepairCnt == null) accidentRepairCnt = 0;
         if (totalLossCnt == null) totalLossCnt = 0;
         if (floodCnt == null) floodCnt = 0;
         if (panelReplacementCnt == null) panelReplacementCnt = 0;
         if (insuranceClaimCost == null) insuranceClaimCost = 0;
 
-        // ✅ Boolean 기본값도 null 방지
         if (thirdPartyDamage == null) thirdPartyDamage = false;
         if (engineOilIssue == null) engineOilIssue = false;
         if (brakeIssue == null) brakeIssue = false;
         if (performanceChecked == null) performanceChecked = false;
+
         if (panelBeating == null) panelBeating = false;
         if (replacementMinor == null) replacementMinor = false;
         if (corrosion == null) corrosion = false;

@@ -5,10 +5,11 @@ import com.example.carproject.dto.CarDto;
 import com.example.carproject.dto.ComparableCarDto;
 import com.example.carproject.dto.InsuranceDto;
 import com.example.carproject.dto.SellerDto;
+import com.example.carproject.repository.AllCarSaleRepository2;
+import com.example.carproject.repository.CarEntryDraftRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import com.example.carproject.repository.ImportCarSaleRepository2;
-
 
 import java.util.*;
 
@@ -17,10 +18,19 @@ public class CarServiceImpl implements CarService {
 
     private final JdbcTemplate jdbc;
     private final ImportCarSaleRepository2 importCarSaleRepository;
+    private final AllCarSaleRepository2 allCarSaleRepository;
+    private final CarEntryDraftRepository carEntryDraftRepository;
 
-    public CarServiceImpl(JdbcTemplate jdbc, ImportCarSaleRepository2 importCarSaleRepository) {
+    public CarServiceImpl(
+            JdbcTemplate jdbc,
+            ImportCarSaleRepository2 importCarSaleRepository,
+            AllCarSaleRepository2 allCarSaleRepository,
+            CarEntryDraftRepository carEntryDraftRepository
+    ) {
         this.jdbc = jdbc;
         this.importCarSaleRepository = importCarSaleRepository;
+        this.allCarSaleRepository = allCarSaleRepository;
+        this.carEntryDraftRepository = carEntryDraftRepository;
     }
 
     private enum Category {
@@ -143,8 +153,6 @@ public class CarServiceImpl implements CarService {
         return dto;
     }
 
-
-
     @Override
     public CarDto getImportCarDetail(Long carId) {
         return importCarSaleRepository.findImportCarByCarId(carId)
@@ -176,9 +184,6 @@ public class CarServiceImpl implements CarService {
                 })
                 .orElseThrow(() -> new IllegalArgumentException("수입 차량 정보를 찾을 수 없습니다."));
     }
-
-
-
 
     // 대표 이미지: DB에서만. 없으면 null 반환
     @Override
@@ -249,105 +254,114 @@ public class CarServiceImpl implements CarService {
     }
 
     /* =======================
-        기타(그대로 유지: 샘플 데이터)
+       1) 옵션: Draft 기반
        ======================= */
     @Override
     public List<String> getOptions(Long carId) {
-        List<String> options = new ArrayList<>();
 
-        // 1) 외관/내장 옵션
-        String sqlExterior = "SELECT * FROM car_option_exterior WHERE car_id = ? ORDER BY uploaded_at DESC LIMIT 1";
-        jdbc.query(sqlExterior, rs -> {
-            if (rs.getInt("sunroof") == 1) options.add("선루프");
-            if (rs.getInt("hid_led_headlamp") == 1) options.add("헤드램프(HID, LED)");
-            if (rs.getInt("power_trunk") == 1) options.add("파워 전동 트렁크");
-            if (rs.getInt("ghost_door_closing") == 1) options.add("고스트 도어 클로징");
-            if (rs.getInt("auto_side_mirror") == 1) options.add("전동접이 사이드 미러");
-            if (rs.getInt("aluminum_wheel") == 1) options.add("알루미늄 휠");
-            if (rs.getInt("roof_rack") == 1) options.add("루프랙");
-            if (rs.getInt("heated_steering_wheel") == 1) options.add("열선 스티어링 휠");
-            if (rs.getInt("adjustable_steering_wheel") == 1) options.add("전동 조절 스티어링 휠");
-            if (rs.getInt("paddle_shift") == 1) options.add("패들 시프트");
-            if (rs.getInt("steering_remote") == 1) options.add("스티어링 휠 리모컨");
-            if (rs.getInt("ecm_mirror") == 1) options.add("ECM 룸미러");
-            if (rs.getInt("hi_pass") == 1) options.add("하이패스");
-            if (rs.getInt("power_doorlock") == 1) options.add("파워 도어록");
-            if (rs.getInt("power_steering") == 1) options.add("파워 스티어링 휠");
-            if (rs.getInt("power_window") == 1) options.add("파워 윈도우");
-        }, carId);
+        // 🔗 all_car_sale → draft id
+        var all = allCarSaleRepository.findByCarId(carId.intValue())
+                .orElseThrow(() -> new IllegalArgumentException("all_car_sale 없음: car_id=" + carId));
 
-        // 2) 편의 옵션
-        String sqlConv = "SELECT * FROM car_option_convenience WHERE car_id = ? ORDER BY uploaded_at DESC LIMIT 1";
-        jdbc.query(sqlConv, rs -> {
-            if (rs.getInt("massage_seat") == 1) options.add("마사지 시트");
-            if (rs.getInt("ventilated_seat") == 1) options.add("통풍 시트");
-            if (rs.getInt("memory_seat") == 1) options.add("메모리 시트");
-            if (rs.getInt("heated_seat") == 1) options.add("열선 시트");
-            if (rs.getInt("power_seat") == 1) options.add("전동 시트");
-            if (rs.getInt("fabric_seat") == 1) options.add("직물 시트");
-            if (rs.getInt("aux_port") == 1) options.add("AUX 단자");
-            if (rs.getInt("usb_port") == 1) options.add("USB 단자");
-            if (rs.getInt("cd_player") == 1) options.add("CD 플레이어");
-            if (rs.getInt("bluetooth") == 1) options.add("블루투스");
-            if (rs.getInt("av_monitor_rear") == 1) options.add("후석 AV 모니터");
-            if (rs.getInt("av_monitor_front") == 1) options.add("전석 AV 모니터");
-            if (rs.getInt("navigation") == 1) options.add("내비게이션");
-            if (rs.getInt("curtain") == 1) options.add("커튼");
-            if (rs.getInt("auto_light") == 1) options.add("자동 라이트");
-            if (rs.getInt("hud") == 1) options.add("HUD");
-            if (rs.getInt("epb") == 1) options.add("전자식 파킹 브레이크(EPB)");
-            if (rs.getInt("cruise_control") == 1) options.add("크루즈 컨트롤");
-            if (rs.getInt("auto_aircon") == 1) options.add("자동 에어컨");
-            if (rs.getInt("smart_key") == 1) options.add("스마트 키");
-            if (rs.getInt("remote_key") == 1) options.add("리모트 키");
-            if (rs.getInt("rain_sensor") == 1) options.add("레인 센서");
-        }, carId);
+        Integer draftId = all.getCarEntryDraftId();
+        if (draftId == null) {
+            return List.of(); // draft가 없으면 옵션 없음
+        }
 
-        // 3) 안전 옵션
-        String sqlSafety = "SELECT * FROM car_option_safety WHERE car_id = ? ORDER BY uploaded_at DESC LIMIT 1";
-        jdbc.query(sqlSafety, rs -> {
-            if (rs.getInt("airbag_front") == 1) options.add("앞 에어백");
-            if (rs.getInt("airbag_side") == 1) options.add("사이드 에어백");
-            if (rs.getInt("airbag_curtain") == 1) options.add("커튼 에어백");
-            if (rs.getInt("abs") == 1) options.add("ABS");
-            if (rs.getInt("tcs") == 1) options.add("TCS");
-            if (rs.getInt("esc") == 1) options.add("ESC");
-            if (rs.getInt("tpms") == 1) options.add("TPMS");
-            if (rs.getInt("ldws") == 1) options.add("LDWS(차선 이탈 경고)");
-            if (rs.getInt("ecs") == 1) options.add("ECS(전자제어 서스펜션)");
-            if (rs.getInt("parking_sensor") == 1) options.add("주차 감지 센서");
-            if (rs.getInt("rear_warning") == 1) options.add("후방 경고");
-            if (rs.getInt("rear_camera") == 1) options.add("후방 카메라");
-            if (rs.getInt("around_view") == 1) options.add("어라운드 뷰");
-        }, carId);
+        var d = carEntryDraftRepository.findById(draftId)
+                .orElseThrow(() -> new IllegalArgumentException("draft 없음: id=" + draftId));
 
-        // 4) 시트 옵션
-        String sqlSeat = "SELECT * FROM car_option_seat WHERE car_id = ? ORDER BY uploaded_at DESC LIMIT 1";
-        jdbc.query(sqlSeat, rs -> {
-            if (rs.getInt("family_seat") == 1) options.add("패밀리 시트");
-            if (rs.getInt("power_seat_front") == 1) options.add("앞좌석 전동 시트");
-            if (rs.getInt("power_seat_rear") == 1) options.add("뒷좌석 전동 시트");
-            if (rs.getInt("heated_seat_front") == 1) options.add("앞좌석 열선 시트");
-            if (rs.getInt("heated_seat_rear") == 1) options.add("뒷좌석 열선 시트");
-            if (rs.getInt("memory_seat") == 1) options.add("메모리 시트");
-            if (rs.getInt("ventilated_seat_front") == 1) options.add("앞좌석 통풍 시트");
-            if (rs.getInt("ventilated_seat_rear") == 1) options.add("뒷좌석 통풍 시트");
-            if (rs.getInt("massage_seat") == 1) options.add("마사지 시트");
-        }, carId);
+        List<String> opts = new ArrayList<>();
 
-        return options;
+        if (d.getCarGrade() != null && !d.getCarGrade().isBlank())
+            opts.add("등급: " + d.getCarGrade());
+        if (d.getFuelType() != null && !d.getFuelType().isBlank())
+            opts.add("연료: " + d.getFuelType());
+        if (d.getTransmission() != null && !d.getTransmission().isBlank())
+            opts.add("변속기: " + d.getTransmission());
+        if (d.getDriveType() != null && !d.getDriveType().isBlank())
+            opts.add("구동방식: " + d.getDriveType());
+        if (d.getExteriorColor() != null && !d.getExteriorColor().isBlank())
+            opts.add("외부 색상: " + d.getExteriorColor());
+        if (d.getInteriorColor() != null && !d.getInteriorColor().isBlank())
+            opts.add("내부 색상: " + d.getInteriorColor());
+        if (d.getSeatColor() != null && !d.getSeatColor().isBlank())
+            opts.add("시트 색상: " + d.getSeatColor());
+
+        return opts;
     }
 
+    /* =======================
+       2) 성능기록부: Draft 기반
+       ======================= */
+    @Override
+    public Map<String, String> getInspectionMap(Long carId) {
 
-    @Override public Map<String, String> getInspectionMap(Long carId) {
-        return Map.of("엔진오일","정상","브레이크","정상","타이어","70% 이상");
+        var all = allCarSaleRepository.findByCarId(carId.intValue())
+                .orElseThrow(() -> new IllegalArgumentException("all_car_sale 없음: car_id=" + carId));
+
+        Integer draftId = all.getCarEntryDraftId();
+        if (draftId == null) {
+            return Collections.emptyMap();
+        }
+
+        var d = carEntryDraftRepository.findById(draftId)
+                .orElseThrow(() -> new IllegalArgumentException("draft 없음: id=" + draftId));
+
+        Map<String, String> m = new LinkedHashMap<>();
+
+        // ⚠️ boolean / Integer 필드는 엔티티 타입에 따라 primitive일 수도 있어서 그대로 사용
+        m.put("타이어 잔량",
+                d.getTirePercentage() == null ? "-" : d.getTirePercentage() + "%");
+        m.put("엔진오일 이상", d.getEngineOilIssue() ? "예" : "아니오");
+        m.put("브레이크 이상", d.getBrakeIssue() ? "예" : "아니오");
+        m.put("성능점검 실시", d.getPerformanceChecked() ? "예" : "아니오");
+        m.put("사고 수리", d.getAccidentRepairCnt() + "회");
+        m.put("전손", d.getTotalLossCnt() + "회");
+        m.put("침수", d.getFloodCnt() + "회");
+        m.put("판금 교환", d.getPanelReplacementCnt() + "회");
+        m.put("보험처리 비용", d.getInsuranceClaimCost() + "원");
+        m.put("타차가해", d.getThirdPartyDamage() ? "예" : "아니오");
+        m.put("판금", d.getPanelBeating() ? "예" : "아니오");
+        m.put("국소 교환", d.getReplacementMinor() ? "예" : "아니오");
+        m.put("부식", d.getCorrosion() ? "예" : "아니오");
+        m.put("특이사항",
+                (d.getSpecialNote() == null || d.getSpecialNote().isBlank())
+                        ? "-" : d.getSpecialNote());
+
+        return m;
     }
 
-    @Override public String getInspectionImage(Long carId) { return null; }
+    @Override
+    public String getInspectionImage(Long carId) {
+        // 지금은 성능기록부 이미지를 따로 안 쓰고 있으니 null
+        return null;
+    }
 
-    @Override public InsuranceDto getInsurance(Long carId) {
+    /* =======================
+       3) 보험이력: Draft 기반
+       ======================= */
+    @Override
+    public InsuranceDto getInsurance(Long carId) {
+
+        var all = allCarSaleRepository.findByCarId(carId.intValue())
+                .orElseThrow(() -> new IllegalArgumentException("all_car_sale 없음: car_id=" + carId));
+
+        Integer draftId = all.getCarEntryDraftId();
+        if (draftId == null) {
+            return null; // 보험이력 없음
+        }
+
+        var d = carEntryDraftRepository.findById(draftId)
+                .orElseThrow(() -> new IllegalArgumentException("draft 없음: id=" + draftId));
+
         InsuranceDto dto = new InsuranceDto();
-        dto.setAccidents(0); dto.setTotalLoss(0); dto.setFlood(0); dto.setPanels(0); dto.setCost(0);
+        dto.setAccidents(d.getAccidentRepairCnt());
+        dto.setTotalLoss(d.getTotalLossCnt());
+        dto.setFlood(d.getFloodCnt());
+        dto.setPanels(d.getPanelReplacementCnt());
+        dto.setCost(d.getInsuranceClaimCost());
+
         return dto;
     }
 

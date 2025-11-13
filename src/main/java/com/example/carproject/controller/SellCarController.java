@@ -1,5 +1,6 @@
 package com.example.carproject.controller;
 
+import com.example.carproject.domain.AllCarSale;
 import com.example.carproject.domain.CarEntryDraft;
 import com.example.carproject.domain.CarConditionHistory;
 
@@ -131,6 +132,16 @@ public class SellCarController {
 
         if (draft.getId() == null) {
             draft.setCreatedAt(LocalDateTime.now());
+
+            // 🔥 Boolean 필드 기본값 세팅 (NOT NULL 문제 해결)
+            draft.setEngineOilIssue(false);
+            draft.setBrakeIssue(false);
+            draft.setPerformanceChecked(false);
+
+            draft.setThirdPartyDamage(false);
+            draft.setPanelBeating(false);
+            draft.setReplacementMinor(false);
+            draft.setCorrosion(false);
         }
 
         carEntryDraftRepository.save(draft);
@@ -286,28 +297,34 @@ public class SellCarController {
     @PostMapping("/sell/detail/condition/save")
     public String saveCondition(
             @RequestParam("carId") Long carId,
-            @RequestParam(value="tirePercentage", defaultValue="0") Integer tirePercentage,
-            @RequestParam(value="engineOilIssue", defaultValue="0") Integer engineOilIssue,
-            @RequestParam(value="brakeIssue", defaultValue="0") Integer brakeIssue,
-            @RequestParam(value="performanceChecked", defaultValue="1") Integer performanceChecked,
-            @RequestParam(value="accidentRepairCnt", defaultValue="0") Integer accidentRepairCnt,
-            @RequestParam(value="totalLossCnt", defaultValue="0") Integer totalLossCnt,
-            @RequestParam(value="floodCnt", defaultValue="0") Integer floodCnt,
-            @RequestParam(value="panelReplacementCnt", defaultValue="0") Integer panelReplacementCnt,
-            @RequestParam(value="insuranceClaimCost", defaultValue="0") Integer insuranceClaimCost,
-            @RequestParam(value="thirdPartyDamage", defaultValue="0") Integer thirdPartyDamage,
-            @RequestParam(value="panelBeating", defaultValue="0") Integer panelBeating,
-            @RequestParam(value="replacementMinor", defaultValue="0") Integer replacementMinor,
-            @RequestParam(value="corrosion", defaultValue="0") Integer corrosion,
+            @RequestParam(value="tirePercentage", required=false) Integer tirePercentage,
+            @RequestParam(value="engineOilIssue", required=false, defaultValue="0") Integer engineOilIssue,
+            @RequestParam(value="brakeIssue", required=false, defaultValue="0") Integer brakeIssue,
+            @RequestParam(value="performanceChecked", required=false, defaultValue="0") Integer performanceChecked,
+            @RequestParam(value="accidentRepairCnt", required=false, defaultValue="0") Integer accidentRepairCnt,
+            @RequestParam(value="totalLossCnt", required=false, defaultValue="0") Integer totalLossCnt,
+            @RequestParam(value="floodCnt", required=false, defaultValue="0") Integer floodCnt,
+            @RequestParam(value="panelReplacementCnt", required=false, defaultValue="0") Integer panelReplacementCnt,
+            @RequestParam(value="insuranceClaimCost", required=false, defaultValue="0") Integer insuranceClaimCost,
+            @RequestParam(value="thirdPartyDamage", required=false, defaultValue="0") Integer thirdPartyDamage,
+            @RequestParam(value="panelBeating", required=false, defaultValue="0") Integer panelBeating,
+            @RequestParam(value="replacementMinor", required=false, defaultValue="0") Integer replacementMinor,
+            @RequestParam(value="corrosion", required=false, defaultValue="0") Integer corrosion,
             @RequestParam(value="specialNote", required=false) String specialNote
     ){
+        // -------- Boolean 변환 --------
+        boolean engineOilBool = (engineOilIssue != null && engineOilIssue == 1);
+        boolean brakeBool     = (brakeIssue     != null && brakeIssue == 1);
+        boolean perfBool      = (performanceChecked != null && performanceChecked == 1);
+
+        // -------- CarConditionHistory 저장 --------
         CarConditionHistory entity = carConditionHistoryRepository.findById(carId.intValue())
                 .orElseGet(() -> CarConditionHistory.builder().carId(carId.intValue()).build());
 
         entity.setTirePercentage(tirePercentage);
-        entity.setEngineOilIssue(engineOilIssue == 1);
-        entity.setBrakeIssue(brakeIssue == 1);
-        entity.setPerformanceChecked(performanceChecked == 1);
+        entity.setEngineOilIssue(engineOilBool);
+        entity.setBrakeIssue(brakeBool);
+        entity.setPerformanceChecked(perfBool);
         entity.setAccidentRepairCnt(accidentRepairCnt);
         entity.setTotalLossCnt(totalLossCnt);
         entity.setFloodCnt(floodCnt);
@@ -318,12 +335,32 @@ public class SellCarController {
         entity.setReplacementMinor(replacementMinor == 1);
         entity.setCorrosion(corrosion == 1);
         entity.setSpecialNote(specialNote);
-
         carConditionHistoryRepository.save(entity);
 
-        // ✅ 검사/이력 완료 → 판매정보로 이동
+        // -------- Draft에도 동기화 --------
+        CarEntryDraft draft = carEntryDraftRepository.findById(carId.intValue())
+                .orElseThrow(() -> new IllegalArgumentException("Draft not found"));
+
+        draft.setTirePercentage(tirePercentage);
+        draft.setEngineOilIssue(engineOilBool);
+        draft.setBrakeIssue(brakeBool);
+        draft.setPerformanceChecked(perfBool);
+        draft.setAccidentRepairCnt(accidentRepairCnt);
+        draft.setTotalLossCnt(totalLossCnt);
+        draft.setFloodCnt(floodCnt);
+        draft.setPanelReplacementCnt(panelReplacementCnt);
+        draft.setInsuranceClaimCost(insuranceClaimCost);
+        draft.setThirdPartyDamage(thirdPartyDamage == 1);
+        draft.setPanelBeating(panelBeating == 1);
+        draft.setReplacementMinor(replacementMinor == 1);
+        draft.setCorrosion(corrosion == 1);
+        draft.setSpecialNote(specialNote);
+        carEntryDraftRepository.save(draft);
+
         return "redirect:/sell/detail/sale?carId=" + carId;
     }
+
+
 
 
 
