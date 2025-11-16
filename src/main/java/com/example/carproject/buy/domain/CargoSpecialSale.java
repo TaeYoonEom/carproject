@@ -52,7 +52,7 @@ public class CargoSpecialSale {
     private String sellerType;
 
     @Column(name = "usage_type", columnDefinition = "ENUM('자가용','영업용','등본차량')")
-    private String UsageType; //용도
+    private String usageType; //용도
 
     @Column(length = 30)
     private String color;
