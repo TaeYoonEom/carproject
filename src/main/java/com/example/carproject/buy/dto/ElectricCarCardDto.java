@@ -1,8 +1,11 @@
 package com.example.carproject.buy.dto;
 
-import lombok.*;
+import com.example.carproject.buy.projection.ElectricCarRow;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Getter @AllArgsConstructor
+@Getter
+@AllArgsConstructor
 public class ElectricCarCardDto {
     private final Integer carId;
     private final String  origin;
@@ -14,4 +17,19 @@ public class ElectricCarCardDto {
     private final String  saleLocation;
     private final String  ownershipStatus;
     private final String  imageUrl;
+
+    public static ElectricCarCardDto from(ElectricCarRow r) {
+        return new ElectricCarCardDto(
+                r.getCarId(),
+                r.getOrigin(),
+                r.getCarName(),
+                r.getPrice(),
+                r.getYear(),
+                r.getMileage(),
+                r.getDriveType(),
+                r.getSaleLocation(),
+                r.getOwnershipStatus(),
+                r.getImageUrl()
+        );
+    }
 }

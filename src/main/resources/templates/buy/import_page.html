@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       lang="ko"
@@ -16,7 +16,6 @@
 
 <body>
 <div layout:fragment="content">
-
     <div class="page-wrapper">
         <!-- 좌측 필터 영역 -->
         <aside class="sidebar-left encar-filters">
@@ -49,91 +48,136 @@
             <!-- 차종 -->
             <details class="filter-group" open>
                 <summary>차종</summary>
-                <ul class="filter-list">
-                    <li><label><input type="checkbox"> 경차</label></li>
-                    <li><label><input type="checkbox"> 소형차</label></li>
-                    <li><label><input type="checkbox"> 준중형차</label></li>
-                    <li><label><input type="checkbox"> 중형차</label></li>
-                    <li><label><input type="checkbox"> 대형차</label></li>
-                    <li><label><input type="checkbox"> 스포츠카</label></li>
-                    <li><label><input type="checkbox"> SUV</label></li>
-                    <li><label><input type="checkbox"> RV</label></li>
-                    <li><label><input type="checkbox"> 경승합차</label></li>
-                    <li><label><input type="checkbox"> 승합차</label></li>
-                    <li><label><input type="checkbox"> 화물차</label></li>
-                    <li><label><input type="checkbox"> 기타</label></li>
+
+                <!-- ① 승용 -->
+                <ul class="filter-list with-count">
+                    <li th:each="item : ${filterCounts.carTypeGroups['승용']}">
+                        <label>
+                            <input type="checkbox" name="carType" th:value="${item.val}">
+                            [[${item.val}]]
+                            <span class="count">[[${#numbers.formatInteger(item.cnt, 1, 'COMMA')}]]</span>
+                        </label>
+                    </li>
+                </ul>
+
+                <div class="filter-divider"></div>
+
+                <!-- ② SUV/RV -->
+                <ul class="filter-list with-count">
+                    <li th:each="item : ${filterCounts.carTypeGroups['SUV/RV']}">
+                        <label>
+                            <input type="checkbox" name="carType" th:value="${item.val}">
+                            [[${item.val}]]
+                            <span class="count">[[${#numbers.formatInteger(item.cnt, 1, 'COMMA')}]]</span>
+                        </label>
+                    </li>
+                </ul>
+
+                <div class="filter-divider"></div>
+
+                <!-- ③ 승합/화물/기타 -->
+                <ul class="filter-list with-count">
+                    <li th:each="item : ${filterCounts.carTypeGroups['승합/화물']}">
+                        <label>
+                            <input type="checkbox" th:value="${item.val}">
+                            [[${item.val}]]
+                            <span class="count">[[${#numbers.formatInteger(item.cnt,1,'COMMA')}]]</span>
+                        </label>
+                    </li>
+                    <li th:each="item : ${filterCounts.carTypeGroups['기타']}">
+                        <label>
+                            <input type="checkbox" th:value="${item.val}">
+                            기타
+                            <span class="count">[[${#numbers.formatInteger(item.cnt,1,'COMMA')}]]</span>
+                        </label>
+                    </li>
                 </ul>
             </details>
 
             <!-- 제조사 / 모델 / 등급 -->
             <details class="filter-group">
-                <summary>제조사 / 모델 / 등급</summary>
+                <summary>제조사</summary>
+                <ul class="filter-list">
+                    <li th:each="m : ${filterCounts.countByManufacturer}">
+                        <label>
+                            <input type="checkbox" th:value="${m.val}">
+                            [[${m.val}]]
+                            <span class="count">[[${m.cnt}]]</span>
+                        </label>
+                    </li>
+                </ul>
+                <summary>모델</summary>
                 <ul class="filter-list with-count">
-                    <label><input type="checkbox"> 현대</label>
-                    <label><input type="checkbox"> 기아</label>
-                    <label><input type="checkbox"> 제네시스</label>
+                    <li th:each="item : ${filterCounts.countByModelName}">
+                        <label>
+                            <input type="checkbox" th:value="${item.val}">
+                            [[${item.val}]]
+                            <span class="count">[[${item.cnt}]]</span>
+                        </label>
+                    </li>
+                </ul>
+                <summary>차량명</summary>
+                <ul class="filter-list with-count">
+                    <li th:each="item : ${filterCounts.countByCarName}">
+                        <label>
+                            <input type="checkbox" th:value="${item.val}">
+                            [[${item.val}]]
+                            <span class="count">[[${item.cnt}]]</span>
+                        </label>
+                    </li>
                 </ul>
             </details>
 
             <!-- 연식 -->
             <details class="filter-group" open>
                 <summary>연식</summary>
-                <div class="range-rows">
+                <div class="filter-range styled-range">
                     <div class="range-row">
                         <div class="selects">
-                            <select name="year_from_y">
+                            <select id="yearFrom" class="styled-select">
                                 <option value="">년</option>
                             </select>
-                            <select name="year_from_m">
+                            <select id="monthFrom" class="styled-select">
                                 <option value="">월</option>
                             </select>
+                            <span class="suffix">부터</span>
                         </div>
-                        <span class="suffix">부터</span>
                     </div>
+
                     <div class="range-row">
                         <div class="selects">
-                            <select name="year_to_y">
+                            <select id="yearTo" class="styled-select">
                                 <option value="">년</option>
                             </select>
-                            <select name="year_to_m">
+                            <select id="monthTo" class="styled-select">
                                 <option value="">월</option>
                             </select>
+                            <span class="suffix">까지</span>
                         </div>
-                        <span class="suffix">까지</span>
                     </div>
-                    <button type="button" class="btn-interval">구간선택 열기</button>
                 </div>
             </details>
 
             <!-- 주행거리 -->
             <details class="filter-group" open>
                 <summary>주행거리</summary>
-                <div class="range-rows">
+                <div class="filter-range styled-range">
                     <div class="range-row">
                         <div class="selects">
-                            <select name="mile_from">
+                            <select id="mileageFrom" class="styled-selected">
                                 <option value="">선택</option>
-                                <option value="0">0km</option>
-                                <option value="10000">1만</option>
-                                <option value="30000">3만</option>
-                                <option value="50000">5만</option>
-                                <option value="100000">10만</option>
                             </select>
+                            <span class="suffix">부터</span>
                         </div>
-                        <span class="suffix">부터</span>
                     </div>
+
                     <div class="range-row">
                         <div class="selects">
-                            <select name="mile_to">
+                            <select id="mileageTo" class="styled-selected">
                                 <option value="">선택</option>
-                                <option value="30000">3만</option>
-                                <option value="50000">5만</option>
-                                <option value="100000">10만</option>
-                                <option value="150000">15만</option>
-                                <option value="200000">20만</option>
                             </select>
+                            <span class="suffix">까지</span>
                         </div>
-                        <span class="suffix">까지</span>
                     </div>
                     <button type="button" class="btn-interval">구간선택 열기</button>
                 </div>
@@ -142,42 +186,23 @@
             <!-- 가격 -->
             <details class="filter-group" open>
                 <summary>가격</summary>
-                <div class="range-rows">
+                <div class="filter-range styled-range">
                     <div class="range-row">
                         <div class="selects">
-                            <select name="price_from">
+                            <select id="priceFrom" class="styled-selected">
                                 <option value="">선택</option>
-                                <option value="0">0만원</option>
-                                <option value="500">500</option>
-                                <option value="1000">1,000</option>
-                                <option value="2000">2,000</option>
-                                <option value="3000">3,000</option>
                             </select>
+                            <span class="suffix">부터</span>
                         </div>
-                        <span class="suffix">부터</span>
                     </div>
+
                     <div class="range-row">
                         <div class="selects">
-                            <select name="price_to">
+                            <select id="priceTo" class="styled-selected">
                                 <option value="">선택</option>
-                                <option value="1000">1,000</option>
-                                <option value="2000">2,000</option>
-                                <option value="3000">3,000</option>
-                                <option value="5000">5,000</option>
-                                <option value="10000">10,000</option>
                             </select>
+                            <span class="suffix">까지</span>
                         </div>
-                        <span class="suffix">까지</span>
-                    </div>
-
-                    <label class="manual">
-                        <input type="checkbox" id="price-direct"> 직접입력
-                    </label>
-
-                    <div class="manual-inputs" hidden>
-                        <input type="number" name="price_from_input" placeholder="최소 만원">
-                        <span class="tilde">~</span>
-                        <input type="number" name="price_to_input" placeholder="최대 만원">
                     </div>
 
                     <button type="button" class="btn-interval">구간선택 열기</button>
@@ -187,28 +212,54 @@
             <!-- 지역 -->
             <details class="filter-group">
                 <summary>지역</summary>
-                <ul class="filter-list">
-                    <li><label><input type="checkbox"> 경기</label></li>
-                    <li><label><input type="checkbox"> 대구</label></li>
-                    <li><label><input type="checkbox"> 부산</label></li>
-                    <li><label><input type="checkbox"> 서울</label></li>
-                    <li><label><input type="checkbox"> 인천</label></li>
+
+                <!-- TOP 5 지역 -->
+                <ul class="filter-list with-count">
+                    <li th:each="item : ${filterCounts.regionTop}">
+                        <label>
+                            <input type="checkbox" name="saleLocation"
+                                   th:value="${item.key}">
+                            [[${item.key}]]
+                            <span class="count">[[${#numbers.formatInteger(item.value, 1, 'COMMA')}]]</span>
+                        </label>
+                    </li>
                 </ul>
+
+                <div class="filter-divider"></div>
+
+                <!-- + 다른 지역 더보기 버튼 -->
+                <div class="more-region-btn" onclick="toggleRegion()">
+                    <span>＋ 다른 지역 더보기</span>
+                </div>
+
+                <!-- 숨겨진 나머지 지역 -->
+                <ul id="regionMoreBox" class="filter-list with-count hidden">
+                    <li th:each="item : ${filterCounts.regionOthers}">
+                        <label>
+                            <input type="checkbox" name="saleLocation"
+                                   th:value="${item.key}">
+                            [[${item.key}]]
+                            <span class="count">[[${#numbers.formatInteger(item.value, 1, 'COMMA')}]]</span>
+                        </label>
+                    </li>
+                </ul>
+
+                <div class="filter-divider"></div>
             </details>
 
             <!-- 인승 -->
             <details class="filter-group">
                 <summary>인승</summary>
                 <ul class="filter-list">
-                    <li><label><input type="checkbox"> 2인승 이하</label></li>
-                    <li><label><input type="checkbox"> 3인승</label></li>
-                    <li><label><input type="checkbox"> 4인승</label></li>
-                    <li><label><input type="checkbox"> 5인승</label></li>
-                    <li><label><input type="checkbox"> 6인승</label></li>
-                    <li><label><input type="checkbox"> 7인승</label></li>
-                    <li><label><input type="checkbox"> 8인승</label></li>
-                    <li><label><input type="checkbox"> 9인승</label></li>
-                    <li><label><input type="checkbox"> 10인승 이상</label></li>
+                    <li><label><input type="checkbox">2인승 이하 <span class="count">[[${filterCounts.capacityBuckets.le2}]]</span></label></li>
+                    <li><label><input type="checkbox">3인승 <span class="count">[[${filterCounts.capacityBuckets.eq3}]]</span></label></li>
+                    <li><label><input type="checkbox">4인승 <span class="count">[[${filterCounts.capacityBuckets.eq4}]]</span></label></li>
+                    <li><label><input type="checkbox">5인승 <span class="count">[[${filterCounts.capacityBuckets.eq5}]]</span></label></li>
+                    <li><label><input type="checkbox">6인승 <span class="count">[[${filterCounts.capacityBuckets.eq6}]]</span></label></li>
+                    <li><label><input type="checkbox">7인승 <span class="count">[[${filterCounts.capacityBuckets.eq7}]]</span></label></li>
+                    <li><label><input type="checkbox">8인승 <span class="count">[[${filterCounts.capacityBuckets.eq8}]]</span></label></li>
+                    <li><label><input type="checkbox">9인승 <span class="count">[[${filterCounts.capacityBuckets.eq9}]]</span></label></li>
+                    <li><label><input type="checkbox">10인승 이상 <span class="count">[[${filterCounts.capacityBuckets.ge10}]]</span></label></li>
                 </ul>
             </details>
 
@@ -216,10 +267,13 @@
             <details class="filter-group">
                 <summary>성능 / 보험 공개</summary>
                 <ul class="filter-list">
-                    <li><label><input type="checkbox"> 엔카 직영 성능점검</label></li>
-                    <li><label><input type="checkbox"> 성능기록부</label></li>
-                    <li><label><input type="checkbox"> 보험이력</label></li>
-                    <li><label><input type="checkbox"> 차량 이력 공개</label></li>
+                    <li th:each="item : ${filterCounts.countByPerformanceOpen}">
+                        <label>
+                            <input type="checkbox" name="performanceOpen" th:value="${item.val}">
+                            [[${item.val}]]
+                            <span class="count">[[${item.cnt}]]</span>
+                        </label>
+                    </li>
                 </ul>
             </details>
 
@@ -227,9 +281,13 @@
             <details class="filter-group">
                 <summary>판매자 구분</summary>
                 <ul class="filter-list">
-                    <li><label><input type="checkbox"> 개인</label></li>
-                    <li><label><input type="checkbox"> 딜러</label></li>
-                    <li><label><input type="checkbox"> 리스렌트제휴</label></li>
+                    <li th:each="item : ${filterCounts.countBySellerType}">
+                        <label>
+                            <input type="checkbox" name="sellerType" th:value="${item.val}">
+                            [[${item.val}]]
+                            <span class="count">[[${item.cnt}]]</span>
+                        </label>
+                    </li>
                 </ul>
             </details>
 
@@ -237,9 +295,13 @@
             <details class="filter-group">
                 <summary>판매 방식</summary>
                 <ul class="filter-list">
-                    <li><label><input type="checkbox"> 일반</label></li>
-                    <li><label><input type="checkbox"> 렌트</label></li>
-                    <li><label><input type="checkbox"> 리스</label></li>
+                    <li th:each="item : ${filterCounts.countBySaleMethod}">
+                        <label>
+                            <input type="checkbox" name="saleMethod" th:value="${item.val}">
+                            [[${item.val}]]
+                            <span class="count">[[${item.cnt}]]</span>
+                        </label>
+                    </li>
                 </ul>
             </details>
 
@@ -247,11 +309,13 @@
             <details class="filter-group">
                 <summary>외부 색상</summary>
                 <ul class="filter-list">
-                    <li><label><input type="checkbox"> 흰색</label></li>
-                    <li><label><input type="checkbox"> 검정색</label></li>
-                    <li><label><input type="checkbox"> 쥐색</label></li>
-                    <li><label><input type="checkbox"> 청색</label></li>
-                    <li><label><input type="checkbox"> 은색</label></li>
+                    <li th:each="item : ${filterCounts.countByExteriorColor}">
+                        <label>
+                            <input type="checkbox" name="exteriorColor" th:value="${item.val}">
+                            [[${item.val}]]
+                            <span class="count">[[${item.cnt}]]</span>
+                        </label>
+                    </li>
                 </ul>
             </details>
 
@@ -259,11 +323,13 @@
             <details class="filter-group">
                 <summary>내부 색상</summary>
                 <ul class="filter-list">
-                    <li><label><input type="checkbox"> 검정색 계열</label></li>
-                    <li><label><input type="checkbox"> 갈색 계열</label></li>
-                    <li><label><input type="checkbox"> 베이지색 계열</label></li>
-                    <li><label><input type="checkbox"> 회색 계열</label></li>
-                    <li><label><input type="checkbox"> 흰색 계열</label></li>
+                    <li th:each="item : ${filterCounts.countByInteriorColor}">
+                        <label>
+                            <input type="checkbox" name="interiorColor" th:value="${item.val}">
+                            [[${item.val}]]
+                            <span class="count">[[${item.cnt}]]</span>
+                        </label>
+                    </li>
                 </ul>
             </details>
 
@@ -271,18 +337,13 @@
             <details class="filter-group">
                 <summary>연료</summary>
                 <ul class="filter-list">
-                    <li><label><input type="checkbox"> 가솔린</label></li>
-                    <li><label><input type="checkbox"> 디젤</label></li>
-                    <li><label><input type="checkbox"> LPG(일반인 구입)</label></li>
-                    <li><label><input type="checkbox"> LPG</label></li>
-                    <li><label><input type="checkbox"> 가솔린+전기</label></li>
-                    <li><label><input type="checkbox"> LPG+전기</label></li>
-                    <li><label><input type="checkbox"> 가솔린+LPG</label></li>
-                    <li><label><input type="checkbox"> 가솔린+CNG</label></li>
-                    <li><label><input type="checkbox"> 전기</label></li>
-                    <li><label><input type="checkbox"> 수소</label></li>
-                    <li><label><input type="checkbox"> LNG</label></li>
-                    <li><label><input type="checkbox"> CNG</label></li>
+                    <li th:each="f : ${filterCounts.countByFuelType}">
+                        <label>
+                            <input type="checkbox" name="fuelType" th:value="${f.val}">
+                            [[${f.val}]]
+                            <span class="count">[[${f.cnt}]]</span>
+                        </label>
+                    </li>
                 </ul>
             </details>
 
@@ -290,11 +351,13 @@
             <details class="filter-group">
                 <summary>변속기</summary>
                 <ul class="filter-list">
-                    <li><label><input type="checkbox"> 오토</label></li>
-                    <li><label><input type="checkbox"> 수동</label></li>
-                    <li><label><input type="checkbox"> 세미오토</label></li>
-                    <li><label><input type="checkbox"> CVT</label></li>
-                    <li><label><input type="checkbox"> 기타</label></li>
+                    <li th:each="item : ${filterCounts.countByTransmission}">
+                        <label>
+                            <input type="checkbox" name="transmission" th:value="${item.val}">
+                            [[${item.val}]]
+                            <span class="count">[[${item.cnt}]]</span>
+                        </label>
+                    </li>
                 </ul>
             </details>
 
@@ -458,94 +521,32 @@
         <aside class="sidebar-right">
             <div class="widget">
                 <ul class="service-list">
-                    <li><span class="icon blue">₩</span>보험료 조회</li>
-                    <li><span class="icon gold">₩</span>대출한도 조회</li>
+                    <li>
+                        <span class="icon blue">₩</span>
+                        보험료 조회
+                    </li>
+                    <li>
+                        <span class="icon gold">₩</span>
+                        대출한도 조회
+                    </li>
                 </ul>
             </div>
         </aside>
-
     </div>
 </div>
 <div class="footer">
     ⓒ 2025 N카. All rights reserved.
 </div>
-
+<th:block layout:fragment="script">
+    <script defer src="/js/base.js"></script>
+    <script defer src="/js/wishlist.js"></script>
+</th:block>
 </body>
 </html>
-
-<script>
-    // 메뉴 active
-    document.addEventListener("DOMContentLoaded", function () {
-      const path = window.location.pathname;
-      const links = document.querySelectorAll('.menu-left a, .menu-right a');
-      links.forEach(link => {
-        if (link.getAttribute('data-path') === path) link.classList.add('active');
-      });
-    });
-
-    // CSRF 헤더 구성
-    function csrfHeaders(base = {}) {
-      const token  = document.querySelector('meta[name="_csrf"]')?.content;
-      const header = document.querySelector('meta[name="_csrf_header"]')?.content;
-      if (token && header) base[header] = token;
-      return base;
-    }
-
-    // 로그인 페이지 이동 유틸
-    function goLogin() {
-      const here = window.location.pathname + window.location.search;
-      window.location.href = '/login?redirect=' + encodeURIComponent(here);
-    }
-
-    // 찜 토글
-    let wishBusy = false;
-    document.addEventListener('click', async (e) => {
-      const btn = e.target.closest('.wish-btn');
-      if (!btn) return;
-
-      e.preventDefault();
-      e.stopPropagation(); // 카드/링크 클릭으로 안 넘어가게
-
-      if (wishBusy) return;
-      wishBusy = true;
-
-      const carId = Number(btn.dataset.carId);
-      const prevOn = btn.classList.contains('on');
-      btn.classList.toggle('on', !prevOn); // 낙관적 토글
-
-      try {
-        const res = await fetch('/api/wish/toggle', {
-          method: 'POST',
-          headers: csrfHeaders({ 'Content-Type': 'application/json' }),
-          body: JSON.stringify({ carId })
-        });
-
-        if (res.status === 401) {
-          btn.classList.toggle('on', prevOn);
-          alert('로그인이 필요합니다.');
-          goLogin();
-          return;
-        }
-        if (res.status === 403) {
-          btn.classList.toggle('on', prevOn);
-          alert('요청이 거부되었습니다(CSRF). 다시 로그인해주세요.');
-          goLogin();
-          return;
-        }
-
-        const data = await res.json();
-        if (!data.ok) {
-          btn.classList.toggle('on', prevOn);
-          alert('처리 중 오류가 발생했습니다.');
-        } else {
-          btn.classList.toggle('on', !!data.liked); // 서버 상태로 확정
-        }
-      } catch (err) {
-        console.error(err);
-        btn.classList.toggle('on', prevOn);
-        alert('네트워크 오류가 발생했습니다.');
-      } finally {
-        wishBusy = false;
-      }
-    });
-</script>
+ <script>
+     //더보기
+     function toggleRegion() {
+         const box = document.getElementById("regionMoreBox");
+         box.classList.toggle("hidden");
+     }
+ </script>

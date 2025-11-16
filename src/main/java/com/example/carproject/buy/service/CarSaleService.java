@@ -22,7 +22,7 @@ public class CarSaleService {
 
     private final CarSaleRepository carSaleRepository;
 
-    // ✅ 정렬 + 페이지네이션 + 필터 통합 메서드
+    // 정렬 + 페이지네이션 + 필터 통합 메서드
     public Page<CarCardDto> searchWithFilter(FilterRequest req, int page, int size, String sort) {
         // 1️⃣ 정렬 기준 설정
         Sort sortOption;
@@ -43,21 +43,22 @@ public class CarSaleService {
 
         Pageable pageable = PageRequest.of(page - 1, size, sortOption);
 
-        // ✅ top 제조사 세트 전달 (기타 처리 위해)
+        // top 제조사 세트 전달 (기타 처리 위해)
         var topSet = Set.of("현대", "기아", "르노코리아", "쌍용", "쉐보레", "제네시스", "기타 제조사");
 
-        // ✅ Specification + Pageable 조합
+        // Specification + Pageable 조합
         Page<CarSale> carPage = carSaleRepository.findAll(CarSaleSpecs.from(req, topSet), pageable);
 
-        // ✅ DTO 변환
+        // DTO 변환
         return carPage.map(CarCardDto::new);
     }
-    // ✅ 전체 차량 조회
+
+    // 전체 차량 조회
     public List<CarSale> getAllCars() {
         return carSaleRepository.findAll();
     }
 
-    // ✅ 차량 유형별 검색
+    // 차량 유형별 검색
     public List<CarSale> findByCarType(String carType) {
         return carSaleRepository.findByCarType(carType);
     }

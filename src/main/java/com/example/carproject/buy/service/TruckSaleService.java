@@ -6,6 +6,7 @@ import com.example.carproject.buy.repository.TruckSaleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -29,4 +30,26 @@ public class TruckSaleService {
     public long getTruckCount() {
         return repo.count();
     }
+
+    /*public Map<String, List<TruckSaleRepository.FacetAgg>> getFacetData() {
+
+        Map<String, List<TruckSaleRepository.FacetAgg>> map = new HashMap<>();
+
+        map.put("bodyType", repo.countByBodyType());
+        map.put("manufacturer", repo.countByManufacturer());
+        map.put("axleConfig", repo.countByAxleConfig());
+        map.put("region", repo.countByRegion());
+        map.put("performance", repo.countByPerformance());
+        map.put("sellerType", repo.countBySellerType());
+        map.put("usageType", repo.countByUsageType());
+        map.put("color", repo.countByColor());
+        map.put("fuelType", repo.countByFuelType());
+        map.put("transmission", repo.countByTransmission());
+
+        return map;
+    }
+
+    public List<CargoSpecialSale> filter(FiltersRequest req) {
+        return repo.findAll(CargoSpec.build(req));
+    }*/
 }

@@ -30,6 +30,17 @@
                         선택 초기화
                     </button>
                 </div>
+                <div class="recent-search">
+                    <button type="button" class="btn-recent">
+                      <span class="ico-search" aria-hidden="true">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <circle cx="11" cy="11" r="7" stroke="#9aa1a7" stroke-width="2"/>
+                          <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="#9aa1a7" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                      </span>
+                        최근 검색 조건
+                    </button>
+                </div>
             </div>
 
             <!-- 차종 -->
@@ -52,7 +63,7 @@
             </details>
 
             <!-- 제조사 / 모델 / 등급 -->
-            <details class="filter-group">
+            <details class="filter-group" open>
                 <summary>제조사 / 모델 / 등급</summary>
                 <ul class="filter-list">
                     <label><input type="checkbox"> 현대</label>
@@ -72,83 +83,31 @@
             </details>
 
             <!-- 연식 -->
-            <details class="filter-group" open>
+            <details class="filter-group">
                 <summary>연식</summary>
-                <div class="filter-list" style="display: flex; flex-direction: column; gap: 8px;">
-                    <!-- 시작 연월 -->
-                    <div>
-                        <select name="start_year">
-                            <option>년</option>
-                            <option>2025년</option>
-                            <option>2024년</option>
-                            <option>2023년</option>
-                            <option>2022년</option>
-                            <option>2021년</option>
-                            <option>2020년</option>
-                            <option>2019년</option>
-                            <option>2018년</option>
-                            <option>2017년</option>
-                            <option>2016년</option>
-                            <option>2015년</option>
-                            <option>2014년</option>
-                            <option>2013년</option>
-                            <option>2012년</option>
-                            <option>2011년</option>
-                        </select>
-                        <select name="start_month">
-                            <option>월</option>
-                            <option>1월</option>
-                            <option>2월</option>
-                            <option>3월</option>
-                            <option>4월</option>
-                            <option>5월</option>
-                            <option>6월</option>
-                            <option>7월</option>
-                            <option>8월</option>
-                            <option>9월</option>
-                            <option>10월</option>
-                            <option>11월</option>
-                            <option>12월</option>
-                        </select>
-                        <span>부터</span>
+                <div class="filter-range styled-range">
+                    <div class="range-row">
+                        <div class="selects">
+                            <select id="yearFrom" class="styled-select">
+                                <option value="">년</option>
+                            </select>
+                            <select id="monthFrom" class="styled-select">
+                                <option value="">월</option>
+                            </select>
+                            <span class="suffix">부터</span>
+                        </div>
                     </div>
 
-                    <!-- 종료 연월 -->
-                    <div>
-                        <select name="end_year">
-                            <option>년</option>
-                            <option>2025년</option>
-                            <option>2024년</option>
-                            <option>2023년</option>
-                            <option>2022년</option>
-                            <option>2021년</option>
-                            <option>2020년</option>
-                            <option>2019년</option>
-                            <option>2018년</option>
-                            <option>2017년</option>
-                            <option>2016년</option>
-                            <option>2015년</option>
-                            <option>2014년</option>
-                            <option>2013년</option>
-                            <option>2012년</option>
-                            <option>2011년</option>
-                        </select>
-                        <select name="end_month">
-                            <option>월</option>
-                            <option>1월</option>
-                            <option>2월</option>
-                            <option>3월</option>
-                            <option>4월</option>
-                            <option>5월</option>
-                            <option>6월</option>
-                            <option>7월</option>
-                            <option>8월</option>
-                            <option>9월</option>
-                            <option>10월</option>
-                            <option>11월</option>
-                            <option>12월</option>
-                        </select>
-                        <span>까지</span>
+                    <div class="range-row">
+                        <div class="selects">
+                            <select id="yearTo" class="styled-select">
+                                <option value="">년</option>
+                            </select>
+                            <select id="monthTo" class="styled-select">
+                                <option value="">월</option>
+                            </select>
+                            <span class="suffix">까지</span>
+                        </div>
                     </div>
                 </div>
             </details>
@@ -156,27 +115,51 @@
             <!-- 주행거리 -->
             <details class="filter-group">
                 <summary>주행거리</summary>
-                <ul class="filter-list">
-                    <input type="number" placeholder="최소 km"> ~
-                    <input type="number" placeholder="최대 km">
-                </ul>
+                <div class="filter-range styled-range">
+                    <div class="range-row">
+                        <div class="selects">
+                            <select id="mileageFrom" class="styled-selected">
+                                <option value="">선택</option>
+                            </select>
+                            <span class="suffix">부터</span>
+                        </div>
+                    </div>
+
+                    <div class="range-row">
+                        <div class="selects">
+                            <select id="mileageTo" class="styled-selected">
+                                <option value="">선택</option>
+                            </select>
+                            <span class="suffix">까지</span>
+                        </div>
+                    </div>
+                </div>
             </details>
 
             <!-- 가격 -->
             <details class="filter-group">
                 <summary>가격</summary>
-                <ul class="filter-list">
-                    <input type="number" placeholder="최소 만원"> ~
-                    <input type="number" placeholder="최대 만원">
-                </ul>
-            </details>
+                <div class="filter-range styled-range">
+                    <div class="range-row">
+                        <div class="selects">
+                            <select id="priceFrom" class="styled-selected">
+                                <option value="">선택</option>
+                            </select>
+                            <span class="suffix">부터</span>
+                        </div>
+                    </div>
 
-            <!-- 엔카진단 -->
-            <details class="filter-group">
-                <summary>엔카진단</summary>
-                <ul class="filter-list">
-                    <label><input type="checkbox"> 엔카진단</label>
-                </ul>
+                    <div class="range-row">
+                        <div class="selects">
+                            <select id="priceTo" class="styled-selected">
+                                <option value="">선택</option>
+                            </select>
+                            <span class="suffix">까지</span>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-interval">구간선택 열기</button>
+                </div>
             </details>
 
             <!-- 지역 -->
@@ -206,16 +189,6 @@
                 <ul class="filter-list">
                     <li><label><input type="checkbox"> 개인</label></li>
                     <li><label><input type="checkbox"> 딜러</label></li>
-                </ul>
-            </details>
-
-            <!-- 판매 방식 -->
-            <details class="filter-group">
-                <summary>판매 방식</summary>
-                <ul class="filter-list">
-                    <li><label><input type="checkbox"> 일반</label></li>
-                    <li><label><input type="checkbox"> 렌트</label></li>
-                    <li><label><input type="checkbox"> 리스</label></li>
                 </ul>
             </details>
 
@@ -292,8 +265,9 @@
         <main class="content">
             <div class="section-title">사진우대</div>
             <div class="encar-grid">
-                <article class="encar-card" th:each="card : ${truckCards}">
-                    <img class="encar-img"
+                <article class="encar-card"
+                         th:each="card : ${truckCards.size() > 8} ? ${truckCards.subList(0,8)} : ${truckCards}">
+                <img class="encar-img"
                          th:src="${card.frontViewUrl != null} ? ${card.frontViewUrl} : '@{/img/default.jpg}'"
                          alt="차량 이미지"/>
 
@@ -316,8 +290,9 @@
                 <tr><th>사진</th><th>차량정보</th><th>가격</th></tr>
                 </thead>
                 <tbody>
-                <tr th:each="card : ${truckCards}">
-                    <td>
+                <tr th:each="card : ${truckCards.size() > 8} ? ${truckCards.subList(0,8)} : ${truckCards}">
+
+                <td>
                         <img class="thumb"
                              th:src="${card.frontViewUrl != null} ? ${card.frontViewUrl} : '@{/img/default.jpg}'"
                              th:alt="${card.manufacturer} + ' ' + ${card.modelName}">
@@ -364,25 +339,27 @@
 
         <!-- 📦 우측 배너 영역 -->
         <aside class="sidebar-right">
-            <div class="widget">이차어때? 모카</div>
+            <div class="widget">
+                <ul class="service-list">
+                    <li>
+                        <span class="icon blue">₩</span>
+                        보험료 조회
+                    </li>
+                    <li>
+                        <span class="icon gold">₩</span>
+                        대출한도 조회
+                    </li>
+                </ul>
+            </div>
         </aside>
     </div>
 </div>
 <div class="footer">
     ⓒ 2025 N카. All rights reserved.
 </div>
-
+<th:block layout:fragment="script">
+    <script defer src="/js/base.js"></script>
+    <script defer src="/js/wishlist.js"></script>
+</th:block>
 </body>
 </html>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-    const path = window.location.pathname;
-    const links = document.querySelectorAll('.menu-left a, .menu-right a');
-    links.forEach(link => {
-    if (link.getAttribute('data-path') === path) {
-    link.classList.add('active');
-    }
-    });
-    });
-</script>

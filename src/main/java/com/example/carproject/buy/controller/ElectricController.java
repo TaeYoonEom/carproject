@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import com.example.carproject.buy.service.ElectricResult;
 
 @Controller
 @RequiredArgsConstructor
@@ -23,14 +24,15 @@ public class ElectricController {
                           @RequestParam(defaultValue = "DESC") String dir,
                           Model model) {
 
-        Page<ElectricCarCardDto> result =
-                service.getEcoCars(page, size, sort, Sort.Direction.fromString(dir));
+        ElectricResult result = service.getEcoCars(page, size, sort, Sort.Direction.fromString(dir));
 
-        model.addAttribute("carList", result.getContent());
-        model.addAttribute("totalCount", result.getTotalElements());
-        model.addAttribute("page", result);
+        model.addAttribute("carList", result.getPage().getContent());
+        model.addAttribute("page", result.getPage());
+        model.addAttribute("totalCount", result.getPage().getTotalElements());
 
-        // ✅ wishSet은 GlobalWishModelAdvice가 자동 주입 -> 여기서 넣지 않음
+        // ⭐ 좌측 필터 12종 Map
+        model.addAttribute("filterCounts", result.getFilterCounts());
+
         return "buy/electric_page";
     }
 }

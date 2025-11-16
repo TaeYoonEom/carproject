@@ -19,13 +19,22 @@ public class ImportController {
 
     @GetMapping("/import")
     public String showImportCars(Model model) {
+
+        // 1) 차량 카드
         List<ImportCarCardDto> carList = importCarSaleService.getCardDtos();
+
+        // 2) 총 개수
         long totalCount = importCarSaleService.getAllCount();
 
+        // 3) 🔥 필터 카운트 + distinct + 인승 버킷
+        var filterCounts = importCarSaleService.getFilterCounts();
+
+        // 4) 모델에 전달
         model.addAttribute("carList", carList);
         model.addAttribute("totalCount", totalCount);
+        model.addAttribute("filterCounts", filterCounts);
 
-        // ✅ wishSet은 GlobalWishModelAdvice가 자동 주입 -> 여기서 넣지 않음
+        // wishSet(찜 목록)은 GlobalWishModelAdvice에서 자동 추가됨
         return "buy/import_page";
     }
 }

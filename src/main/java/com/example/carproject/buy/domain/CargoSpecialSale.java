@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 public class CargoSpecialSale {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "car_id")
     private Integer carId;
 
@@ -30,21 +29,18 @@ public class CargoSpecialSale {
     @Column(name = "body_type", length = 60)
     private String bodyType;      // 차체형식
 
-    @Column(name = "load_capacity_ton", precision = 3, scale = 1)
     private BigDecimal loadCapacityTon;  // 적재톤수
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "axle_config", columnDefinition = "ENUM('전축','후축','추축','없음')")
-    private AxleConfig axleConfig;   // 축 구성
+    @Column(name = "axle_config", columnDefinition = "ENUM('전축','중축','후축','없음')")
+    private String axleConfig;   // 축 구성
 
     private Integer year;
     private Integer month;
     private Integer mileage;
     private Integer price;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "encar_diagnosis", columnDefinition = "ENUM('엔카진단','미진단')")
-    private EncarDiagnosis encarDiagnosis;
+    private String encarDiagnosis;
 
     @Column(length = 100)
     private String region; //지역
@@ -52,24 +48,20 @@ public class CargoSpecialSale {
     @Column(columnDefinition = "ENUM('직영 성능점검', '성능기록부', '보험이력', '차량 이력 공개')")
     private String performanceOpen;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "seller_type", columnDefinition = "ENUM('개인','딜러')")
-    private SellerType sellerType;
+    private String sellerType;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "usage_type", columnDefinition = "ENUM('자가용','영업용','등본차량')")
-    private UsageType usageType;
+    private String UsageType; //용도
 
     @Column(length = 30)
     private String color;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "fuel_type", columnDefinition = "ENUM('가솔린','디젤','LPG','전기','CNG','기타')")
-    private FuelType fuelType;
+    private String fuelType;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "transmission", columnDefinition = "ENUM('오토','수동','세미오토','기타')")
-    private Transmission transmission;
+    private String transmission;
 
     @Column(columnDefinition = "TEXT")
     private String options;
@@ -81,11 +73,4 @@ public class CargoSpecialSale {
     @JoinColumn(name = "car_id", referencedColumnName = "car_id")
     private AllCarSale allCarSale;
 
-    // ====== ENUM 내부 클래스 ======
-    public enum AxleConfig { 전축, 후축, 중축, 없음 }
-    public enum EncarDiagnosis { 엔카진단, 미진단 }
-    public enum SellerType { 개인, 딜러 }
-    public enum UsageType { 자가용, 영업용, 등본차량 }
-    public enum FuelType { 가솔린, 디젤, LPG, 전기, CNG, 기타 }
-    public enum Transmission { 오토, 수동, 세미오토, 기타 }
 }

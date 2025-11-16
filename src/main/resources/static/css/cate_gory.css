@@ -40,6 +40,11 @@ body {
   overflow: visible;
   max-width: none !important;
 }
+.filter-divider {
+    height: 1px;
+    background: #f1f3f5;
+    margin: 14px 0;
+}
 
 /* ===== 헤더 ===== */
 .filter-header {
@@ -142,10 +147,35 @@ details[open] > summary::after{
   display: grid; gap: 6px;
 }
 
+.filter-list label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    font-size: 14px;
+    color: #333;
+    padding: 6px 0;
+}
+
 /* 필터링 카운트 */
-.filter-list.with-count li{display:flex;justify-content:space-between;align-items:center;gap:8px;}
-.filter-list.with-count label{display:flex;align-items:center;gap:8px;}
-.filter-list.with-count .count{min-width:64px;text-align:right;color:#9aa1a7;}
+.filter-list.with-count li{font-size: 13px; display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.filter-list label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    font-size: 14px;
+    color: #333;
+    padding: 6px 0;
+}
+/* 오른쪽 카운트 스타일 */
+.filter-list .count {
+    margin-left: auto; /* 🔥 오른쪽 끝으로 밀기 */
+    color: #8a8f94;    /* 엔카 스타일 회색 */
+    font-size: 13px;
+}
 
 /* === 필터 리스트: 마커 및 기본 여백 완전 제거 (우선순위↑) === */
 .encar-filters .filter-list,
