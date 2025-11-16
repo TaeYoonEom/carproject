@@ -21,6 +21,7 @@ public class SellSubmissionService {
 
     // ✅ 추가된 부분
     private final CarPublishService carPublishService;
+    private final ConditionService conditionService;
 
     /**
      * 초안 제출(내차등록 완료) 시 호출:
@@ -68,6 +69,7 @@ public class SellSubmissionService {
         // ✅ 4️⃣ car_publish 자동 호출
         try {
             carPublishService.publishFromDraft(draft.getId());
+            conditionService.upsertFromDraft(all.getCarId(), draft);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("CarPublishService 호출 중 오류 발생: " + e.getMessage());

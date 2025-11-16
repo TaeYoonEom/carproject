@@ -10,6 +10,7 @@
 <div class="sale-container">
   <div class="sale-title">차량 판매 정보 입력</div>
   <form th:action="@{/sell/detail/sale/save}" method="post">
+    <input type="hidden" name="draftId" th:value="${draftId}" />
     <input type="hidden" name="carId" th:value="${carId}" />
 
     <!-- 출고 일정 -->

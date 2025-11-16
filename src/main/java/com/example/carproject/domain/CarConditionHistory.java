@@ -13,8 +13,15 @@ import java.time.LocalDateTime;
 public class CarConditionHistory {
 
     @Id
-    @Column(name = "car_id")
-    private Integer carId;                      // all_car_sale.car_id (초기엔 draft id를 넘겨도 OK)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;        // 새 PK
+
+    @Column(name = "car_id", nullable = false, unique = true)
+    private Integer carId;     // 판매차량 ID (all_car_sale.car_id)
+
+    @Column(name = "draft_id") // 예전 매핑 보존 시
+    private Integer draftId;
 
     @Column(name = "tire_percentage")
     private Integer tirePercentage;             // 0~100
