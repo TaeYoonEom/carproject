@@ -799,43 +799,33 @@ a.sidebar-category:hover {
     text-decoration: none;
     display: inline-block;
     margin: 2px 4px;
+    transition: all 0.2s ease; /* Hover 애니메이션 */
 }
 
-/* 보기 버튼 - 파란색 */
+/* 🔴 엔카 메인 버튼 */
 .btn-view {
-    background-color: #2a76d2;
+    background-color: #d7282f;
     color: #fff;
-    border: 1px solid #1f5aa6;
+    border: 1px solid #b81f25;
 }
 
+/* Hover 효과: 색 진하게 + 미세 상승 */
 .btn-view:hover {
-    background-color: #1f5aa6;
+    background-color: #b81f25;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
 }
 
-/* 사진수정 - 회색 */
+/* 🩶 사진 수정 버튼 */
 .btn-edit-photo {
     background-color: #f1f1f1;
     color: #333;
     border: 1px solid #ccc;
 }
 
+/* Hover 효과: 밝기 강조 + 미세 상승 */
 .btn-edit-photo:hover {
     background-color: #e0e0e0;
-}
-
-.btn-view {
-    padding: 6px 14px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    border: 1px solid #bca9ff;
-    background: #f8f5ff;
-    color: #6a00ff;
-    text-decoration: none;
-    display: inline-block;
-    margin: 2px 4px;
-}
-
-.btn-view:hover {
-    background: #ece4ff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.12);
 }
