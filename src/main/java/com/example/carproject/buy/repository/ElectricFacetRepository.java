@@ -97,6 +97,7 @@ public class ElectricFacetRepository {
         return runFacetQuery("performance_open");
     }
 
+
     /* ----------------------------------------
        3) 지역 Region (TOP 5 + 나머지)
        ---------------------------------------- */
@@ -209,7 +210,7 @@ public class ElectricFacetRepository {
         return ((Number)x).longValue();
     }
 
-    public Map<String, Long> countCapacityBuckets() {
+    public Map<String, Long> countCapacity() {
 
         return Map.of(
                 "le2",  countCap("<= 2"),

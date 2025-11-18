@@ -53,7 +53,7 @@
                 <ul class="filter-list with-count">
                     <li th:each="item : ${filterCounts.carTypeGroups['승용']}">
                         <label>
-                            <input type="checkbox" name="carType" th:value="${item.val}">
+                            <input type="checkbox" name="carType" th:value="${item.val}" th:disabled="${item.cnt == 0}">
                             [[${item.val}]]
                             <span class="count">[[${#numbers.formatInteger(item.cnt, 1, 'COMMA')}]]</span>
                         </label>
@@ -66,7 +66,7 @@
                 <ul class="filter-list with-count">
                     <li th:each="item : ${filterCounts.carTypeGroups['SUV/RV']}">
                         <label>
-                            <input type="checkbox" name="carType" th:value="${item.val}">
+                            <input type="checkbox" name="carType" th:value="${item.val}" th:disabled="${item.cnt == 0}">
                             [[${item.val}]]
                             <span class="count">[[${#numbers.formatInteger(item.cnt, 1, 'COMMA')}]]</span>
                         </label>
@@ -79,14 +79,14 @@
                 <ul class="filter-list with-count">
                     <li th:each="item : ${filterCounts.carTypeGroups['승합/화물']}">
                         <label>
-                            <input type="checkbox" th:value="${item.val}">
+                            <input type="checkbox" name="carType" th:value="${item.val}" th:disabled="${item.cnt == 0}">
                             [[${item.val}]]
                             <span class="count">[[${#numbers.formatInteger(item.cnt,1,'COMMA')}]]</span>
                         </label>
                     </li>
                     <li th:each="item : ${filterCounts.carTypeGroups['기타']}">
                         <label>
-                            <input type="checkbox" th:value="${item.val}">
+                            <input type="checkbox" name="carType" th:value="${item.val}" th:disabled="${item.cnt == 0}">
                             기타
                             <span class="count">[[${#numbers.formatInteger(item.cnt,1,'COMMA')}]]</span>
                         </label>
@@ -96,31 +96,29 @@
 
             <!-- 제조사 / 모델 / 등급 -->
             <details class="filter-group">
-                <summary>제조사</summary>
+                <summary>제조사/모델/등급</summary>
                 <ul class="filter-list">
                     <li th:each="m : ${filterCounts.countByManufacturer}">
                         <label>
-                            <input type="checkbox" th:value="${m.val}">
+                            <input type="checkbox" name="manufacturer" th:value="${m.val}" th:disabled="${m.cnt == 0}">
                             [[${m.val}]]
                             <span class="count">[[${m.cnt}]]</span>
                         </label>
                     </li>
                 </ul>
-                <summary>모델</summary>
                 <ul class="filter-list with-count">
                     <li th:each="item : ${filterCounts.countByModelName}">
                         <label>
-                            <input type="checkbox" th:value="${item.val}">
+                            <input type="checkbox" name="modelName" th:value="${item.val}" th:disabled="${item.cnt == 0}">
                             [[${item.val}]]
                             <span class="count">[[${item.cnt}]]</span>
                         </label>
                     </li>
                 </ul>
-                <summary>차량명</summary>
                 <ul class="filter-list with-count">
                     <li th:each="item : ${filterCounts.countByCarName}">
                         <label>
-                            <input type="checkbox" th:value="${item.val}">
+                            <input type="checkbox" name="carName" th:value="${item.val}" th:disabled="${item.cnt == 0}">
                             [[${item.val}]]
                             <span class="count">[[${item.cnt}]]</span>
                         </label>
@@ -218,7 +216,7 @@
                     <li th:each="item : ${filterCounts.regionTop}">
                         <label>
                             <input type="checkbox" name="saleLocation"
-                                   th:value="${item.key}">
+                                   th:value="${item.key}" th:disabled="${item.value == 0}">
                             [[${item.key}]]
                             <span class="count">[[${#numbers.formatInteger(item.value, 1, 'COMMA')}]]</span>
                         </label>
@@ -237,7 +235,7 @@
                     <li th:each="item : ${filterCounts.regionOthers}">
                         <label>
                             <input type="checkbox" name="saleLocation"
-                                   th:value="${item.key}">
+                                   th:value="${item.key}" th:disabled="${item.value == 0}">
                             [[${item.key}]]
                             <span class="count">[[${#numbers.formatInteger(item.value, 1, 'COMMA')}]]</span>
                         </label>
@@ -251,15 +249,15 @@
             <details class="filter-group">
                 <summary>인승</summary>
                 <ul class="filter-list">
-                    <li><label><input type="checkbox">2인승 이하 <span class="count">[[${filterCounts.capacityBuckets.le2}]]</span></label></li>
-                    <li><label><input type="checkbox">3인승 <span class="count">[[${filterCounts.capacityBuckets.eq3}]]</span></label></li>
-                    <li><label><input type="checkbox">4인승 <span class="count">[[${filterCounts.capacityBuckets.eq4}]]</span></label></li>
-                    <li><label><input type="checkbox">5인승 <span class="count">[[${filterCounts.capacityBuckets.eq5}]]</span></label></li>
-                    <li><label><input type="checkbox">6인승 <span class="count">[[${filterCounts.capacityBuckets.eq6}]]</span></label></li>
-                    <li><label><input type="checkbox">7인승 <span class="count">[[${filterCounts.capacityBuckets.eq7}]]</span></label></li>
-                    <li><label><input type="checkbox">8인승 <span class="count">[[${filterCounts.capacityBuckets.eq8}]]</span></label></li>
-                    <li><label><input type="checkbox">9인승 <span class="count">[[${filterCounts.capacityBuckets.eq9}]]</span></label></li>
-                    <li><label><input type="checkbox">10인승 이상 <span class="count">[[${filterCounts.capacityBuckets.ge10}]]</span></label></li>
+                    <li><label><input type="checkbox" name="capacity" value="2" th:disabled="${filterCounts.capacityBuckets.le2 == 0}">2인승 이하 <span class="count">[[${filterCounts.capacityBuckets.le2}]]</span></label></li>
+                    <li><label><input type="checkbox" name="capacity" value="3" th:disabled="${filterCounts.capacityBuckets.eq3 == 0}">3인승 <span class="count">[[${filterCounts.capacityBuckets.eq3}]]</span></label></li>
+                    <li><label><input type="checkbox" name="capacity" value="4" th:disabled="${filterCounts.capacityBuckets.eq4== 0}">4인승 <span class="count">[[${filterCounts.capacityBuckets.eq4}]]</span></label></li>
+                    <li><label><input type="checkbox" name="capacity" value="5" th:disabled="${filterCounts.capacityBuckets.eq5 == 0}">5인승 <span class="count">[[${filterCounts.capacityBuckets.eq5}]]</span></label></li>
+                    <li><label><input type="checkbox" name="capacity" value="6" th:disabled="${filterCounts.capacityBuckets.eq6 == 0}">6인승 <span class="count">[[${filterCounts.capacityBuckets.eq6}]]</span></label></li>
+                    <li><label><input type="checkbox" name="capacity" value="7" th:disabled="${filterCounts.capacityBuckets.eq7 == 0}">7인승 <span class="count">[[${filterCounts.capacityBuckets.eq7}]]</span></label></li>
+                    <li><label><input type="checkbox" name="capacity" value="8" th:disabled="${filterCounts.capacityBuckets.eq8 == 0}">8인승 <span class="count">[[${filterCounts.capacityBuckets.eq8}]]</span></label></li>
+                    <li><label><input type="checkbox" name="capacity" value="9" th:disabled="${filterCounts.capacityBuckets.eq9 == 0}">9인승 <span class="count">[[${filterCounts.capacityBuckets.eq9}]]</span></label></li>
+                    <li><label><input type="checkbox" name="capacity" value="10" th:disabled="${filterCounts.capacityBuckets.ge10 == 0}">10인승 이상 <span class="count">[[${filterCounts.capacityBuckets.ge10}]]</span></label></li>
                 </ul>
             </details>
 
@@ -269,7 +267,7 @@
                 <ul class="filter-list">
                     <li th:each="item : ${filterCounts.countByPerformanceOpen}">
                         <label>
-                            <input type="checkbox" name="performanceOpen" th:value="${item.val}">
+                            <input type="checkbox" name="performanceOpen" th:value="${item.val}" th:disabled="${item.cnt == 0}">
                             [[${item.val}]]
                             <span class="count">[[${item.cnt}]]</span>
                         </label>
@@ -283,7 +281,7 @@
                 <ul class="filter-list">
                     <li th:each="item : ${filterCounts.countBySellerType}">
                         <label>
-                            <input type="checkbox" name="sellerType" th:value="${item.val}">
+                            <input type="checkbox" name="sellerType" th:value="${item.val}" th:disabled="${item.cnt == 0}">
                             [[${item.val}]]
                             <span class="count">[[${item.cnt}]]</span>
                         </label>
@@ -297,7 +295,7 @@
                 <ul class="filter-list">
                     <li th:each="item : ${filterCounts.countBySaleMethod}">
                         <label>
-                            <input type="checkbox" name="saleMethod" th:value="${item.val}">
+                            <input type="checkbox" name="saleMethod" th:value="${item.val}" th:disabled="${item.cnt == 0}">
                             [[${item.val}]]
                             <span class="count">[[${item.cnt}]]</span>
                         </label>
@@ -311,7 +309,7 @@
                 <ul class="filter-list">
                     <li th:each="item : ${filterCounts.countByExteriorColor}">
                         <label>
-                            <input type="checkbox" name="exteriorColor" th:value="${item.val}">
+                            <input type="checkbox" name="exteriorColor" th:value="${item.val}" th:disabled="${item.cnt == 0}">
                             [[${item.val}]]
                             <span class="count">[[${item.cnt}]]</span>
                         </label>
@@ -325,7 +323,7 @@
                 <ul class="filter-list">
                     <li th:each="item : ${filterCounts.countByInteriorColor}">
                         <label>
-                            <input type="checkbox" name="interiorColor" th:value="${item.val}">
+                            <input type="checkbox" name="interiorColor" th:value="${item.val}" th:disabled="${item.cnt == 0}">
                             [[${item.val}]]
                             <span class="count">[[${item.cnt}]]</span>
                         </label>
@@ -339,7 +337,7 @@
                 <ul class="filter-list">
                     <li th:each="f : ${filterCounts.countByFuelType}">
                         <label>
-                            <input type="checkbox" name="fuelType" th:value="${f.val}">
+                            <input type="checkbox" name="fuelType" th:value="${f.val}" th:disabled="${f.cnt == 0}">
                             [[${f.val}]]
                             <span class="count">[[${f.cnt}]]</span>
                         </label>
@@ -353,7 +351,7 @@
                 <ul class="filter-list">
                     <li th:each="item : ${filterCounts.countByTransmission}">
                         <label>
-                            <input type="checkbox" name="transmission" th:value="${item.val}">
+                            <input type="checkbox" name="transmission" th:value="${item.val}" th:disabled="${item.cnt == 0}">
                             [[${item.val}]]
                             <span class="count">[[${item.cnt}]]</span>
                         </label>
@@ -415,7 +413,7 @@
                 <thead>
                 <tr><th>사진</th><th>차량정보</th><th>가격</th></tr>
                 </thead>
-                <tbody>
+                <tbody id="premium-body">
                 <tr th:each="car, stat : ${carList}"
                     th:if="${stat.index} < 8"
                     th:with="
@@ -479,7 +477,7 @@
                 <thead>
                 <tr><th>사진</th><th>차량정보</th><th>가격</th></tr>
                 </thead>
-                <tbody>
+                <tbody id="normal-body">
                 <tr th:each="car : ${carList}"
                     th:with="
                       cidRaw=${car.carId != null ? car.carId : (car.car != null and car.car.carId != null ? car.car.carId : 0)},
@@ -540,6 +538,8 @@
 <th:block layout:fragment="script">
     <script defer src="/js/base.js"></script>
     <script defer src="/js/wishlist.js"></script>
+    <script defer src="/js/import_filter_init.js"></script>
+    <script defer src="/js/import-filter.js"></script>
 </th:block>
 </body>
 </html>

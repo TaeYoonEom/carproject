@@ -287,6 +287,18 @@ details[open] > summary::after{
   cursor: not-allowed;
 }
 
+.disabled-item {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.disabled-item input[type="checkbox"] {
+    cursor: not-allowed;
+}
+.disabled-item {
+    color: #ccc;
+}
+
 /* 2열 리스트일 때 라벨 줄바꿈 깔끔하게 */
 .filter-list.columns-2 label {
   white-space: nowrap;

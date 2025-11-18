@@ -64,6 +64,7 @@
                     <li th:each="m : ${filters.manufacturer}">
                         <label>
                             <input type="checkbox"
+                                   name="manufacturer"
                                    onclick="loadModels(this.value)"
                                    th:value="${m.val}">
                             <span th:text="${m.val}">현대</span>
@@ -78,7 +79,8 @@
                     <li th:each="item : ${filters.modelName}">
                         <label>
                             <input type="checkbox"
-                                   onclick="loadCarNames(this.value)"
+                                   name="modelName"
+                                   onclick="loadCarNames(item.value)"
                                    th:value="${item.val}">
                             <span th:text="${item.val}"></span>
                             <span class="count" th:text="${item.cnt}"></span>
@@ -343,7 +345,7 @@
                 <thead>
                 <tr><th>사진</th><th>차량정보</th><th>가격</th></tr>
                 </thead>
-                <tbody>
+                <tbody id="premium-body">
                 <tr th:each="card, stat : ${truckCards}"
                     th:if="${stat.index} < 8"
                     th:with="cid=${card.carId}">
@@ -379,12 +381,31 @@
             </table>
 
             <!-- 일반등록 -->
-            <div class="section-title">일반등록</div>
+            <div class="section-title">일반등록
+                <div class="list-header">
+                    <div class="sort-options">
+                        <a th:href="@{/cars(sort='recent')}"      th:classappend="${sort == 'recent'} ? 'active' : ''">최근 등록일순</a>
+                        <a th:href="@{/cars(sort='priceAsc')}"    th:classappend="${sort == 'priceAsc'} ? 'active' : ''">낮은 가격순</a>
+                        <a th:href="@{/cars(sort='priceDesc')}"   th:classappend="${sort == 'priceDesc'} ? 'active' : ''">높은 가격순</a>
+                        <a th:href="@{/cars(sort='mileageAsc')}"  th:classappend="${sort == 'mileageAsc'} ? 'active' : ''">낮은 주행거리순</a>
+                        <a th:href="@{/cars(sort='mileageDesc')}" th:classappend="${sort == 'mileageDesc'} ? 'active' : ''">높은 주행거리순</a>
+                        <a th:href="@{/cars(sort='yearDesc')}"    th:classappend="${sort == 'yearDesc'} ? 'active' : ''">최근연식순</a>
+                    </div>
+
+                    <div class="page-size">
+                        <select onchange="location.href=this.value">
+                            <option th:value="@{/cars(pageSize=20)}"  th:selected="${pageSize==20}">20개씩 보기</option>
+                            <option th:value="@{/cars(pageSize=50)}"  th:selected="${pageSize==50}">50개씩 보기</option>
+                            <option th:value="@{/cars(pageSize=100)}" th:selected="${pageSize==100}">100개씩 보기</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
             <table class="premium-table">
                 <thead>
                 <tr><th>사진</th><th>차량정보</th><th>가격</th></tr>
                 </thead>
-                <tbody>
+                <tbody id="normal-body">
                 <tr th:each="card : ${truckCards}"
                     th:with="cid=${card.carId}">
                     <td class="thumb-cell">
@@ -441,6 +462,8 @@
 <th:block layout:fragment="script">
     <script defer src="/js/base.js"></script>
     <script defer src="/js/wishlist.js"></script>
+    <script defer src="/js/truck_filter_init.js"></script>
+    <script defer src="/js/truck_filter.js"></script>
 </th:block>
 </body>
 </html>

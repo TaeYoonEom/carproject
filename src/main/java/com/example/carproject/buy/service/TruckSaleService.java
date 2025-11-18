@@ -2,13 +2,16 @@ package com.example.carproject.buy.service;
 
 import com.example.carproject.buy.domain.CargoSpecialSale;
 import com.example.carproject.buy.dto.TruckCardDto;
+import com.example.carproject.buy.dto.TruckFilterRequest;
 import com.example.carproject.buy.repository.TruckSaleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -52,5 +55,100 @@ public class TruckSaleService {
         map.put("modelName", repo.findModelsByMaker(maker));
 
         return map;
+    }
+    public List<TruckCardDto> filterTrucks(TruckFilterRequest req) {
+
+        Specification<CargoSpecialSale> spec = Specification.where(null);
+
+        // ===== 체크박스들 =====
+        if (req.getBodyType() != null && !req.getBodyType().isEmpty())
+            spec = spec.and(inSpec("bodyType", req.getBodyType()));
+
+        if (req.getManufacturer() != null && !req.getManufacturer().isEmpty())
+            spec = spec.and(inSpec("manufacturer", req.getManufacturer()));
+
+        if (req.getModelName() != null && !req.getModelName().isEmpty())
+            spec = spec.and(inSpec("modelName", req.getModelName()));
+
+        if (req.getAxleConfig() != null && !req.getAxleConfig().isEmpty())
+            spec = spec.and(inSpec("axleConfig", req.getAxleConfig()));
+
+        if (req.getRegion() != null && !req.getRegion().isEmpty())
+            spec = spec.and(inSpec("region", req.getRegion()));
+
+        if (req.getPerformanceOpen() != null && !req.getPerformanceOpen().isEmpty())
+            spec = spec.and(inSpec("performanceOpen", req.getPerformanceOpen()));
+
+        if (req.getSellerType() != null && !req.getSellerType().isEmpty())
+            spec = spec.and(inSpec("sellerType", req.getSellerType()));
+
+        if (req.getUsageType() != null && !req.getUsageType().isEmpty())
+            spec = spec.and(inSpec("usageType", req.getUsageType()));
+
+        if (req.getColor() != null && !req.getColor().isEmpty())
+            spec = spec.and(inSpec("color", req.getColor()));
+
+        if (req.getFuelType() != null && !req.getFuelType().isEmpty())
+            spec = spec.and(inSpec("fuelType", req.getFuelType()));
+
+        if (req.getTransmission() != null && !req.getTransmission().isEmpty())
+            spec = spec.and(inSpec("transmission", req.getTransmission()));
+
+
+        // ===== 연식 =====
+        if (req.getYearFrom() != null && req.getMonthFrom() != null) {
+            spec = spec.and((root, q, cb) -> cb.or(
+                    cb.greaterThan(root.get("year"), req.getYearFrom()),
+                    cb.and(
+                            cb.equal(root.get("year"), req.getYearFrom()),
+                            cb.greaterThanOrEqualTo(root.get("month"), req.getMonthFrom())
+                    )
+            ));
+        }
+
+        if (req.getYearTo() != null && req.getMonthTo() != null) {
+            spec = spec.and((root, q, cb) -> cb.or(
+                    cb.lessThan(root.get("year"), req.getYearTo()),
+                    cb.and(
+                            cb.equal(root.get("year"), req.getYearTo()),
+                            cb.lessThanOrEqualTo(root.get("month"), req.getMonthTo())
+                    )
+            ));
+        }
+
+        // ===== 주행거리 =====
+        if (req.getMileageMin() != null) {
+            spec = spec.and((root, q, cb) ->
+                    cb.greaterThanOrEqualTo(root.get("mileage"), req.getMileageMin())
+            );
+        }
+        if (req.getMileageMax() != null) {
+            spec = spec.and((root, q, cb) ->
+                    cb.lessThanOrEqualTo(root.get("mileage"), req.getMileageMax())
+            );
+        }
+
+        // ===== 가격 =====
+        if (req.getPriceMin() != null) {
+            spec = spec.and((root, q, cb) ->
+                    cb.greaterThanOrEqualTo(root.get("price"), req.getPriceMin() * 10000)
+            );
+        }
+        if (req.getPriceMax() != null) {
+            spec = spec.and((root, q, cb) ->
+                    cb.lessThanOrEqualTo(root.get("price"), req.getPriceMax() * 10000)
+            );
+        }
+
+        List<CargoSpecialSale> rows = repo.findAll(spec);
+
+        return rows.stream()
+                .map(TruckCardDto::new)
+                .toList();
+    }
+
+    // 공통 Specification
+    private Specification<CargoSpecialSale> inSpec(String field, List<String> values) {
+        return (root, query, cb) -> root.get(field).in(values);
     }
 }

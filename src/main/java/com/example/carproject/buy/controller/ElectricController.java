@@ -1,15 +1,19 @@
 package com.example.carproject.buy.controller;
 
 import com.example.carproject.buy.dto.ElectricCarCardDto;
+import com.example.carproject.buy.dto.ElectricFilterRequest;
 import com.example.carproject.buy.service.ElectricCarService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import com.example.carproject.buy.service.ElectricResult;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -35,4 +39,6 @@ public class ElectricController {
 
         return "buy/electric_page";
     }
+
+
 }

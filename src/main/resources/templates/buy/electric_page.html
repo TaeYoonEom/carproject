@@ -280,15 +280,15 @@
             <details class="filter-group">
                 <summary>인승</summary>
                 <ul class="filter-list">
-                    <li><label><input type="checkbox" name="capacityBucket" value="LE2">2인승 이하 <span class="count">[[${filterCounts.capacityBuckets.le2}]]</span></label></li>
-                    <li><label><input type="checkbox" name="capacityBucket" value="EQ3">3인승 <span class="count">[[${filterCounts.capacityBuckets.eq3}]]</span></label></li>
-                    <li><label><input type="checkbox" name="capacityBucket" value="EQ4">4인승 <span class="count">[[${filterCounts.capacityBuckets.eq4}]]</span></label></li>
-                    <li><label><input type="checkbox" name="capacityBucket" value="EQ5">5인승 <span class="count">[[${filterCounts.capacityBuckets.eq5}]]</span></label></li>
-                    <li><label><input type="checkbox" name="capacityBucket" value="EQ6">6인승 <span class="count">[[${filterCounts.capacityBuckets.eq6}]]</span></label></li>
-                    <li><label><input type="checkbox" name="capacityBucket" value="EQ7">7인승 <span class="count">[[${filterCounts.capacityBuckets.eq7}]]</span></label></li>
-                    <li><label><input type="checkbox" name="capacityBucket" value="EQ8">8인승 <span class="count">[[${filterCounts.capacityBuckets.eq8}]]</span></label></li>
-                    <li><label><input type="checkbox" name="capacityBucket" value="EQ9">9인승 <span class="count">[[${filterCounts.capacityBuckets.eq9}]]</span></label></li>
-                    <li><label><input type="checkbox" name="capacityBucket" value="GE10">10인승 이상 <span class="count">[[${filterCounts.capacityBuckets.ge10}]]</span></label></li>
+                    <li><label><input type="checkbox" name="capacity" value="LE2">2인승 이하 <span class="count">[[${filterCounts.capacityBuckets.le2}]]</span></label></li>
+                    <li><label><input type="checkbox" name="capacity" value="EQ3">3인승 <span class="count">[[${filterCounts.capacityBuckets.eq3}]]</span></label></li>
+                    <li><label><input type="checkbox" name="capacity" value="EQ4">4인승 <span class="count">[[${filterCounts.capacityBuckets.eq4}]]</span></label></li>
+                    <li><label><input type="checkbox" name="capacity" value="EQ5">5인승 <span class="count">[[${filterCounts.capacityBuckets.eq5}]]</span></label></li>
+                    <li><label><input type="checkbox" name="capacity" value="EQ6">6인승 <span class="count">[[${filterCounts.capacityBuckets.eq6}]]</span></label></li>
+                    <li><label><input type="checkbox" name="capacity" value="EQ7">7인승 <span class="count">[[${filterCounts.capacityBuckets.eq7}]]</span></label></li>
+                    <li><label><input type="checkbox" name="capacity" value="EQ8">8인승 <span class="count">[[${filterCounts.capacityBuckets.eq8}]]</span></label></li>
+                    <li><label><input type="checkbox" name="capacity" value="EQ9">9인승 <span class="count">[[${filterCounts.capacityBuckets.eq9}]]</span></label></li>
+                    <li><label><input type="checkbox" name="capacity" value="GE10">10인승 이상 <span class="count">[[${filterCounts.capacityBuckets.ge10}]]</span></label></li>
                 </ul>
             </details>
 
@@ -556,9 +556,11 @@
     ⓒ 2025 N카. All rights reserved.
 </div>
 <th:block layout:fragment="script">
-    <script defer src="/js/base.js"></script>
     <script defer src="/js/wishlist.js"></script>
+    <script defer src="/js/base.js"></script>
+    <script defer src="/js/electric-filter.js"></script>
 </th:block>
+
 
 </body>
 </html>

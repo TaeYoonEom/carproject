@@ -1,11 +1,14 @@
 package com.example.carproject.buy.service;
 
+import com.example.carproject.buy.domain.CargoSpecialSale;
 import com.example.carproject.buy.dto.ElectricCarCardDto;
+import com.example.carproject.buy.dto.ElectricFilterRequest;
 import com.example.carproject.buy.projection.ElectricCarRow;
 import com.example.carproject.buy.repository.ElectricCarRepository;
 import com.example.carproject.buy.repository.ElectricFacetRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -17,22 +20,6 @@ public class ElectricCarService {
     private final ElectricCarRepository repo;
     private final ElectricFacetRepository facetRepo;
 
-    /*public Page<ElectricCarCardDto> getEcoCars(int page, int size, String sort, Sort.Direction dir) {
-        // 정렬 컬럼은 프로젝션 별칭과 같은 이름이어야 동작 (예: price, year 등)
-        Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sort));
-        Page<ElectricCarRow> rows = repo.findEcoCars(pageable);
-
-        List<ElectricCarCardDto> items = rows.getContent().stream()
-                .map(r -> new ElectricCarCardDto(
-                        r.getCarId(), r.getOrigin(), r.getCarName(), r.getPrice(),
-                        r.getYear(), r.getMileage(), r.getDriveType(),
-                        r.getSaleLocation(), r.getOwnershipStatus(),
-                        r.getImageUrl()
-                ))
-                .toList();
-
-        return new PageImpl<>(items, pageable, rows.getTotalElements());
-    }*/
     private static final List<String> FIXED_BODY_TYPES = List.of(
             "경차","소형차","준중형차","중형차","대형차","스포츠카",
             "SUV","RV",
@@ -126,8 +113,8 @@ public class ElectricCarService {
         map.put("regionTop",    region.get("top"));
         map.put("regionOthers", region.get("others"));
 
-        /*  인승 Bucket */
-        map.put("capacityBuckets", facetRepo.countCapacityBuckets());
+        /*  인승  */
+        map.put("capacity", facetRepo.countCapacity());
 
         map.put("fuelType",      facetRepo.countFuelType());
         map.put("manufacturer",  facetRepo.countManufacturer());
@@ -143,6 +130,8 @@ public class ElectricCarService {
 
         return map;
     }
+
+
 
     /** 차량목록 + 필터 전달 */
     public ElectricResult getEcoCars(int page, int size, String sort, Sort.Direction dir) {

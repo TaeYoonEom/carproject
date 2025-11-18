@@ -2,6 +2,7 @@ package com.example.carproject.buy.repository;
 
 import com.example.carproject.buy.projection.ElectricCarRow;
 import com.example.carproject.domain.AllCarSale;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;

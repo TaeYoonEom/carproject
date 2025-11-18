@@ -2,8 +2,10 @@ package com.example.carproject.buy.service;
 
 import com.example.carproject.buy.dto.ImportCarCardDto;
 import com.example.carproject.buy.domain.ImportCarSale;
+import com.example.carproject.buy.dto.ImportFilterRequest;
 import com.example.carproject.buy.repository.ImportCarSaleRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
@@ -175,4 +177,123 @@ public class ImportCarSaleService {
 
         return map;
     }
+    private Specification<ImportCarSale> getCapacitySpec(List<String> caps) {
+        return (root, q, cb) -> {
+
+            // 하나라도 조건 맞으면 OR
+            var predicates = caps.stream().map(cap -> {
+                int c = Integer.parseInt(cap);
+
+                if (c == 2) {
+                    return root.get("capacity").in(List.of(0, 1, 2));
+                } else if (c == 10) {
+                    return cb.greaterThanOrEqualTo(root.get("capacity"), 10);
+                } else {
+                    return cb.equal(root.get("capacity"), c);
+                }
+            }).toList();
+
+            return cb.or(predicates.toArray(new jakarta.persistence.criteria.Predicate[0]));
+        };
+    }
+
+    public List<ImportCarCardDto> filterCars(ImportFilterRequest req) {
+
+        Specification<ImportCarSale> spec = Specification.where(null);
+
+        if (req.getCarType() != null && !req.getCarType().isEmpty()) {
+            spec = spec.and((root, q, cb) -> root.get("carType").in(req.getCarType()));
+        }
+        if (req.getManufacturer() != null && !req.getManufacturer().isEmpty()) {
+            spec = spec.and((root, q, cb) -> root.get("manufacturer").in(req.getManufacturer()));
+        }
+        if (req.getModelName() != null && !req.getModelName().isEmpty()) {
+            spec = spec.and((root, q, cb) -> root.get("modelName").in(req.getModelName()));
+        }
+
+        if (req.getFuelType() != null && !req.getFuelType().isEmpty()) {
+            spec = spec.and((root, q, cb) -> root.get("fuelType").in(req.getFuelType()));
+        }
+        if (req.getSaleLocation() != null && !req.getSaleLocation().isEmpty()) {
+            spec = spec.and((root, q, cb) -> root.get("saleLocation").in(req.getSaleLocation()));
+        }
+        if (req.getPerformanceOpen() != null && !req.getPerformanceOpen().isEmpty()) {
+            spec = spec.and((root, q, cb) -> root.get("performanceOpen").in(req.getPerformanceOpen()));
+        }
+        if (req.getCarName() != null && !req.getCarName().isEmpty()) {
+            spec = spec.and((root, q, cb) -> root.get("carName").in(req.getCarName()));
+        }
+        if (req.getTransmission() != null && !req.getTransmission().isEmpty()) {
+            spec = spec.and((root, q, cb) -> root.get("transmission").in(req.getTransmission()));
+        }
+        if (req.getSellerType() != null && !req.getSellerType().isEmpty()) {
+            spec = spec.and((root, q, cb) -> root.get("sellerType").in(req.getSellerType()));
+        }
+        if (req.getSaleMethod() != null && !req.getSaleMethod().isEmpty()) {
+            spec = spec.and((root, q, cb) -> root.get("saleMethod").in(req.getSaleMethod()));
+        }
+        if (req.getExteriorColor() != null && !req.getExteriorColor().isEmpty()) {
+            spec = spec.and((root, q, cb) -> root.get("exteriorColor").in(req.getExteriorColor()));
+        }
+        if (req.getInteriorColor() != null && !req.getInteriorColor().isEmpty()) {
+            spec = spec.and((root, q, cb) -> root.get("interiorColor").in(req.getInteriorColor()));
+        }
+        if (req.getCapacity() != null && !req.getCapacity().isEmpty()) {
+            spec = spec.and(getCapacitySpec(req.getCapacity()));
+        }
+
+        if (req.getPriceMin() != null) {
+            spec = spec.and((root, q, cb) ->
+                    cb.greaterThanOrEqualTo(root.get("price"), req.getPriceMin() * 10000)
+            );
+        }
+        if (req.getPriceMax() != null) {
+            spec = spec.and((root, q, cb) ->
+                    cb.lessThanOrEqualTo(root.get("price"), req.getPriceMax() * 10000)
+            );
+        }
+
+        //  연식 (year + month)
+        if (req.getYearFrom() != null && req.getMonthFrom() != null) {
+            spec = spec.and((root, q, cb) -> cb.or(
+                    cb.greaterThan(root.get("year"), req.getYearFrom()),
+                    cb.and(
+                            cb.equal(root.get("year"), req.getYearFrom()),
+                            cb.greaterThanOrEqualTo(root.get("month"), req.getMonthFrom())
+                    )
+            ));
+        }
+
+        if (req.getYearTo() != null && req.getMonthTo() != null) {
+            spec = spec.and((root, q, cb) -> cb.or(
+                    cb.lessThan(root.get("year"), req.getYearTo()),
+                    cb.and(
+                            cb.equal(root.get("year"), req.getYearTo()),
+                            cb.lessThanOrEqualTo(root.get("month"), req.getMonthTo())
+                    )
+            ));
+        }
+
+        // 주행거리(mileage)
+        if (req.getMileageMin() != null) {
+            spec = spec.and((root, q, cb) ->
+                    cb.greaterThanOrEqualTo(root.get("mileage"), req.getMileageMin())
+            );
+        }
+        if (req.getMileageMax() != null) {
+            spec = spec.and((root, q, cb) ->
+                    cb.lessThanOrEqualTo(root.get("mileage"), req.getMileageMax())
+            );
+        }
+
+
+        // 필요하면 더 추가
+
+        List<ImportCarSale> result = repo.findAll(spec);
+
+        return result.stream()
+                .map(ImportCarCardDto::new)
+                .toList();
+    }
+
 }

@@ -6,27 +6,38 @@ import lombok.Getter;
 
 @Getter
 public class TruckCardDto {
-    private final CargoSpecialSale car;
-    private final String frontViewUrl;
+    private Integer carId;
+    private String manufacturer;
+    private String modelName;
+    private String bodyType;
 
-    public TruckCardDto(CargoSpecialSale car) {
-        this.car = car;
-        this.frontViewUrl = car.getAllCarSale() != null
-                ? car.getAllCarSale().getRepresentativeImage()
-                .map(CarImage::getFrontViewUrl)
-                .orElse("/img/default.jpg")
-                : "/img/default.jpg";
+    private Integer year;
+    private Integer month;
+    private Integer mileage;
+    private Integer price;
+    private String region;
+
+    private String frontViewUrl;
+
+    public TruckCardDto(CargoSpecialSale c) {
+        this.carId = c.getCarId();
+        this.manufacturer = c.getManufacturer();
+        this.modelName = c.getModelName();
+        this.bodyType = c.getBodyType();
+        this.year = c.getYear();
+        this.month = c.getMonth();
+        this.mileage = c.getMileage();
+        this.price = c.getPrice();
+        this.region = c.getRegion();
+
+        if (c.getAllCarSale() != null && c.getAllCarSale().getCarImages() != null) {
+            this.frontViewUrl = c.getAllCarSale().getCarImages().stream()
+                    .filter(img -> img.getIsRepresentative() != null && img.getIsRepresentative())
+                    .findFirst()
+                    .map(img -> img.getFrontViewUrl())
+                    .orElse("/img/default.jpg");
+        } else {
+            this.frontViewUrl = "/img/default.jpg";
+        }
     }
-
-    // ✅ Thymeleaf에서 바로 쓰는 getter들
-    public Integer getCarId()      { return car.getCarId(); }
-    public String  getManufacturer(){ return car.getManufacturer(); }
-    public String  getModelName()  { return car.getModelName(); }
-    public Integer getYear()       { return car.getYear(); }
-    public Integer getMonth()      { return car.getMonth(); }
-    public Integer getMileage()    { return car.getMileage(); }
-    public String  getBodyType()   { return car.getBodyType(); }
-    public String  getRegion()     { return car.getRegion(); }
-    public Integer getPrice()      { return car.getPrice(); }
-    public String  getOption()     { return car.getOptions(); }
 }

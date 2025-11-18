@@ -1,12 +1,18 @@
 package com.example.carproject.buy.controller;
 
 import com.example.carproject.buy.dto.ImportCarCardDto;
+import com.example.carproject.buy.dto.ImportFilterRequest;
 import com.example.carproject.buy.service.ImportCarSaleService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class ImportController {
@@ -37,4 +43,17 @@ public class ImportController {
         // wishSet(찜 목록)은 GlobalWishModelAdvice에서 자동 추가됨
         return "buy/import_page";
     }
+    @PostMapping("/import/filter")
+    @ResponseBody
+    public Map<String, Object> filterImportCars(@RequestBody ImportFilterRequest req){
+
+        List<ImportCarCardDto> list = importCarSaleService.filterCars(req);
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("carList", list);
+        res.put("count", list.size());
+
+        return res;
+    }
+
 }
