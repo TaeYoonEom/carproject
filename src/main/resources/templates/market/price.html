@@ -12,62 +12,94 @@
 </head>
 <body>
 <div layout:fragment="content">
-    <main class="wrap page">
+    <!-- 스코프 클래스 mp-price 추가 -->
+    <main class="wrap page mp-price">
         <!-- 좌측 필터 -->
         <aside class="filter">
             <h3>차량검색</h3>
 
+            <!-- 제조사: 기본 select + 커스텀 패널 -->
             <div class="field">
                 <label>제조사</label>
-                <select id="make"><option value="">제조사 선택</option></select>
+                <div class="fs" data-target="make">
+                    <select id="make"><option value="">제조사 선택</option></select>
+                    <div id="makePanel" class="fs-panel" hidden></div>
+                </div>
             </div>
 
+            <!-- 모델: 기본 select + 커스텀 패널 -->
             <div class="field">
                 <label>모델</label>
-                <select id="model"><option value="">모델 선택</option></select>
+                <div class="fs" data-target="model">
+                    <select id="model"><option value="">모델 선택</option></select>
+                    <div id="modelPanel" class="fs-panel" hidden></div>
+                </div>
+            </div>
+
+            <!-- 연료 드롭다운(체크박스 → 셀렉트) -->
+            <div class="field">
+                <label>연료</label>
+                <select id="fuelSelect">
+                    <option value="">연료 선택</option>
+                    <option value="GASOLINE">가솔린</option>
+                    <option value="DIESEL">디젤</option>
+                    <option value="LPG">LPG</option>
+                    <option value="HYBRID">하이브리드</option>
+                    <option value="EV">전기</option>
+                </select>
             </div>
 
             <div class="field grid2">
-                <div><label>연식(From)</label><input id="yearFrom" type="number" placeholder="2010" /></div>
+                <div><label>연식(From)</label><input id="yearFrom" type="number" placeholder="2005" /></div>
                 <div><label>연식(To)</label><input id="yearTo" type="number" placeholder="2025" value="2025"/></div>
             </div>
 
+            <!-- 가격/주행 슬라이더(기존 스타일 유지) -->
             <div class="field">
                 <label>가격(만원)</label>
-                <div class="range">
-                    <input id="priceMin" type="number" placeholder="최소" /><span>~</span>
-                    <input id="priceMax" type="number" placeholder="최대" />
+                <div class="range2">
+                    <div class="progress"><div class="fill" id="priceFill"></div></div>
+                    <input id="priceMin" type="range" min="0" max="20000" step="10" value="0">
+                    <input id="priceMax" type="range" min="0" max="20000" step="10" value="20000">
+                    <div class="range2-values"><span id="priceMinVal">0</span> ~ <span id="priceMaxVal">20,000</span></div>
                 </div>
             </div>
 
             <div class="field">
                 <label>주행거리(km)</label>
-                <div class="range">
-                    <input id="mileageMin" type="number" placeholder="0" value="0" /><span>~</span>
-                    <input id="mileageMax" type="number" placeholder="200000" value="200000" />
+                <div class="range2">
+                    <div class="progress"><div class="fill" id="mileFill"></div></div>
+                    <input id="mileageMin" type="range" min="0" max="200000" step="1000" value="0">
+                    <input id="mileageMax" type="range" min="0" max="200000" step="1000" value="200000">
+                    <div class="range2-values"><span id="mileageMinVal">0</span> ~ <span id="mileageMaxVal">200,000</span></div>
                 </div>
             </div>
 
-            <div class="field">
-                <label>연료</label>
-                <div class="chips" id="fuel">
-                    <label><input type="checkbox" value="GASOLINE"> 가솔린</label>
-                    <label><input type="checkbox" value="DIESEL"> 디젤</label>
-                    <label><input type="checkbox" value="LPG"> LPG</label>
-                    <label><input type="checkbox" value="HYBRID"> 하이브리드</label>
-                    <label><input type="checkbox" value="EV"> 전기</label>
-                </div>
-            </div>
-
+            <!-- 색상: 원형칩 + 더보기 -->
             <div class="field">
                 <label>색상</label>
-                <div class="color-pills" id="colors">
-                    <label><input type="checkbox" value="화이트"><span class="dot white"></span></label>
-                    <label><input type="checkbox" value="실버"><span class="dot silver"></span></label>
-                    <label><input type="checkbox" value="블랙"><span class="dot black"></span></label>
-                    <label><input type="checkbox" value="그레이"><span class="dot gray"></span></label>
-                    <label><input type="checkbox" value="다크그레이"><span class="dot gray"></span></label>
-                    <label><input type="checkbox" value="베이지"><span class="dot"></span></label>
+                <div class="color-pills collapsed" id="colors">
+                    <!-- 첫 줄(대표 8색) -->
+                    <button class="dot white"   data-color="화이트" title="화이트"></button>
+                    <button class="dot silver"  data-color="실버"   title="실버"></button>
+                    <button class="dot black"   data-color="블랙"   title="블랙"></button>
+                    <button class="dot gray"    data-color="그레이"  title="그레이"></button>
+                    <button class="dot dgray"   data-color="다크그레이" title="다크그레이"></button>
+                    <button class="dot beige"   data-color="베이지" title="베이지"></button>
+                    <button class="dot blue"    data-color="블루"   title="블루"></button>
+                    <button class="dot red"     data-color="레드"   title="레드"></button>
+
+                    <!-- 더보기: 펼치면 추가색 노출 -->
+                    <button id="moreColors" class="more">더보기</button>
+                    <div id="moreColorsWrap" class="more-wrap" hidden>
+                        <button class="dot green"  data-color="그린"  title="그린"></button>
+                        <button class="dot brown"  data-color="브라운" title="브라운"></button>
+                        <button class="dot gold"   data-color="골드"  title="골드"></button>
+                        <button class="dot orange" data-color="오렌지" title="오렌지"></button>
+                        <button class="dot purple" data-color="퍼플"  title="퍼플"></button>
+                        <button class="dot yellow" data-color="옐로우" title="옐로우"></button>
+                        <!-- 필요 시 계속 추가 -->
+                    </div>
                 </div>
             </div>
 
@@ -79,22 +111,45 @@
 
         <!-- 우측 콘텐츠 -->
         <section class="content">
-            <div class="title-row">
-                <div>
+            <!-- 헤드라인: 제목 + (좌)금주 시세 인라인 / (우)차량 이미지 -->
+            <header class="headline">
+                <div class="meta">
                     <h1 id="pageTitle">시세</h1>
+
+                    <!-- 금주 시세 인라인 -->
+                    <div class="week-price">
+                        <span class="label">금주 시세</span>
+                        <strong class="num">
+                            <span id="statMin">-</span>
+                            <span class="tilde">~</span>
+                            <span id="statMax">-</span>
+                        </strong>
+                        <i class="unit">만원</i>
+                        <!-- 필요하면 링크
+                        <a class="ref" href="#">신차기준표</a>
+                        -->
+                    </div>
+
+                    <!-- 보조 문구(평균, 매물 수) -->
+                    <p class="week-sub">
+                        평균 <b id="statAvg">-</b> 만원 · 매물 <b id="statCnt">0</b>대
+                    </p>
+
+                    <!-- 태그(무사고/주행 기준) -->
                     <div class="tags">
                         <span class="tag">무사고 기준</span>
                         <span class="tag">주행 70,000km 기준</span>
                     </div>
                 </div>
-                <img class="thumb" src="/img/car_image/제네시스로고.jpg" alt="car" />
-            </div>
 
-            <div class="price-box">
-                <div class="label">중고차 시세</div>
-                <div class="price"><span id="statMin">-</span> ~ <span id="statMax">-</span> <em>만원</em></div>
-                <div class="sub">평균 <b id="statAvg">-</b> 만원 · 매물 <b id="statCnt">0</b>대</div>
-            </div>
+                <!-- 우측 차량/브랜드 이미지 -->
+                <div class="hero">
+                    <img class="thumb" src="/img/car_image/제네시스로고.jpg" alt="car" />
+                </div>
+            </header>
+
+            <hr class="headline-divider">
+
 
             <div class="toolbar">
                 <div class="count"><b id="resultCount">0</b>대 검색됨</div>
@@ -117,7 +172,17 @@
                 </div>
             </div>
 
+            <!-- 리스트 & 빈 상태 -->
             <ul id="list" class="cards"></ul>
+
+            <div id="emptyState" class="empty-state" hidden>
+                <div class="empty-icon">!</div>
+                <div class="empty-title">검색결과 없음</div>
+                <div class="empty-text">
+                    해당 조건에 맞는 매물이 없습니다.<br>다른 조건으로 검색해 보세요.
+                </div>
+            </div>
+
             <div id="pagination" class="pagination"></div>
         </section>
     </main>
@@ -127,37 +192,121 @@
     <script>
         const qs  = (s,p=document)=>p.querySelector(s);
         const qsa = (s,p=document)=>Array.from(p.querySelectorAll(s));
+        const debounce = (fn, d=350) => { let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), d); }; };
 
-         // ① 디바운스 유틸(타이핑 중 과도 호출 방지)
-          const debounce = (fn, d=350) => {
-            let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), d); };
+        // -------- UI helpers
+        function setHidden(el, v){ v? el.setAttribute('hidden',''): el.removeAttribute('hidden'); }
+        function fmt(n){ return (n??0).toLocaleString(); }
+
+        // 색상 토글
+        function setupColorPills(){
+          const wrap = qs('#colors');
+          const picked = new Set();
+
+          wrap.addEventListener('click', (e)=>{
+            const btn = e.target.closest('button.dot'); if(!btn) return;
+            const color = btn.dataset.color;
+            btn.classList.toggle('on');
+            if(btn.classList.contains('on')) picked.add(color); else picked.delete(color);
+            load(0);
+          });
+
+          // 더보기/접기
+            const moreBtn  = qs('#moreColors');
+            const moreWrap = qs('#moreColorsWrap');
+
+            moreBtn.onclick = () => {
+              const isCollapsed = wrap.classList.toggle('collapsed'); // 클래스 토글
+              moreBtn.textContent = isCollapsed ? '더보기' : '접기';
+              moreWrap.hidden = isCollapsed;                           // 실제 표시/숨김
+            };
+        }
+
+        // 슬라이더 값 표시
+        function setupSliders(){
+          const pmin=qs('#priceMin'), pmax=qs('#priceMax');
+          const mmin=qs('#mileageMin'), mmax=qs('#mileageMax');
+          const sync=()=>{
+            qs('#priceMinVal').textContent = fmt(+pmin.value);
+            qs('#priceMaxVal').textContent = fmt(+pmax.value);
+            qs('#mileageMinVal').textContent = fmt(+mmin.value);
+            qs('#mileageMaxVal').textContent = fmt(+mmax.value);
+          };
+          [pmin,pmax,mmin,mmax].forEach(x=>x.addEventListener('input', debounce(()=>{ sync(); load(0); },200)));
+          sync();
+        }
+
+        function updateFill(minEl, maxEl, fillEl){
+          const min = +minEl.min, max = +minEl.max;
+          const a = Math.min(+minEl.value, +maxEl.value);
+          const b = Math.max(+minEl.value, +maxEl.value);
+          const left  = ((a - min) / (max - min)) * 100;
+          const right = ((b - min) / (max - min)) * 100;
+          fillEl.style.left  = left + '%';
+          fillEl.style.width = (right - left) + '%';
+        }
+
+        function setupSliders(){
+          const pmin = qs('#priceMin'),   pmax = qs('#priceMax');
+          const mmin = qs('#mileageMin'), mmax = qs('#mileageMax');
+          const pFill = qs('#priceFill'), mFill = qs('#mileFill');
+
+          const sync = ()=>{
+            qs('#priceMinVal').textContent   = fmt(+pmin.value);
+            qs('#priceMaxVal').textContent   = fmt(+pmax.value);
+            qs('#mileageMinVal').textContent = fmt(+mmin.value);
+            qs('#mileageMaxVal').textContent = fmt(+mmax.value);
+            updateFill(pmin, pmax, pFill);
+            updateFill(mmin, mmax, mFill);
           };
 
+          // 입력 시 값/채움선 즉시 반영 + 검색
+          [pmin,pmax,mmin,mmax].forEach(el=>{
+            el.addEventListener('input', debounce(()=>{ sync(); load(0); }, 150));
+            // 누른 쪽을 항상 최상단으로
+            el.addEventListener('pointerdown', ()=>{
+              ['priceMin','priceMax','mileageMin','mileageMax']
+                .forEach(k => document.getElementById(k).style.zIndex = 3);
+              el.style.zIndex = 4;
+              sync();
+            });
+          });
+
+          // 초기 상태 계산
+          sync();
+        }
+
+
+
+        // 파라미터 수집
         function collect(page=0){
           const params = new URLSearchParams();
           const make = qs('#make').value.trim();
           const model = qs('#model').value.trim();
+          const fuel = qs('#fuelSelect').value;
+
           const yearFrom = qs('#yearFrom').value;
           const yearTo   = qs('#yearTo').value;
           const priceMin = qs('#priceMin').value;
           const priceMax = qs('#priceMax').value;
           const mileageMin = qs('#mileageMin').value;
           const mileageMax = qs('#mileageMax').value;
+
+          const size = Number(qs('#pageSize')?.value || 5);
           const sort = qs('#sort').value;
-          const fuels  = qsa('#fuel input:checked').map(i=>i.value);
-          const colors = qsa('#colors input:checked').map(i=>i.value);
-          const size = Number(qs('#pageSize')?.value || 5); // ▶ 페이지당 갯수
 
           if(make)     params.append('make', make);
           if(model)    params.append('model', model);
+          if(fuel)     params.append('fuel', fuel);
           if(yearFrom) params.append('yearFrom', yearFrom);
           if(yearTo)   params.append('yearTo', yearTo);
           if(priceMin) params.append('priceMin', priceMin);
           if(priceMax) params.append('priceMax', priceMax);
           if(mileageMin) params.append('mileageMin', mileageMin);
           if(mileageMax) params.append('mileageMax', mileageMax);
-          fuels.forEach(f=>params.append('fuel', f));
-          colors.forEach(c=>params.append('colors', c));
+
+          // 색상(버튼 on)
+          qsa('#colors .dot.on').forEach(b=>params.append('colors', b.dataset.color));
 
           params.append('sort', sort);
           params.append('page', page);
@@ -165,13 +314,14 @@
           return params;
         }
 
+        // 카드
         function renderCard(it){
           const li = document.createElement('li');
           li.className='card';
           li.innerHTML = `
             <div class="img"><img src="${it.thumbnailUrl || '/img/car_image/car_g80.jpg'}" alt=""></div>
             <div class="meta">
-              <div class="name">${it.manufacturer} ${it.modelName}</div>
+              <a class="name" href="/cars/${it.id}">${it.manufacturer} ${it.modelName}</a>
               <div class="sub">${it.year??'-'}년식 · ${(it.mileageKm??0).toLocaleString()}km · ${it.region||'-'}</div>
               <div class="badges">
                 <span class="badge badge-ring">${it.fuelType||'-'}</span>
@@ -179,7 +329,7 @@
               </div>
             </div>
             <div class="price-area">
-              <div class="price"><b>${(it.priceManwon??0).toLocaleString()}</b> 만원</div>
+              <div class="price"><b>${fmt(it.priceManwon)}</b> 만원</div>
               <a class="btn" href="/cars/${it.id}">상세보기</a>
             </div>`;
           return li;
@@ -188,28 +338,72 @@
         function renderPagination(pg){
           const root = qs('#pagination'); root.innerHTML='';
           if(!pg || pg.totalPages<=1) return;
+          const mk=(t,dis=false,act=false)=>{ const b=document.createElement('button'); b.textContent=t; if(dis) b.disabled=true; if(act) b.classList.add('active'); return b; };
+          const prev=mk('이전', pg.number===0); prev.onclick=()=>load(pg.number-1); root.appendChild(prev);
+          const st=Math.max(0, pg.number-2), en=Math.min(pg.totalPages-1, pg.number+2);
+          for(let i=st;i<=en;i++){ const b=mk(String(i+1),false,i===pg.number); b.onclick=()=>load(i); root.appendChild(b); }
+          const next=mk('다음', pg.number>=pg.totalPages-1); next.onclick=()=>load(pg.number+1); root.appendChild(next);
+        }
 
-          const mkBtn=(t,disabled=false,active=false)=>{
-            const b=document.createElement('button'); b.textContent=t;
-            if(disabled) b.disabled=true;
-            if(active) b.classList.add('active');
-            return b;
-          };
+        // 커스텀 패널 렌더링(시세 포함)
+        function buildPanel(el, items){
+          // items: [{name, count, minManwon, maxManwon}]
+          el.innerHTML = `
+            <div class="fs-head">제조사</div>
+            <ul class="fs-list">
+              ${items.map(x=>`
+                <li class="fs-option" data-name="${x.name}">
+                  <span class="opt-name">${x.name}</span>
+                  <span class="opt-range">${fmt(x.minManwon)} ~ ${fmt(x.maxManwon)}<i>만원</i></span>
+                </li>
+              `).join('')}
+            </ul>`;
+        }
 
-          const prev = mkBtn('이전', pg.number===0);
-          prev.onclick = ()=>load(pg.number-1);
-          root.appendChild(prev);
+        async function loadMakes(){
+          const params = collect();             // 현재 필터 포함
+          params.delete('make'); params.delete('model'); // 제조사 패널은 make/model 제외
+          const res = await fetch('/market/api/options/makes?' + params.toString());
+          const data = await res.json(); // [{name,count,minManwon,maxManwon}]
+          qs('#make').innerHTML =
+            `<option value="">제조사 선택</option>` +
+            data.map(m=>`<option value="${m.name}">${m.name} (${m.count})</option>`).join('');
+          buildPanel(qs('#makePanel'), data);
+        }
 
-          const start = Math.max(0, pg.number-2);
-          const end   = Math.min(pg.totalPages-1, pg.number+2);
-          for(let i=start;i<=end;i++){
-            const b = mkBtn(String(i+1), false, i===pg.number);
-            b.onclick = ()=>load(i);
-            root.appendChild(b);
-          }
-          const next = mkBtn('다음', pg.number>=pg.totalPages-1);
-          next.onclick = ()=>load(pg.number+1);
-          root.appendChild(next);
+        async function loadModels(){
+          const params = collect();
+          const make = qs('#make').value || '';
+          params.set('make', make); params.delete('model'); // 모델 패널은 model 제외
+          const res = await fetch('/market/api/options/models?' + params.toString());
+          const data = await res.json();
+          qs('#model').innerHTML =
+            `<option value="">모델 선택</option>` +
+            data.map(m=>`<option value="${m.name}">${m.name} (${m.count})</option>`).join('');
+          buildPanel(qs('#modelPanel'), data);
+        }
+
+        function wireFancySelect(){
+          // 패널 토글
+          qsa('.fs').forEach(box=>{
+            const sel = box.querySelector('select');
+            const panel = box.querySelector('.fs-panel');
+            // 셀렉트 클릭 시 패널 토글(네이티브 드롭다운 열리지 않게)
+            sel.addEventListener('mousedown', (e)=>{ e.preventDefault(); setHidden(panel, !panel.hidden); });
+            // 옵션 클릭 시 값 반영 + 검색
+            panel.addEventListener('click', (e)=>{
+              const li = e.target.closest('.fs-option'); if(!li) return;
+              const name = li.dataset.name || '';
+              sel.value = name;
+              setHidden(panel, true);
+              if(sel.id==='make'){ loadModels().then(()=>load(0)); }
+              else { load(0); }
+            });
+            // 바깥 클릭 닫기
+            document.addEventListener('click', (e)=>{
+              if(!box.contains(e.target)) setHidden(panel,true);
+            });
+          });
         }
 
         async function load(page=0){
@@ -218,17 +412,23 @@
           // 리스트
           const r = await fetch('/market/api/prices?'+params.toString());
           const data = await r.json();
+
           const ul = qs('#list'); ul.innerHTML='';
-          (data.content||[]).forEach(it=>ul.appendChild(renderCard(it)));
+          if((data.content||[]).length===0){
+            setHidden(qs('#emptyState'), false);
+          }else{
+            setHidden(qs('#emptyState'), true);
+            data.content.forEach(it=>ul.appendChild(renderCard(it)));
+          }
           qs('#resultCount').textContent = data.totalElements ?? 0;
           renderPagination(data);
 
           // 통계
           const sres = await fetch('/market/api/prices/stats?'+collect().toString());
           const s = await sres.json();
-          qs('#statMin').textContent = (s.minManwon||0).toLocaleString();
-          qs('#statMax').textContent = (s.maxManwon||0).toLocaleString();
-          qs('#statAvg').textContent = (s.avgManwon||0).toLocaleString();
+          qs('#statMin').textContent = fmt(s.minManwon);
+          qs('#statMax').textContent = fmt(s.maxManwon);
+          qs('#statAvg').textContent = fmt(s.avgManwon);
           qs('#statCnt').textContent = s.totalCount || 0;
 
           // 타이틀
@@ -236,67 +436,37 @@
           const model = qs('#model').value || '';
           const yFrom = qs('#yearFrom').value || '';
           const yTo   = qs('#yearTo').value || '';
-          qs('#pageTitle').textContent = `${make} ${model} ${yFrom?yFrom+'~':''}${yTo}`.trim();
+          qs('#pageTitle').textContent = `${make}${model? ' '+model:''} ${yFrom?yFrom+'~':''}${yTo}`.trim();
         }
 
-        // 옵션 로딩 (이름 + 개수)
-        async function loadMakes(){
-          const res = await fetch('/market/api/options/makes');
-          const makes = await res.json(); // [{name, count}]
-          qs('#make').innerHTML =
-            `<option value="">제조사 선택</option>` +
-            makes.map(m=>`<option value="${m.name}">${m.name} (${m.count})</option>`).join('');
+        // 이벤트(즉시 검색)
+        function attachInstant(){
+          qs('#btnSearch').onclick = ()=>load(0);
+          qs('#btnReset').onclick = ()=>{
+            ['#make','#model','#yearFrom','#yearTo'].forEach(id=>qs(id).value='');
+            ['#priceMin','#priceMax'].forEach(id=>qs(id).value=id.endsWith('Min')?'0':'20000');
+            ['#mileageMin','#mileageMax'].forEach(id=>qs(id).value=id.endsWith('Min')?'0':'200000');
+            qsa('#colors .dot.on').forEach(b=>b.classList.remove('on'));
+            qs('#fuelSelect').value='';
+            setHidden(qs('#moreColorsWrap'), true);
+            loadMakes().then(loadModels).then(()=>{ setupSliders(); load(0); });
+          };
+          ['#sort','#pageSize','#fuelSelect','#make','#model'].forEach(id=>{
+            const el = qs(id);
+            el && el.addEventListener('change', ()=>load(0));
+          });
+          // 숫자 인풋(연식)은 디바운스
+          ['#yearFrom','#yearTo'].forEach(id=>qs(id).addEventListener('input', debounce(()=>load(0),300)));
         }
-        async function loadModels(){
-          const make = qs('#make').value;
-          const res = await fetch('/market/api/options/models?make='+encodeURIComponent(make||''));
-          const models = await res.json(); // [{name, count}]
-          qs('#model').innerHTML =
-            `<option value="">모델 선택</option>` +
-            models.map(m=>`<option value="${m.name}">${m.name} (${m.count})</option>`).join('');
-        }
 
-        // 이벤트
-        qs('#btnSearch').onclick = ()=>load(0);
-        qs('#btnReset').onclick = ()=>{
-          ['#make','#model','#yearFrom','#yearTo','#priceMin','#priceMax','#mileageMin','#mileageMax']
-            .forEach(id=>qs(id).value='');
-          qsa('#fuel input:checked').forEach(i=>i.checked=false);
-          qsa('#colors input:checked').forEach(i=>i.checked=false);
-          loadMakes().then(loadModels).then(()=>load(0));
-        };
-        qs('#sort').onchange = ()=>load(0);
-        qs('#pageSize').onchange = ()=>load(0);
-        qs('#make').addEventListener('change', ()=>{ loadModels(); load(0); });
-        qs('#model').addEventListener('change', ()=>load(0));
-
-        // ② 즉시검색 리스너 묶어서 등록
-          function attachInstantSearch(){
-            // 셀렉트류
-            qs('#make').addEventListener('change', async ()=>{
-              await loadModels();   // 제조사 바뀌면 모델 목록 갱신
-              load(0);              // 즉시 검색
-            });
-            ['#model','#sort','#pageSize'].forEach(id=>{
-              qs(id).addEventListener('change', ()=>load(0));
-            });
-
-            // 숫자 입력: 입력 중엔 디바운스
-            ['#yearFrom','#yearTo','#priceMin','#priceMax','#mileageMin','#mileageMax']
-              .forEach(id => qs(id).addEventListener('input', debounce(()=>load(0), 350)));
-
-            // 체크박스(연료/색상)
-            qsa('#fuel input, #colors input').forEach(el=>{
-              el.addEventListener('change', ()=>load(0));
-            });
-          }
-
-        // 초기 로딩
         document.addEventListener('DOMContentLoaded', async ()=>{
+          setupColorPills();
+          setupSliders();
           await loadMakes();
           await loadModels();
-          attachInstantSearch();
-          await load(0);
+          wireFancySelect();
+          attachInstant();
+          load(0);
         });
     </script>
 </th:block>
