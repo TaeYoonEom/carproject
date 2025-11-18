@@ -40,7 +40,12 @@
   width:100%; height:38px; padding:0 10px;
   border:1px solid var(--line); border-radius:8px; background:#fff;
 }
-.field.grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.field.grid2{ display:grid; grid-template-columns:1fr 1fr; gap:5px; }
+.field.grid2 > div:first-child input[type="number"],
+.field.grid2 > div:last-child  input[type="number"] {
+  width: calc(100% - 4px);  /* 좌우 합계 4px만 줄여서 눈에 안 띄게 조정 */
+  box-sizing: border-box;
+}
 
 /* =========================================================
    Headline(엔카형) - 좌측 텍스트/우측 이미지
