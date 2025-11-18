@@ -198,7 +198,11 @@ public class MypageController {
         /* ============================================================
            🔹 3) 판매중 / 완료 / 삭제 차량
            ============================================================ */
-        List<SellOnMini> soldRows = allCarSaleRepository2.findCarsByMemberAndStatus(memberId, tab);
+        List<SellOnMini> soldRows = List.of();  // 기본값
+
+        if (!tab.startsWith("트럭-")) {
+            soldRows = allCarSaleRepository2.findCarsByMemberAndStatus(memberId, tab);
+        }
 
         List<SellDraftCardVm> sellOnCards = soldRows.stream()
                 .map(r -> new SellDraftCardVm(

@@ -25,6 +25,7 @@ public class MarketPriceRepository {
 
     // where 절 공통 바인딩
     private void addWhere(StringBuilder sql, Map<String,Object> p, Map<String,Object> f){
+        if (f == null) return;
         if (has(f,"make"))       { sql.append(" AND manufacturer = :make");          p.put("make", f.get("make")); }
         if (has(f,"model"))      { sql.append(" AND model_name = :model");           p.put("model", f.get("model")); }
         if (has(f,"yearFrom"))   { sql.append(" AND year >= :yf");                   p.put("yf", f.get("yearFrom")); }
@@ -78,7 +79,56 @@ public class MarketPriceRepository {
         return jdbc.queryForMap(sql.toString(), bind(p));
     }
 
-    // 제조사 목록(+개수)
+    // ───── 드롭다운: 제조사/모델 시세 + 개수 ─────
+
+    // 제조사별 가격 범위 + 개수 (현재 필터 - make 제외)
+    public List<Map<String,Object>> makePriceStats(Map<String,Object> f){
+        StringBuilder sql = new StringBuilder("""
+        SELECT manufacturer AS name,
+               COUNT(*)          AS count,
+               MIN(price_manwon) AS minManwon,
+               MAX(price_manwon) AS maxManwon
+        FROM v_market_car
+        WHERE 1=1
+    """);
+        Map<String,Object> p = new HashMap<>();
+
+        Map<String,Object> g = (f==null)? new HashMap<>() : new HashMap<>(f);
+        if (g != null) g.remove("make"); // 제조사 패널은 make 제외
+        addWhere(sql, p, g);
+
+        sql.append(" GROUP BY manufacturer ORDER BY manufacturer");
+        return jdbc.queryForList(sql.toString(), bind(p));
+    }
+
+    // 모델별 가격 범위 + 개수 (현재 필터 - model 제외, 제조사는 선택값 적용)
+    public List<Map<String,Object>> modelPriceStats(String make, Map<String,Object> f){
+        StringBuilder sql = new StringBuilder("""
+        SELECT model_name AS name,
+               COUNT(*)          AS count,
+               MIN(price_manwon) AS minManwon,
+               MAX(price_manwon) AS maxManwon
+        FROM v_market_car
+        WHERE 1=1
+    """);
+        Map<String,Object> p = new HashMap<>();
+
+        if(make != null && !make.isBlank()){
+            sql.append(" AND manufacturer = :m");
+            p.put("m", make);
+        }
+        Map<String,Object> g = (f==null)? new HashMap<>() : new HashMap<>(f);
+        if (g != null) {
+            g.remove("model"); // 모델 패널은 model 제외
+            g.remove("make");  // 위에서 :m로 처리했으니 중복 제거
+        }
+        addWhere(sql, p, g);
+
+        sql.append(" GROUP BY model_name ORDER BY model_name");
+        return jdbc.queryForList(sql.toString(), bind(p));
+    }
+
+    // (아직 필요하면) 개수만 주는 버전
     public List<Map<String,Object>> makeCounts(){
         return jdbc.queryForList("""
           SELECT manufacturer AS name, COUNT(*) AS count
@@ -87,8 +137,6 @@ public class MarketPriceRepository {
           ORDER BY manufacturer
         """, Map.of());
     }
-
-    // 모델 목록(+개수)
     public List<Map<String,Object>> modelCounts(String make){
         if (make == null || make.isBlank()){
             return jdbc.queryForList("""
@@ -107,7 +155,7 @@ public class MarketPriceRepository {
         """, Map.of("m", make));
     }
 
-    // 필요하면 문자열-only 버전도 유지
+    // 문자열-only
     public List<String> makes(){
         return jdbc.queryForList("SELECT DISTINCT manufacturer FROM v_market_car ORDER BY manufacturer", Map.of(), String.class);
     }
@@ -120,6 +168,7 @@ public class MarketPriceRepository {
     }
 
     private boolean has(Map<String,?> f, String k){
+        if (f == null) return false;
         Object v = f.get(k);
         if (v == null) return false;
         if (v instanceof String s) return !s.isBlank();
