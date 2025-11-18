@@ -1,5 +1,7 @@
 package com.example.carproject.controller;
 
+import com.example.carproject.buy.repository.CarImageRepository;
+import com.example.carproject.buy.repository.TruckSaleRepository;
 import com.example.carproject.domain.*;
 import com.example.carproject.dto.*;
 import com.example.carproject.repository.*;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
@@ -32,6 +35,12 @@ public class MypageController {
     private final CouponPointService couponPointService;
     private final UserConsultationService userConsultationService;
     private final InquiryService inquiryService;
+    private final RecentCarService recentCarService;
+    private final CarImageRepository carImageRepository;
+    private final ImportCarSaleRepository2 importCarSaleRepository2;
+    private final CarSaleRepository2 carSaleRepository2;
+    private final TruckSaleRepository truckSaleRepository;
+
 
     public MypageController(MemberRepository memberRepository,
                             AllCarSaleRepository2 allCarSaleRepository2,
@@ -40,7 +49,12 @@ public class MypageController {
                             CarEntryDraftRepository carEntryDraftRepository,
                             CouponPointService couponPointService,
                             UserConsultationService userConsultationService,
-                            InquiryService inquiryService) {
+                            InquiryService inquiryService,
+                            RecentCarService recentCarService,         // ⭐ 추가됨
+                            CarImageRepository carImageRepository,
+                            ImportCarSaleRepository2 importCarSaleRepository2,
+                            CarSaleRepository2 carSaleRepository2,
+                            TruckSaleRepository truckSaleRepository) {
 
         this.memberRepository = memberRepository;
         this.allCarSaleRepository2 = allCarSaleRepository2;
@@ -50,6 +64,12 @@ public class MypageController {
         this.couponPointService = couponPointService;
         this.userConsultationService = userConsultationService;
         this.inquiryService = inquiryService;
+        this.recentCarService = recentCarService;
+        this.carImageRepository = carImageRepository;
+        this.importCarSaleRepository2 = importCarSaleRepository2;
+        this.carSaleRepository2 = carSaleRepository2;
+        this.truckSaleRepository = truckSaleRepository;   // 🔥 이거
+
     }
 
 
@@ -76,6 +96,60 @@ public class MypageController {
         List<WishCarDto> wishlistCars = wishlistService.myWishlistCars(memberId);
         int wishCount = wishlistService.count(memberId);
 
+        // 🔥 화물·특장·버스 찜 목록
+        List<WishMini> truckWishMini = allCarSaleRepository2.findTruckWish(memberId);
+        model.addAttribute("truckWishMini", truckWishMini);
+        model.addAttribute("truckWishCount", truckWishMini.size());
+
+        /* ============================================================
+   🔥 최근 본 차량
+   ============================================================ */
+        List<CarPurchaseRecent> recentList =
+                recentCarService.getRecentList(memberId, 15);
+
+        List<RecentCarDto> recentDtos = recentList.stream()
+                .map(r -> {
+                    Integer carId = r.getCarId();
+
+                    // all_car_sale 조회
+                    AllCarSale all = allCarSaleRepository2.findByCarId(carId)
+                            .orElse(null);
+                    if (all == null) return null;
+
+                    // 대표 이미지
+                    CarImage img = carImageRepository.findFirstByCarId(carId).orElse(null);
+
+                    // 판매 테이블 선택 (국산/수입/화물 분기)
+                    Object carEntity = null;
+
+                    if (all.getIsCargo() != null && all.getIsCargo() == 1) {
+                        carEntity = truckSaleRepository.findById(carId).orElse(null);
+                    }
+                    else if (all.getOrigin() == 0) {
+                        carEntity = carSaleRepository2.findByCarId(carId).orElse(null);
+                    }
+                    else {
+                        carEntity = importCarSaleRepository2.findByCarId(carId).orElse(null);
+                    }
+
+                    // ⭐ WishlistService 의 toRecentDto 사용
+                    RecentCarDto dto = wishlistService.toRecentDto(carEntity, img, all);
+
+                    // ⭐ 최근 본 시간 추가
+                    if (dto != null) {
+                        dto.setViewedAt(r.getViewedAt());
+                    }
+
+                    return dto;
+                })
+                .filter(Objects::nonNull)
+                .toList();
+
+        model.addAttribute("recentCars", recentDtos);
+        model.addAttribute("recentCount", recentDtos.size());
+
+
+
         /* ============================================================
            🔹 2) 판매대기 차량
            ============================================================ */
@@ -97,6 +171,29 @@ public class MypageController {
                         d.getPrice()
                 ))
                 .collect(Collectors.toList());
+
+        // 🔥 화물/특장/버스 판매중 차량
+        List<SellOnMini> soldCargoRows =
+                allCarSaleRepository2.findCargoSellOn(memberId, tab);
+
+        List<SellDraftCardVm> sellOnCargoCards = soldCargoRows.stream()
+                .map(r -> new SellDraftCardVm(
+                        null,
+                        r.getCarId(),
+                        (r.getFrontViewUrl() != null && !r.getFrontViewUrl().isEmpty())
+                                ? r.getFrontViewUrl()
+                                : "/img/common/noimage.png",
+                        r.getCarName(),
+                        r.getCarNumber(),
+                        (r.getYear() != null ? LocalDate.of(r.getYear(), 1, 1) : null),
+                        r.getMileage(),
+                        r.getSaleLocation(),
+                        r.getPrice()
+                ))
+                .toList();
+
+        model.addAttribute("sellOnCargoCards", sellOnCargoCards);
+        model.addAttribute("saleOnCargo", sellOnCargoCards.size());
 
         /* ============================================================
            🔹 3) 판매중 / 완료 / 삭제 차량
@@ -189,7 +286,6 @@ public class MypageController {
 
         return "mypage";
     }
-
 
 
     // ✅ 로그인된 Member 조회

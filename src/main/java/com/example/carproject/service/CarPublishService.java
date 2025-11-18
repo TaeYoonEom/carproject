@@ -48,7 +48,9 @@ public class CarPublishService {
                     created.setCarEntryDraftId(d.getId());
                     created.setOrigin(d.getOrigin()); // 그대로 전달 (0=국산, 1=수입)
                     created.setIsEcoFriendly(Boolean.TRUE.equals(d.getIsEcoFriendly()));
-                    created.setIsCargo(d.getCarType() != null && d.getCarType().contains("화물"));
+                    int cargoValue = (d.getCarType() != null && d.getCarType().contains("화물")) ? 1 : 0;
+                    created.setIsCargo(cargoValue);
+
                     return allRepo.save(created);
                 });
 

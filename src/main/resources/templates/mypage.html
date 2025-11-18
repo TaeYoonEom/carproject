@@ -201,8 +201,9 @@
                                     총 <span th:text="${wishCount}">0</span>대
                                 </span>
                             </div>
-                            <a href="/mypage#wish" style="color:#666; text-decoration:none;">더보기 &gt;</a>
-                        </div>
+                            <a href="/mypage#interested-cars" class="go-interested-cars"
+                               style="color:#666; text-decoration:none;">더보기 &gt;</a>
+                            </div>
 
                         <!-- 비었을 때 -->
                         <p class="no-data" th:if="${wishCount == null or wishCount == 0}">
@@ -220,7 +221,9 @@
                                     </div>
                                     <div class="txt">
                                         <div class="name" th:text="${w.carName}">차량명</div>
-                                        <div class="price" th:text="${#numbers.formatInteger(w.price/10000, 1, 'COMMA')} + '만원'">0만원</div>
+                                        <div class="price"
+                                             th:text="${(w.price != null) ? #numbers.formatInteger(w.price/10000, 1, 'COMMA') + '만원' : '가격 미정'}">
+                                        </div>
                                     </div>
                                 </a>
                             </div>
@@ -239,7 +242,8 @@
                                     총 <span th:text="${saleOn}">0</span>대
                                 </span>
                             </div>
-                            <a href="/mypage#sell" style="color:#666; text-decoration:none;">더보기 &gt;</a>
+                            <a href="/mypage#sell-car-section" class="go-sell-cars"
+                               style="color:#666; text-decoration:none;">더보기 &gt;</a>
                         </div>
 
                         <!-- 판매중 차량 없을 때 -->
@@ -260,8 +264,7 @@
                                     <div class="txt">
                                         <div class="name" th:text="${s.modelName}">모델명</div>
                                         <div class="price"
-                                             th:text="${s.price != null ? #numbers.formatInteger(s.price/10000, 1, 'COMMA') + '만원' : '가격 미정'}">
-                                            0만원
+                                             th:text="${(s.price != null) ? #numbers.formatInteger(s.price/10000, 1, 'COMMA') + '만원' : '가격 미정'}">
                                         </div>
                                     </div>
                                 </a>
@@ -299,43 +302,87 @@
             <div id="tab-truck" class="vehicle-tab-content hidden">
                 <section class="car-status">
 
-                    <!-- ✅ 내차 구매 박스 -->
-                    <div class="car-box">
-                        <h4>내차 구매</h4>
-                        <ul style="font-size: 13px; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 6px;">
-                            <li> 찜한 차량 <span style="float: right;">더보기 &gt;</span></li>
-                        </ul>
-                        <p class="no-data"><span style="color: orange;">찜한 차량</span>이 없습니다.</p>
+                    <!-- ✅ 화물 특장/버스 찜한 차량 -->
+                    <div class="car-box car-box--wish">
+                        <h4>찜한 화물·특장·버스</h4>
+
+                        <div style="display:flex; justify-content:space-between; align-items:center;
+                        border-bottom:1px solid #ddd; padding-bottom:6px; margin-bottom:8px;">
+                            <div>
+                                • 찜한 차량
+                                <span th:if="${truckWishCount > 0}" style="color:red;">
+                        총 <span th:text="${truckWishCount}">0</span>대
+                    </span>
+                            </div>
+                            <a href="/mypage#interested-cars" class="go-interested-cars"
+                               style="color:#666; text-decoration:none;">더보기 &gt;</a>
+                        </div>
+
+                        <!-- 비었을 때 -->
+                        <p class="no-data" th:if="${truckWishCount == 0}">
+                            <span style="color: orange;">찜한 차량</span>이 없습니다.
+                        </p>
+
+                        <!-- 목록 -->
+                        <div th:if="${truckWishCount > 0}" class="wish-mini">
+                            <div class="wish-mini-grid">
+                                <a th:each="t : ${truckWishMini}"
+                                   th:href="@{/cars/{id}(id=${t.id})}"
+                                   class="wish-mini-card">
+                                    <div class="thumb">
+                                        <img th:src="${t.frontViewUrl} ?: @{/img/common/noimage.png}" alt="">
+                                    </div>
+                                    <div class="txt">
+                                        <div class="name" th:text="${t.carName}">차량명</div>
+                                        <div class="price"
+                                             th:text="${(t.price != null) ? #numbers.formatInteger(t.price/10000, 1, 'COMMA') + '만원' : '가격 미정'}">
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- ✅ 내차 판매 박스 -->
-                    <div class="car-box">
-                        <h4>내차 판매</h4>
-                        <ul style="font-size: 13px; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 6px;">
-                            <li> 판매중 차량 <span style="color: red;">총 0대</span> <span style="float: right;">더보기 &gt;</span></li>
-                        </ul>
-                        <p class="no-data"><span style="color: orange;">판매중 차량</span>이 없습니다.</p>
+                    <!-- 🔥 화물차 내차 판매 리스트 -->
+                    <div class="car-box car-box--wish">
+                        <h4>내차 판매 리스트 (화물/특장/버스)</h4>
 
-                        <!-- 판매차량 관리 -->
-                        <div style="margin-top: 16px;">
-                            <br>
-                            <strong style="font-size: 13px;">• 판매차량 관리</strong>
-                            <span style="float: right;">더보기 &gt;</span>
-                            <div style="display: flex; gap: 10px; margin-top: 8px; font-size: 13px;">
-                                <div style="flex: 1; border: 1px solid #ccc; padding: 8px; text-align: center;">
-                                    <strong>판매대기</strong><br>
-                                    등록대기 <span style="color: red;"><span th:text="${saleWaiting}">0</span>대</span><br>
-                                    임시저장 <span style="color: red;">0대</span>
-                                </div>
-                                <div style="flex: 1; border: 1px solid #ccc; padding: 8px; text-align: center;">
-                                    <strong>판매완료<br>(최근 1년)</strong><br>
-                                    <span style="color: red;"><span th:text="${saleDone}">0</span>대</span>
-                                </div>
-                                <div style="flex: 1; border: 1px solid #ccc; padding: 8px; text-align: center;">
-                                    <strong>삭제<br>(최근 3개월)</strong><br>
-                                    기간만료 <span style="color: red;"><span th:text="${saleDeleted}">0</span>대</span><br>
-                                    직접삭제 <span style="color: red;">0대</span>
-                                </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;
+                    border-bottom:1px solid #ddd; padding-bottom:6px; margin-bottom:8px;">
+                            <div>
+                                • 판매중 차량
+                                <span th:if="${saleOnCargo != null}" style="color:red;">
+                                    총 <span th:text="${saleOnCargo}">0</span>대
+                                </span>
+                            </div>
+                            <a href="/mypage#sell-car-section" class="go-sell-cars"
+                               style="color:#666; text-decoration:none;">더보기 &gt;</a>
+                        </div>
+
+                        <!-- 판매중 차량 없을 때 -->
+                        <p class="no-data" th:if="${saleOnCargo == 0}">
+                            <span style="color: orange;">판매중 차량</span>이 없습니다.
+                        </p>
+
+                        <!-- 화물차 판매중 리스트 -->
+                        <div th:if="${saleOnCargo > 0}" class="wish-mini">
+                            <div class="wish-mini-grid">
+                                <a th:each="s : ${sellOnCargoCards}"
+                                   th:href="${s.carId} != null ? @{/cars/{id}(id=${s.carId})}
+                            : @{|/sell/detail/view?carNumber=${s.carNumber}|}"
+                                   class="wish-mini-card">
+
+                                    <div class="thumb">
+                                        <img th:src="${s.frontViewUrl} ?: @{/img/common/noimage.png}" alt="">
+                                    </div>
+
+                                    <div class="txt">
+                                        <div class="name" th:text="${s.modelName}">모델명</div>
+                                        <div class="price"
+                                             th:text="${(s.price != null) ? #numbers.formatInteger(s.price/10000, 1, 'COMMA') + '만원' : '가격 미정'}">
+                                        </div>
+                                    </div>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -381,7 +428,6 @@
                 </div>
             </div>
 
-            <!-- #### 사이드바 #### -->
             <!-- ############# 내차 구매 ################ -->
             <!-- 관심 차량 콘텐츠 (초기에 숨김) -->
             <div id="interested-cars-section" class="hidden">
@@ -394,65 +440,102 @@
                     <button class="tab-btn" data-tab="recent">최근 본 차량</button>
                 </div>
 
-                <!-- 테이블 -->
-                <div class="car-table">
-                    <div class="car-table-header">
-                      <span>
-                        찜한 차량 수 :
-                        <span style="color:red;" th:text="'총 ' + ${wishCount} + '대'">총 0대</span>
-                      </span>
-                        <div style="float: right;">
-                            <a href="#" class="wish-compare" style="font-size: 13px; color: #666;">비교하기</a> |
-                            <a href="#" class="wish-sort" style="font-size: 13px; color: #666;">최근 찜한순</a>
+
+                <!-- =============== 📌 1) 찜한 차량 영역 =============== -->
+                <div id="liked-content" class="tab-content">
+                    <div class="car-table">
+                        <div class="car-table-header">
+              <span>
+                찜한 차량 수 :
+                <span style="color:red;" th:text="'총 ' + ${wishCount} + '대'">총 0대</span>
+              </span>
+                            <div style="float: right;">
+                                <a href="#" class="wish-compare" style="font-size: 13px; color: #666;">비교하기</a> |
+                                <a href="#" class="wish-sort" style="font-size: 13px; color: #666;">최근 찜한순</a>
+                            </div>
                         </div>
+
+                        <table class="car-list-table">
+                            <thead>
+                            <tr>
+                                <th><input type="checkbox" id="wish-check-all"></th>
+                                <th>차량정보</th>
+                                <th>가격</th>
+                                <th>관리</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <!-- 비어있을 때 -->
+                            <tr th:if="${#lists.isEmpty(wishlistCars)}">
+                                <td colspan="4" style="text-align:center; color:#888;">찜한 차량이 없습니다.</td>
+                            </tr>
+
+                            <!-- 목록 렌더 -->
+                            <tr th:each="c : ${wishlistCars}">
+                                <td><input type="checkbox" name="wish-row" th:value="${c.carId}"></td>
+                                <td>
+                                    <a th:href="@{/cars/{id}(id=${c.carId})}" style="display:flex; gap:10px; align-items:center; text-decoration:none; color:inherit;">
+                                        <img th:src="${c.imageUrl} ?: '/img/common/noimage.png'"
+                                             style="width:100px; height:70px; object-fit:cover; border-radius:6px;">
+                                        <div>
+                                            <div style="font-weight:600;" th:text="${c.carName}">모델명</div>
+                                            <small th:text="${c.year} + '년식'">2021년식</small>
+                                        </div>
+                                    </a>
+                                </td>
+                                <td th:text="${#numbers.formatInteger(c.price, 3, 'COMMA')} + '원'">0원</td>
+                                <td><button type="button" class="btn-gray-small wish-remove-one" th:data-id="${c.carId}">삭제</button></td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
+                </div>
 
-                    <table class="car-list-table">
-                        <thead>
-                        <tr>
-                            <th><input type="checkbox" id="wish-check-all"></th>
-                            <th>차량정보</th>
-                            <th>가격</th>
-                            <th>관리</th>
-                        </tr>
-                        </thead>
+              <!-- =============== 📌 2) 최근 본 차량 영역 (새로 추가됨) =============== -->
+              <div id="recent-content" class="tab-content hidden">
+                  <div class="car-table">
+                      <div class="car-table-header">
+              <span>
+                최근 본 차량 수 :
+                <span style="color:red;" th:text="'총 ' + ${recentCount} + '대'">총 0대</span>
+              </span>
+                        </div>
 
-                        <tbody>
-                        <!-- 비어있을 때 -->
-                        <tr th:if="${#lists.isEmpty(wishlistCars)}">
-                            <td colspan="4" style="text-align:center; color:#888;">찜한 차량이 없습니다.</td>
-                        </tr>
+                        <table class="car-list-table">
+                            <thead>
+                            <tr>
+                                <th>차량정보</th>
+                                <th>가격</th>
+                                <th>최근 본 시간</th>
+                            </tr>
+                            </thead>
 
-                        <!-- 목록 렌더 -->
-                        <tr th:each="c : ${wishlistCars}">
-                            <td>
-                                <input type="checkbox" name="wish-row" th:value="${c.carId}">
-                            </td>
-                            <td>
-                                <a th:href="@{/cars/{id}(id=${c.carId})}" style="display:flex; gap:10px; align-items:center; text-decoration:none; color:inherit;">
-                                    <img th:if="${c.imageUrl}" th:src="${c.imageUrl}" alt=""
-                                         style="width:100px; height:70px; object-fit:cover; border-radius:6px;">
-                                    <img th:if="${c.imageUrl == null}" src="/img/common/noimage.png" alt=""
-                                         style="width:100px; height:70px; object-fit:cover; border-radius:6px;">
-                                    <div>
-                                        <div style="font-weight:600;" th:text="${c.carName}">모델명</div>
-                                        <small th:text="${c.year} + '년식'">2021년식</small>
-                                    </div>
-                                </a>
-                            </td>
-                            <td th:text="${#numbers.formatInteger(c.price, 3, 'COMMA')} + '원'">0원</td>
-                            <td>
-                                <button type="button" class="btn-gray-small wish-remove-one" th:data-id="${c.carId}">삭제</button>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+                            <tbody>
+                            <!-- 비어있을 때 -->
+                            <tr th:if="${#lists.isEmpty(recentCars)}">
+                                <td colspan="3" style="text-align:center; color:#888;">최근 본 차량이 없습니다.</td>
+                            </tr>
 
-                    <!-- 하단 버튼 -->
-                    <div style="margin-top:10px;">
-                        <label><input type="checkbox" id="wish-bottom-check-all" checked> 선택 차량을</label>
-                        <button type="button" class="btn-gray-small wish-compare-selected">비교하기</button>
-                        <button type="button" class="btn-gray-small wish-remove-selected">차량삭제</button>
+                            <!-- 목록 -->
+                            <tr th:each="rc : ${recentCars}">
+                                <td>
+                                    <a th:href="@{/cars/{id}(id=${rc.carId})}" style="display:flex; gap:10px; align-items:center; text-decoration:none; color:inherit;">
+                                        <img th:src="${rc.imageUrl} ?: '/img/common/noimage.png'"
+                                             style="width:100px; height:70px; object-fit:cover; border-radius:6px;">
+                                        <div>
+                                            <div style="font-weight:600;" th:text="${rc.carName}">모델명</div>
+                                            <small th:text="${rc.year} + '년식'">2021년식</small>
+                                        </div>
+                                    </a>
+                                </td>
+
+                                <td th:text="${#numbers.formatInteger(rc.price, 3, 'COMMA')} + '원'">0원</td>
+
+                                <td th:text="${#temporals.format(rc.viewedAt, 'yyyy-MM-dd HH:mm')}">최근 본 시간</td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -654,9 +737,9 @@
                 <div class="tab-buttons-wrapper">
                     <!-- 상위 탭 (국산/수입차 vs 화물/버스) -->
                     <div class="tab-buttons top-tab-buttons vehicle-tabs">
-                    <button class="tab-btn active" data-target="car-tab"
-                                th:text="|국산/수입차 (총 ${totalSellCars != null ? totalSellCars : #lists.size(sellDrafts)}대)|">
-                            국산/수입차 (총 0대)
+                        <button class="tab-btn active" data-target="car-tab"
+                                    th:text="|국산/수입차 (총 ${totalSellCars != null ? totalSellCars : #lists.size(sellDrafts)}대)|">
+                                국산/수입차 (총 0대)
                         </button>
                         <button class="tab-btn" data-target="truck-tab">화물•특장•버스</button>
                         <button class="btn-gray-small float-right">업데이트시간 보관함</button>
@@ -664,7 +747,7 @@
 
                     <!-- 하위 탭 (판매중, 대기 등) -->
                     <div class="tab-buttons sub-tab-buttons">
-                        <a th:href="@{/mypage(section='sell-car-section', tab='판매중')}"const tabButtons = document.querySelectorAll(".vehicle-tabs .tab-btn");
+                        <a th:href="@{/mypage(section='sell-car-section', tab='판매중')}"const tabButtons = document.querySelectorAll(".vehicle-tabs.tab-btn");
                            class="tab-btn"
                            th:classappend="${currentTab == '판매중'} ? 'active' : ''">판매중 (<span th:text="${saleOn}">0</span>대)</a>
 
@@ -2248,29 +2331,86 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+
             const tabButtons = document.querySelectorAll(".vehicle-tabs .tab-btn");
-            const tabContents = document.querySelectorAll(".vehicle-tab-content");
+            const tabContents = {
+                liked: document.getElementById("liked-content"),
+                recent: document.getElementById("recent-content")
+            };
 
             tabButtons.forEach(btn => {
                 btn.addEventListener("click", function () {
 
-                    // 1) 버튼 active 처리
+                    // 모든 버튼 active 해제
                     tabButtons.forEach(b => b.classList.remove("active"));
                     this.classList.add("active");
 
-                    // 2) 콘텐츠 숨기기
-                    tabContents.forEach(c => c.classList.add("hidden"));
+                    // 모든 콘텐츠 숨김
+                    tabContents.liked.classList.add("hidden");
+                    tabContents.recent.classList.add("hidden");
 
-                    // 3) data-target에 맞는 콘텐츠 보이기
-                    const targetId = this.dataset.target;
-                    if (!targetId) return;
-
-                    const targetContent = document.getElementById(targetId);
-                    if (targetContent) targetContent.classList.remove("hidden");
+                    // 표시할 콘텐츠 선택
+                    const target = this.dataset.tab;   // liked or recent
+                    tabContents[target].classList.remove("hidden");
                 });
             });
         });
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const hash = window.location.hash.replace("#", "");
+
+            // 공통 섹션/버튼/탭 초기화 함수
+            const resetAll = () => {
+                document.querySelectorAll(".mypage-main > div").forEach(sec => sec.classList.add("hidden"));
+                document.querySelectorAll(".mypage-btn").forEach(btn => btn.classList.remove("active"));
+                document.querySelectorAll(".sidebar-link").forEach(btn => btn.classList.remove("active"));
+                document.querySelectorAll(".vehicle-tabs .tab-btn").forEach(btn => btn.classList.remove("active"));
+            };
+
+            // 관심차량 처리
+            if (hash === "interested-cars" || hash === "interested-cars-recent") {
+
+                resetAll();
+
+                // 관심차량 섹션 표시
+                const sec = document.getElementById("interested-cars-section");
+                if (sec) sec.classList.remove("hidden");
+
+                // 상단 활성화
+                document.querySelector('.mypage-btn[data-target="interested-cars-section"]')
+                    ?.classList.add("active");
+
+                // 사이드바 활성화
+                document.querySelector('.sidebar-link[data-target="interested-cars-section"]')
+                    ?.classList.add("active");
+
+                // ---------- 탭 선택 처리 ----------
+                if (hash === "interested-cars") {
+                    // 찜한 차량 탭 켜기
+                    document.querySelector('.vehicle-tabs .tab-btn[data-tab="liked"]')
+                        ?.classList.add("active");
+
+                    document.getElementById("liked-content")?.classList.remove("hidden");
+                    document.getElementById("recent-content")?.classList.add("hidden");
+                }
+
+                if (hash === "interested-cars-recent") {
+                    // 최근 본 차량 탭 켜기
+                    document.querySelector('.vehicle-tabs .tab-btn[data-tab="recent"]')
+                        ?.classList.add("active");
+
+                    document.getElementById("liked-content")?.classList.add("hidden");
+                    document.getElementById("recent-content")?.classList.remove("hidden");
+                }
+            }
+
+        });
+    </script>
+
+
 </th:block>
 
 </body>

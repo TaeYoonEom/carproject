@@ -98,7 +98,10 @@ public class SellSubmissionService {
         a.setIsEcoFriendly(eco);
 
         // ✅ cargo: 기본 false 처리
-        a.setIsCargo(d.getCarType() != null && d.getCarType().contains("화물"));
+        // ✅ cargo: boolean → Integer 로 변환 후 저장
+        int cargoValue = (d.getCarType() != null && d.getCarType().contains("화물")) ? 1 : 0;
+        a.setIsCargo(cargoValue);
+
 
         // ✅ draft 연결
         a.setCarEntryDraftId(d.getId());

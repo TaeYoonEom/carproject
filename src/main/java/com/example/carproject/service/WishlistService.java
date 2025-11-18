@@ -1,5 +1,6 @@
 package com.example.carproject.service;
 
+import com.example.carproject.domain.AllCarSale;
 import com.example.carproject.domain.Wishlist;
 import com.example.carproject.repository.WishlistRepository;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,12 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.carproject.dto.RecentCarDto;
+import com.example.carproject.buy.domain.CarSale;
+import com.example.carproject.buy.domain.ImportCarSale;
+import com.example.carproject.buy.domain.CargoSpecialSale;
+import com.example.carproject.domain.CarImage;
+
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -62,14 +69,28 @@ public class WishlistService {
 
         String sql = """
             SELECT
-                a.car_id              AS carId,
-                COALESCE(cs.car_name, ic.car_name)   AS carName,
-                COALESCE(cs.year, ic.year)           AS year,
-                COALESCE(cs.price, ic.price)         AS price,
-                img.front_view_url    AS imageUrl
+                a.car_id AS carId,
+        
+                /* 🔥 차량 이름: 국산/수입/car_sale + cargo까지 통합 */
+                COALESCE(cs.car_name,
+                         ic.car_name,
+                         CONCAT(cg.manufacturer, ' ', cg.model_name)) AS carName,
+        
+                /* 🔥 연식: cargo에는 year만 있음 */
+                COALESCE(cs.year, ic.year, cg.year) AS year,
+        
+                /* 🔥 가격 */
+                COALESCE(cs.price, ic.price, cg.price) AS price,
+        
+                /* 🔥 이미지 경로 */
+                img.front_view_url AS imageUrl
+        
             FROM car_purchase_wishlist w
-            JOIN all_car_sale a
-              ON a.car_id = w.car_id
+            JOIN all_car_sale a ON a.car_id = w.car_id
+        
+            /* ======================
+               1) 국산차(car_sale)
+               ====================== */
             LEFT JOIN (
                 SELECT cs1.*
                 FROM car_sale cs1
@@ -77,8 +98,13 @@ public class WishlistService {
                     SELECT car_id, MAX(created_at) AS max_created
                     FROM car_sale
                     GROUP BY car_id
-                ) t ON t.car_id = cs1.car_id AND t.max_created = cs1.created_at
+                ) t
+                ON cs1.car_id = t.car_id AND cs1.created_at = t.max_created
             ) cs ON cs.car_id = a.car_id
+        
+            /* ======================
+               2) 수입차(import_car_sale)
+               ====================== */
             LEFT JOIN (
                 SELECT ic1.*
                 FROM import_car_sale ic1
@@ -86,11 +112,31 @@ public class WishlistService {
                     SELECT car_id, MAX(created_at) AS max_created
                     FROM import_car_sale
                     GROUP BY car_id
-                ) t ON t.car_id = ic1.car_id AND t.max_created = ic1.created_at
+                )t
+                ON ic1.car_id = t.car_id AND ic1.created_at = t.max_created
             ) ic ON ic.car_id = a.car_id
+        
+            /* ======================
+               3) 화물/특장(cargo_special_sale)
+               ====================== */
+            LEFT JOIN (
+                SELECT cg1.*
+                FROM cargo_special_sale cg1
+                JOIN (
+                    SELECT car_id, MAX(created_at) AS max_created
+                    FROM cargo_special_sale
+                    GROUP BY car_id
+                ) t
+                ON cg1.car_id = t.car_id AND cg1.created_at = t.max_created
+            ) cg ON cg.car_id = a.car_id
+        
+            /* ======================
+               대표 이미지
+               ====================== */
             LEFT JOIN car_image img
               ON img.car_id = a.car_id
              AND img.is_representative = 1
+        
             WHERE w.member_id = :memberId
             ORDER BY w.created_at DESC, w.id DESC
             """;
@@ -152,4 +198,58 @@ public class WishlistService {
         public String getImageUrl() { return imageUrl; }
         public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
     }
+
+    public RecentCarDto toRecentDto(Object carEntity, CarImage image, AllCarSale all) {
+
+        if (carEntity == null) return null;
+
+        Integer carId = null;
+        String carName = null;
+        Integer year = null;
+        Integer price = null;
+
+        int origin = all.getOrigin();       // 0 or 1
+        int isCargo = all.getIsCargo() != null ? all.getIsCargo() : 0;  // 0 or 1
+
+        // 🔹 화물차 (isCargo = 1)
+        if (isCargo == 1 && carEntity instanceof CargoSpecialSale c) {
+            carId = c.getCarId();
+            carName = c.getManufacturer() + " " + c.getModelName();
+            year = c.getYear();
+            price = c.getPrice();
+        }
+
+        // 🔹 국산차 (origin 0 & isCargo 0)
+        else if (isCargo == 0 && origin == 0 && carEntity instanceof CarSale c) {
+            carId = c.getCarId();
+            carName = c.getCarName();
+            year = c.getYear();
+            price = c.getPrice();
+        }
+
+        // 🔹 수입차 (origin 1 & isCargo 0)
+        else if (isCargo == 0 && origin == 1 && carEntity instanceof ImportCarSale c) {
+            carId = c.getCarId();
+            carName = c.getCarName();
+            year = c.getYear();
+            price = c.getPrice();
+        }
+
+        // 이미지 세팅
+        String imgUrl = (image != null && image.getFrontViewUrl() != null)
+                ? image.getFrontViewUrl()
+                : "/img/common/noimage.png";
+
+        return new RecentCarDto(
+                carId,
+                carName,
+                year,
+                price,
+                imgUrl,
+                origin,    // 0 or 1
+                isCargo,
+                null// 0 or 1
+        );
+    }
+
 }

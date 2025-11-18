@@ -55,8 +55,13 @@ public class SellSaleService {
         a.setMemberId(d.getMemberId());
         a.setOrigin(d.getOrigin() == null ? 0 : d.getOrigin());
         a.setIsEcoFriendly(Boolean.TRUE.equals(d.getIsEcoFriendly()));
-        a.setIsCargo(d.getCarType()!=null && d.getCarType().contains("화물"));
+
+        // 🔥 cargo boolean → int 변환
+        int cargoValue = (d.getCarType() != null && d.getCarType().contains("화물")) ? 1 : 0;
+        a.setIsCargo(cargoValue);
+
         a.setCarEntryDraftId(d.getId());
         return allRepo.save(a);
     }
+
 }

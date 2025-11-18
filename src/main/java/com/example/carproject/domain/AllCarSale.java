@@ -25,7 +25,7 @@ public class AllCarSale {
     private Boolean isEcoFriendly;
 
     @Column(name = "is_cargo")
-    private Boolean isCargo;
+    private Integer isCargo;   // 🔥 Boolean → Integer 로 변경
 
     @Column(name = "car_entry_draft_id", unique = true)          // ✅ 서비스에서 세팅할 필드 추가
     private Integer carEntryDraftId;
