@@ -178,13 +178,13 @@
                 </div>
                 <br>
             </div>
-
+            <!-- #########마이페이지 홈######### -->
             <!-- #########구매/판매 영역######### -->
             <!-- 탭 버튼 -->
-            <div class="vehicle-tabs">
+            <div class="vehicle-tabs home-tabs">
                 <br>
-                <button class="tab-btn active" data-target="tab-normal">국산/수입차</button>
-                <button class="tab-btn" data-target="tab-truck">화물·특장·버스</button>
+                <button class="tab-btn home-tab-btn active" data-target="tab-normal">국산/수입차</button>
+                <button class="tab-btn home-tab-btn" data-target="tab-truck">화물·특장·버스</button>
             </div>
 
             <!-- 국산/수입차 콘텐츠 -->
@@ -203,7 +203,7 @@
                             </div>
                             <a href="/mypage#interested-cars" class="go-interested-cars"
                                style="color:#666; text-decoration:none;">더보기 &gt;</a>
-                            </div>
+                        </div>
 
                         <!-- 비었을 때 -->
                         <p class="no-data" th:if="${wishCount == null or wishCount == 0}">
@@ -311,8 +311,8 @@
                             <div>
                                 • 찜한 차량
                                 <span th:if="${truckWishCount > 0}" style="color:red;">
-                        총 <span th:text="${truckWishCount}">0</span>대
-                    </span>
+                                    총 <span th:text="${truckWishCount}">0</span>대
+                                </span>
                             </div>
                             <a href="/mypage#interested-cars" class="go-interested-cars"
                                style="color:#666; text-decoration:none;">더보기 &gt;</a>
@@ -348,7 +348,7 @@
                         <h4>내차 판매 리스트 (화물/특장/버스)</h4>
 
                         <div style="display:flex; justify-content:space-between; align-items:center;
-                    border-bottom:1px solid #ddd; padding-bottom:6px; margin-bottom:8px;">
+                        border-bottom:1px solid #ddd; padding-bottom:6px; margin-bottom:8px;">
                             <div>
                                 • 판매중 차량
                                 <span th:if="${saleOnCargo != null}" style="color:red;">
@@ -736,20 +736,22 @@
                 <!-- ✅ 테두리 통합된 탭 영역 -->
                 <div class="tab-buttons-wrapper">
                     <!-- 상위 탭 (국산/수입차 vs 화물/버스) -->
-                    <div class="tab-buttons top-tab-buttons vehicle-tabs">
-                        <button class="tab-btn active" data-target="car-tab"
+                    <div class="tab-buttons top-tab-buttons sell-tabs">
+                        <button class="tab-btn sell-tab-btn active" data-target="car-tab"
                                     th:text="|국산/수입차 (총 ${totalSellCars != null ? totalSellCars : #lists.size(sellDrafts)}대)|">
                                 국산/수입차 (총 0대)
                         </button>
-                        <button class="tab-btn" data-target="truck-tab">화물•특장•버스</button>
+                        <button class="tab-btn sell-tab-btn" data-target="truck-tab">화물•특장•버스</button>
                         <button class="btn-gray-small float-right">업데이트시간 보관함</button>
                     </div>
 
                     <!-- 하위 탭 (판매중, 대기 등) -->
                     <div class="tab-buttons sub-tab-buttons">
-                        <a th:href="@{/mypage(section='sell-car-section', tab='판매중')}"const tabButtons = document.querySelectorAll(".vehicle-tabs.tab-btn");
+                        <a th:href="@{/mypage(section='sell-car-section', tab='판매중')}"
                            class="tab-btn"
-                           th:classappend="${currentTab == '판매중'} ? 'active' : ''">판매중 (<span th:text="${saleOn}">0</span>대)</a>
+                           th:classappend="${currentTab == '판매중'} ? 'active' : ''">
+                            판매중 (<span th:text="${saleOn}">0</span>대)
+                        </a>
 
                         <a th:href="@{/mypage(section='sell-car-section', tab='판매대기')}"
                            class="tab-btn"
@@ -1020,7 +1022,6 @@
                         - 입력횟수: 전화 10회, 사고이력/등록증 6회, 파워팩 15회<br>
                         - 자동업데이트 항목은 제외됩니다.
                     </div>
-
                 </div>
             </div>
 
@@ -1882,6 +1883,162 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
 
+            /* ============================================================
+               1) 마이페이지 홈 탭 (국산/수입차 ↔ 화물특장버스)
+               ============================================================ */
+            (function () {
+                const homeTabs = document.querySelectorAll(".home-tabs .home-tab-btn");
+                const homeContents = {
+                    "tab-normal": document.getElementById("tab-normal"),
+                    "tab-truck": document.getElementById("tab-truck")
+                };
+
+                if (!homeTabs.length) return;
+
+                homeTabs.forEach(btn => {
+                    btn.addEventListener("click", function () {
+
+                        // active 처리
+                        homeTabs.forEach(b => b.classList.remove("active"));
+                        this.classList.add("active");
+
+                        // 콘텐츠 전환
+                        const target = this.dataset.target;
+                        Object.keys(homeContents).forEach(id => {
+                            homeContents[id].classList.add("hidden");
+                        });
+                        homeContents[target]?.classList.remove("hidden");
+                    });
+                });
+            })();
+
+
+
+            /* ============================================================
+           2) 판매차량 상단 탭 (국산/수입차 ↔ 화물·특장·버스) - SPA 전환
+           ============================================================ */
+            (function () {
+                const sellTabs = document.querySelectorAll(".sell-tabs .sell-tab-btn");
+                const sellSection = document.getElementById("sell-car-section");
+
+                if (!sellTabs.length || !sellSection) return;
+
+                sellTabs.forEach(btn => {
+                    btn.addEventListener("click", function () {
+
+                        // active 처리
+                        sellTabs.forEach(b => b.classList.remove("active"));
+                        this.classList.add("active");
+
+                        const target = this.dataset.target;
+
+                        // 1) 국산/수입차 목록 로드
+                        if (target === "car-tab") {
+                            swapSellCategory("/mypage?section=sell-car-section&tab=판매중");
+                            return;
+                        }
+
+                        // 2) 화물/버스 목록 로드
+                        if (target === "truck-tab") {
+                            swapSellCategory("/mypage?section=sell-car-section&tab=트럭-판매중");
+                            return;
+                        }
+                    });
+                });
+
+                // 카테고리 전환 함수
+                async function swapSellCategory(url) {
+                    try {
+                        const res = await fetch(url, { headers: { "X-Requested-With": "fetch" } });
+                        const html = await res.text();
+                        const doc = new DOMParser().parseFromString(html, "text/html");
+
+                        // 하위 탭 교체
+                        const newTabs = doc.querySelector(".sub-tab-buttons");
+                        const oldTabs = sellSection.querySelector(".sub-tab-buttons");
+                        if (newTabs && oldTabs) oldTabs.replaceWith(newTabs);
+
+                        // 테이블 교체
+                        const newTbody = doc.querySelector(".simple-table tbody");
+                        const curTbody = sellSection.querySelector(".simple-table tbody");
+                        if (newTbody && curTbody) curTbody.replaceWith(newTbody);
+
+                        // 하위 탭 이벤트 다시 바인딩
+                        rebindSubTabEvents();
+                    } catch (err) {
+                        console.log(err);
+                    }
+                }
+
+            })();
+
+
+            /* ============================================================
+               3) 관심차량 탭 (찜/최근)
+               ============================================================ */
+            (function () {
+                const interestTabs = document.querySelectorAll("#interested-cars-section .tab-btn");
+                const liked = document.getElementById("liked-content");
+                const recent = document.getElementById("recent-content");
+
+                if (!interestTabs.length) return;
+
+                interestTabs.forEach(btn => {
+                    btn.addEventListener("click", function () {
+
+                        // active 처리
+                        interestTabs.forEach(b => b.classList.remove("active"));
+                        this.classList.add("active");
+
+                        // 콘텐츠 전환
+                        liked?.classList.add("hidden");
+                        recent?.classList.add("hidden");
+
+                        const target = this.dataset.tab;
+                        document.getElementById(`${target}-content`)?.classList.remove("hidden");
+                    });
+                });
+            })();
+
+
+
+            /* ============================================================
+               4) 해시 이동 처리 (#interested-cars, #interested-cars-recent)
+               ============================================================ */
+            (function () {
+                const hash = window.location.hash.replace("#", "");
+                if (!["interested-cars", "interested-cars-recent"].includes(hash)) return;
+
+                const sec = document.getElementById("interested-cars-section");
+                if (!sec) return;
+
+                // 모든 섹션 숨김
+                document.querySelectorAll(".mypage-main > div").forEach(div => div.classList.add("hidden"));
+
+                sec.classList.remove("hidden");
+
+                // 상단 동기화
+                document.querySelector('.mypage-btn[data-target="interested-cars-section"]')
+                    ?.classList.add("active");
+
+                // 사이드바 동기화
+                document.querySelector('.sidebar-link[data-target="interested-cars-section"]')
+                    ?.classList.add("active");
+
+                // 탭 표시
+                if (hash === "interested-cars") {
+                    document.querySelector('#interested-cars-section .tab-btn[data-tab="liked"]')
+                        ?.classList.add("active");
+                    document.getElementById("liked-content")?.classList.remove("hidden");
+                    document.getElementById("recent-content")?.classList.add("hidden");
+                } else {
+                    document.querySelector('#interested-cars-section .tab-btn[data-tab="recent"]')
+                        ?.classList.add("active");
+                    document.getElementById("liked-content")?.classList.add("hidden");
+                    document.getElementById("recent-content")?.classList.remove("hidden");
+                }
+            })();
+
           // ===============================
           // 1) 판매차량관리 하위 탭(a) 클릭 제어
           // ===============================
@@ -2239,173 +2396,246 @@
     </script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-          // ✅ 기본 탭 자동 설정
-          const url = new URL(window.location.href);
+        document.addEventListener("DOMContentLoaded", function () {
 
-          // section이 sell-car-section인데 tab이 없으면 → 기본 탭을 '판매중'으로 강제
-          if (url.searchParams.get("section") === "sell-car-section" && !url.searchParams.get("tab")) {
-            url.searchParams.set("tab", "판매중");
-            history.replaceState({}, "", url.toString());
-          }
-
-          // ✅ 하위 탭: 판매중/판매대기/완료/삭제 를 SPA로 교체 로딩
-          (function () {
-            const sellSection = document.getElementById("sell-car-section");
-            if (!sellSection) return;
-
-            const tableSelector = "#sell-car-section .simple-table";
-            const tbodySelector = "#sell-car-section .simple-table tbody";
-
-            function showLoading() {
-              if (sellSection.querySelector(".ajax-loading")) return;
-              const div = document.createElement("div");
-              div.className = "ajax-loading";
-              div.style.cssText = "padding:12px 0;color:#666;font-size:13px;";
-              div.textContent = "불러오는 중...";
-              const table = sellSection.querySelector(tableSelector);
-              table?.parentNode?.insertBefore(div, table);
-            }
-            function hideLoading() {
-              sellSection.querySelector(".ajax-loading")?.remove();
+            /* ============================================================
+               1) 판매차량 관리 – 기본 탭 강제 설정 (/mypage?section=sell-car-section)
+               ============================================================ */
+            const url = new URL(window.location.href);
+            if (url.searchParams.get("section") === "sell-car-section" &&
+                !url.searchParams.get("tab")) {
+                url.searchParams.set("tab", "판매중");
+                history.replaceState({}, "", url.toString());
             }
 
-            async function swapSellList(url, pushState = true) {
-              try {
-                showLoading();
-                const res = await fetch(url, { headers: { "X-Requested-With": "fetch" } });
-                if (!res.ok) throw new Error("네트워크 오류");
-                const html = await res.text();
 
-                const doc = new DOMParser().parseFromString(html, "text/html");
+            /* ============================================================
+               2) 판매차량 – 하위 탭 SPA 로딩 (판매중/대기/완료/삭제)
+               ============================================================ */
+            (function () {
+                const sellSection = document.getElementById("sell-car-section");
+                if (!sellSection) return;
 
-                const newTabs = doc.querySelector(".sub-tab-buttons");
-                const oldTabs = sellSection.querySelector(".sub-tab-buttons");
-                if (newTabs && oldTabs) oldTabs.replaceWith(newTabs);
+                const tableSelector = "#sell-car-section .simple-table";
+                const tbodySelector = "#sell-car-section .simple-table tbody";
 
-                const newTbody = doc.querySelector(tbodySelector);
-                const curTbody = sellSection.querySelector(tbodySelector);
-                if (newTbody && curTbody) curTbody.replaceWith(newTbody);
+                function showLoading() {
+                    if (sellSection.querySelector(".ajax-loading")) return;
+                    const div = document.createElement("div");
+                    div.className = "ajax-loading";
+                    div.style.cssText = "padding:12px 0;color:#666;font-size:13px;";
+                    div.textContent = "불러오는 중...";
+                    const table = sellSection.querySelector(tableSelector);
+                    table?.parentNode?.insertBefore(div, table);
+                }
+                function hideLoading() {
+                    sellSection.querySelector(".ajax-loading")?.remove();
+                }
 
-                if (pushState) history.pushState({ __sellTabSwap: true }, "", url);
+                async function swapSellList(url, pushState = true) {
+                    try {
+                        showLoading();
+                        const res = await fetch(url, { headers: { "X-Requested-With": "fetch" } });
+                        if (!res.ok) throw new Error("네트워크 오류");
+                        const html = await res.text();
+                        const doc = new DOMParser().parseFromString(html, "text/html");
+
+                        const newTabs = doc.querySelector(".sub-tab-buttons");
+                        const oldTabs = sellSection.querySelector(".sub-tab-buttons");
+                        if (newTabs && oldTabs) oldTabs.replaceWith(newTabs);
+
+                        const newTbody = doc.querySelector(tbodySelector);
+                        const curTbody = sellSection.querySelector(tbodySelector);
+                        if (newTbody && curTbody) curTbody.replaceWith(newTbody);
+
+                        if (pushState) history.pushState({ __sellTabSwap: true }, "", url);
+
+                        rebindSubTabEvents();
+                    } catch (e) {
+                        alert("목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
+                        window.location.href = url;
+                    } finally {
+                        hideLoading();
+                    }
+                }
+
+                function handleSubTabClick(e) {
+                    const a = e.target.closest("a");
+                    if (!a) return;
+                    const href = a.getAttribute("href") || "";
+                    if (!href) return;
+
+                    e.preventDefault();
+                    e.stopPropagation();
+                    swapSellList(href, true);
+                }
+
+                function rebindSubTabEvents() {
+                    const wrap = sellSection.querySelector(".sub-tab-buttons");
+                    if (!wrap) return;
+                    wrap.querySelectorAll("a").forEach(a => a.addEventListener("click", handleSubTabClick));
+                }
 
                 rebindSubTabEvents();
-              } catch (e) {
-                console.error(e);
-                alert("목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
-                window.location.href = url;
-              } finally {
-                hideLoading();
-              }
-            }
 
-            function handleSubTabClick(e) {
-              const a = e.target.closest("a");
-              if (!a) return;
-              const href = a.getAttribute("href") || "";
-              if (!href) return;
-              e.preventDefault();
-              e.stopPropagation();
-              swapSellList(href, true);
-            }
-
-            function rebindSubTabEvents() {
-              const newWrap = sellSection.querySelector(".sub-tab-buttons");
-              if (!newWrap) return;
-              newWrap.querySelectorAll("a").forEach(a => {
-                a.addEventListener("click", handleSubTabClick);
-              });
-            }
-
-            rebindSubTabEvents();
-
-            window.addEventListener("popstate", () => {
-              const url = location.href;
-              if (url.includes("/mypage") && url.includes("section=sell-car-section") && url.includes("tab=")) {
-                swapSellList(url, false);
-              }
-            });
-          })();
-        });
-    </script>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-
-            const tabButtons = document.querySelectorAll(".vehicle-tabs .tab-btn");
-            const tabContents = {
-                liked: document.getElementById("liked-content"),
-                recent: document.getElementById("recent-content")
-            };
-
-            tabButtons.forEach(btn => {
-                btn.addEventListener("click", function () {
-
-                    // 모든 버튼 active 해제
-                    tabButtons.forEach(b => b.classList.remove("active"));
-                    this.classList.add("active");
-
-                    // 모든 콘텐츠 숨김
-                    tabContents.liked.classList.add("hidden");
-                    tabContents.recent.classList.add("hidden");
-
-                    // 표시할 콘텐츠 선택
-                    const target = this.dataset.tab;   // liked or recent
-                    tabContents[target].classList.remove("hidden");
+                // 뒤로가기 대응
+                window.addEventListener("popstate", () => {
+                    const url = location.href;
+                    if (url.includes("/mypage") &&
+                        url.includes("section=sell-car-section") &&
+                        url.includes("tab=")) {
+                        swapSellList(url, false);
+                    }
                 });
-            });
-        });
-    </script>
+            })();
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
 
-            const hash = window.location.hash.replace("#", "");
+            /* ============================================================
+               3) 관심차량 탭 (찜 / 최근본)
+               ============================================================ */
+            (function () {
+                const interestTabs = document.querySelectorAll("#interested-cars-section .tab-btn");
+                const likedContent = document.getElementById("liked-content");
+                const recentContent = document.getElementById("recent-content");
 
-            // 공통 섹션/버튼/탭 초기화 함수
-            const resetAll = () => {
-                document.querySelectorAll(".mypage-main > div").forEach(sec => sec.classList.add("hidden"));
-                document.querySelectorAll(".mypage-btn").forEach(btn => btn.classList.remove("active"));
-                document.querySelectorAll(".sidebar-link").forEach(btn => btn.classList.remove("active"));
-                document.querySelectorAll(".vehicle-tabs .tab-btn").forEach(btn => btn.classList.remove("active"));
-            };
+                if (!interestTabs.length) return;
 
-            // 관심차량 처리
-            if (hash === "interested-cars" || hash === "interested-cars-recent") {
+                interestTabs.forEach(btn => {
+                    btn.addEventListener("click", function () {
+
+                        interestTabs.forEach(b => b.classList.remove("active"));
+                        this.classList.add("active");
+
+                        likedContent?.classList.add("hidden");
+                        recentContent?.classList.add("hidden");
+
+                        const target = this.dataset.tab;
+                        document.getElementById(`${target}-content`)?.classList.remove("hidden");
+                    });
+                });
+            })();
+
+
+            /* ============================================================
+               4) 관심차량 해시 (#interested-cars, #interested-cars-recent)
+               ============================================================ */
+            (function () {
+                const hash = window.location.hash.replace("#", "");
+                if (hash !== "interested-cars" && hash !== "interested-cars-recent") return;
+
+                const resetAll = () => {
+                    document.querySelectorAll(".mypage-main > div").forEach(sec => sec.classList.add("hidden"));
+                    document.querySelectorAll(".mypage-btn").forEach(btn => btn.classList.remove("active"));
+                    document.querySelectorAll(".sidebar-link").forEach(btn => btn.classList.remove("active"));
+                    document.querySelectorAll("#interested-cars-section .tab-btn").forEach(btn => btn.classList.remove("active"));
+                };
 
                 resetAll();
 
-                // 관심차량 섹션 표시
                 const sec = document.getElementById("interested-cars-section");
-                if (sec) sec.classList.remove("hidden");
+                sec?.classList.remove("hidden");
 
-                // 상단 활성화
-                document.querySelector('.mypage-btn[data-target="interested-cars-section"]')
-                    ?.classList.add("active");
+                document.querySelector('.mypage-btn[data-target="interested-cars-section"]')?.classList.add("active");
+                document.querySelector('.sidebar-link[data-target="interested-cars-section"]')?.classList.add("active");
 
-                // 사이드바 활성화
-                document.querySelector('.sidebar-link[data-target="interested-cars-section"]')
-                    ?.classList.add("active");
-
-                // ---------- 탭 선택 처리 ----------
                 if (hash === "interested-cars") {
-                    // 찜한 차량 탭 켜기
-                    document.querySelector('.vehicle-tabs .tab-btn[data-tab="liked"]')
+                    document.querySelector('#interested-cars-section .tab-btn[data-tab="liked"]')
                         ?.classList.add("active");
-
                     document.getElementById("liked-content")?.classList.remove("hidden");
                     document.getElementById("recent-content")?.classList.add("hidden");
-                }
-
-                if (hash === "interested-cars-recent") {
-                    // 최근 본 차량 탭 켜기
-                    document.querySelector('.vehicle-tabs .tab-btn[data-tab="recent"]')
+                } else {
+                    document.querySelector('#interested-cars-section .tab-btn[data-tab="recent"]')
                         ?.classList.add("active");
-
                     document.getElementById("liked-content")?.classList.add("hidden");
                     document.getElementById("recent-content")?.classList.remove("hidden");
                 }
-            }
+            })();
+
+            /* ============================================================
+               더보기 버튼 → 새로고침 없이 SPA 이동 처리
+            ============================================================ */
+            (function () {
+                function openSection(sectionId) {
+                    // 모든 섹션 숨기기
+                    document.querySelectorAll(".mypage-main > div")
+                        .forEach(div => div.classList.add("hidden"));
+
+                    // 해당 섹션 표시
+                    document.getElementById(sectionId)?.classList.remove("hidden");
+
+                    // 상단 버튼 active
+                    document.querySelectorAll(".mypage-btn").forEach(btn => btn.classList.remove("active"));
+                    document.querySelector(`.mypage-btn[data-target="${sectionId}"]`)?.classList.add("active");
+
+                    // 사이드바 active
+                    document.querySelectorAll(".sidebar-link").forEach(btn => btn.classList.remove("active"));
+                    document.querySelector(`.sidebar-link[data-target="${sectionId}"]`)?.classList.add("active");
+                }
+
+                /* --------------------------
+                   1) 관심차량 더보기
+                --------------------------- */
+                document.querySelectorAll("a.go-interested-cars").forEach(a => {
+                    a.addEventListener("click", function (e) {
+                        e.preventDefault();   // 이동 막음
+
+                        // SPA 방식으로 열기
+                        openSection("interested-cars-section");
+
+                        // 찜한 차량 탭 자동 활성화
+                        document.querySelector('#interested-cars-section .tab-btn[data-tab="liked"]')
+                            ?.classList.add("active");
+
+                        document.getElementById("liked-content")?.classList.remove("hidden");
+                        document.getElementById("recent-content")?.classList.add("hidden");
+
+                        // URL 해시 동기화 (새로고침 없음)
+                        history.replaceState({}, "", "/mypage#interested-cars");
+                    });
+                });
+
+                /* --------------------------
+                   2) 판매차량 더보기
+                --------------------------- */
+                document.querySelectorAll("a.go-sell-cars").forEach(a => {
+                    a.addEventListener("click", function (e) {
+                        e.preventDefault(); // 이동 막음
+
+                        // SPA 방식으로 섹션 열기
+                        openSection("sell-car-section");
+
+                        // 상위 탭 국산/수입차 활성화
+                        document.querySelector('.sell-tab-btn[data-target="car-tab"]')
+                            ?.classList.add("active");
+
+                        // 하위 탭 "판매중" 활성화
+                        const firstSubTab = document.querySelector("#sell-car-section .sub-tab-buttons .tab-btn");
+                        firstSubTab?.classList.add("active");
+
+                        // URL 해시만 바꿔줌 (새로고침 없음)
+                        history.replaceState({}, "", "/mypage#sell-car-section");
+                    });
+                });
+            })();
+        });
+    </script>
+
+    <!-- ⭐ 여기 추가하면 됨 -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const allTabGroups = document.querySelectorAll(".vehicle-tabs");
+
+            allTabGroups.forEach(group => {
+                const buttons = group.querySelectorAll(".tab-btn");
+
+                buttons.forEach(btn => {
+                    btn.addEventListener("click", function () {
+                        buttons.forEach(b => b.classList.remove("active"));
+                        this.classList.add("active");
+                    });
+                });
+            });
 
         });
     </script>
