@@ -147,33 +147,62 @@ details[open] > summary::after{
   display: grid; gap: 6px;
 }
 
-.filter-list label {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-
-    font-size: 14px;
-    color: #333;
-    padding: 6px 0;
-}
-
 /* 필터링 카운트 */
-.filter-list.with-count li{font-size: 13px; display:flex;justify-content:space-between;align-items:center;gap:8px;}
-.filter-list label {
+.filter-list.with-count label {
+    display: flex;
+    justify-content: space-between;
+       align-items: center;
+    width: 100%;
+    font-size: 13px;
+    color: #333;
+    padding: 4px 0;
+    cursor: pointer;
+}
+
+.filter-list.with-count .count {
+    margin-left: auto;
+        color: #999;
+        font-size: 13px;
+        white-space: nowrap;
+}
+
+.filter-divider {
+    border-bottom: 1px solid #eee;
+    margin: 8px 0;
+}
+
+.more-region-btn {
+    font-size: 13px;
+    padding: 8px 0;
+    cursor: pointer;
+    color: #333;
+}
+
+.more-region-btn:hover {
+    color: #000;
+}
+/* li 전체가 한 줄 정렬되도록 */
+.filter-list.with-count li {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
 
-    font-size: 14px;
-    color: #333;
-    padding: 6px 0;
+    padding: 2px 0;
+    width: 100%;
 }
-/* 오른쪽 카운트 스타일 */
-.filter-list .count {
-    margin-left: auto; /* 🔥 오른쪽 끝으로 밀기 */
-    color: #8a8f94;    /* 엔카 스타일 회색 */
+
+/* label은 내용만 차지하도록 */
+.filter-list.with-count li label {
+    display: flex;
+    align-items: center;
+    gap: 6px; /* checkbox와 텍스트 간격 */
+    flex-grow: 0; /* label이 줄 전체를 먹지 않도록 */
+}
+
+/* 오른쪽 숫자는 고정 위치 */
+.filter-list.with-count li .count {
+    white-space: nowrap;
+    color: #888;
     font-size: 13px;
 }
 

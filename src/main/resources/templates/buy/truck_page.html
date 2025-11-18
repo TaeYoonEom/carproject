@@ -47,28 +47,43 @@
             <details class="filter-group" open>
                 <summary>형식/적재용량</summary>
                 <ul class="filter-list">
-                    <li><label><input type="checkbox"> 경차</label></li>
-                    <li><label><input type="checkbox"> 소형차</label></li>
-                    <li><label><input type="checkbox"> 준중형차</label></li>
-                    <li><label><input type="checkbox"> 중형차</label></li>
-                    <li><label><input type="checkbox"> 대형차</label></li>
-                    <li><label><input type="checkbox"> 스포츠카</label></li>
-                    <li><label><input type="checkbox"> SUV</label></li>
-                    <li><label><input type="checkbox"> RV</label></li>
-                    <li><label><input type="checkbox"> 경승합차</label></li>
-                    <li><label><input type="checkbox"> 승합차</label></li>
-                    <li><label><input type="checkbox"> 화물차</label></li>
-                    <li><label><input type="checkbox"> 기타</label></li>
+                    <li th:each="item : ${filters.bodyTypes}">
+                        <label>
+                            <input type="checkbox" name="bodyType" th:value="${item.val}">
+                            <span th:text="${item.val}">덤프</span>
+                            <span class="count" th:text="${item.cnt}">0</span>
+                        </label>
+                    </li>
                 </ul>
             </details>
 
             <!-- 제조사 / 모델 / 등급 -->
-            <details class="filter-group" open>
-                <summary>제조사 / 모델 / 등급</summary>
-                <ul class="filter-list">
-                    <label><input type="checkbox"> 현대</label>
-                    <label><input type="checkbox"> 기아</label>
-                    <label><input type="checkbox"> 제네시스</label>
+            <details class="filter-group">
+                <summary>제조사</summary>
+                <ul class="filter-list" id="maker-box">
+                    <li th:each="m : ${filters.manufacturer}">
+                        <label>
+                            <input type="checkbox"
+                                   onclick="loadModels(this.value)"
+                                   th:value="${m.val}">
+                            <span th:text="${m.val}">현대</span>
+                            <span class="count" th:text="${m.cnt}">0</span>
+                        </label>
+                    </li>
+                </ul>
+            </details>
+            <details class="filter-group">
+                <summary>모델</summary>
+                <ul id="model-box" class="filter-list">
+                    <li th:each="item : ${filters.modelName}">
+                        <label>
+                            <input type="checkbox"
+                                   onclick="loadCarNames(this.value)"
+                                   th:value="${item.val}">
+                            <span th:text="${item.val}"></span>
+                            <span class="count" th:text="${item.cnt}"></span>
+                        </label>
+                    </li>
                 </ul>
             </details>
 
@@ -76,9 +91,13 @@
             <details class="filter-group">
                 <summary>가변축</summary>
                 <ul class="filter-list">
-                    <label><input type="checkbox"> 전축</label>
-                    <label><input type="checkbox"> 중축</label>
-                    <label><input type="checkbox"> 후축</label>
+                    <li th:each="item : ${filters.axleConfig}">
+                        <label>
+                            <input type="checkbox" name="axleConfig" th:value="${item.val}">
+                            <span th:text="${item.val}"></span>
+                            <span class="count" th:text="${item.cnt}"></span>
+                        </label>
+                    </li>
                 </ul>
             </details>
 
@@ -166,11 +185,13 @@
             <details class="filter-group">
                 <summary>지역</summary>
                 <ul class="filter-list">
-                    <li><label><input type="checkbox"> 경기</label></li>
-                    <li><label><input type="checkbox"> 대구</label></li>
-                    <li><label><input type="checkbox"> 부산</label></li>
-                    <li><label><input type="checkbox"> 서울</label></li>
-                    <li><label><input type="checkbox"> 인천</label></li>
+                    <li th:each="item : ${filters.region}">
+                        <label>
+                            <input type="checkbox" name="region" th:value="${item.val}">
+                            <span th:text="${item.val}"></span>
+                            <span class="count" th:text="${item.cnt}"></span>
+                        </label>
+                    </li>
                 </ul>
             </details>
 
@@ -178,8 +199,13 @@
             <details class="filter-group">
                 <summary>성능공개</summary>
                 <ul class="filter-list">
-                    <li><label><input type="checkbox"> 엔카 직영 성능점검</label></li>
-                    <li><label><input type="checkbox"> 성능기록부</label></li>
+                    <li th:each="item : ${filters.performanceOpen}">
+                        <label>
+                            <input type="checkbox" name="performanceOpen" th:value="${item.val}">
+                            <span th:text="${item.val}"></span>
+                            <span class="count" th:text="${item.cnt}"></span>
+                        </label>
+                    </li>
                 </ul>
             </details>
 
@@ -187,8 +213,13 @@
             <details class="filter-group">
                 <summary>판매자 구분</summary>
                 <ul class="filter-list">
-                    <li><label><input type="checkbox"> 개인</label></li>
-                    <li><label><input type="checkbox"> 딜러</label></li>
+                    <li th:each="item : ${filters.sellerType}">
+                        <label>
+                            <input type="checkbox" name="sellerType" th:value="${item.val}">
+                            <span th:text="${item.val}"></span>
+                            <span class="count" th:text="${item.cnt}"></span>
+                        </label>
+                    </li>
                 </ul>
             </details>
 
@@ -196,9 +227,13 @@
             <details class="filter-group">
                 <summary>용도</summary>
                 <ul class="filter-list">
-                    <li><label><input type="checkbox"> 자가용</label></li>
-                    <li><label><input type="checkbox"> 영업용</label></li>
-                    <li><label><input type="checkbox"> 등본차량</label></li>
+                    <li th:each="item : ${filters.usageType}">
+                        <label>
+                            <input type="checkbox" name="usageType" th:value="${item.val}">
+                            <span th:text="${item.val}"></span>
+                            <span class="count" th:text="${item.cnt}"></span>
+                        </label>
+                    </li>
                 </ul>
             </details>
 
@@ -206,23 +241,26 @@
             <details class="filter-group">
                 <summary>색상</summary>
                 <ul class="filter-list">
-                    <li><label><input type="checkbox"> 흰색</label></li>
-                    <li><label><input type="checkbox"> 검정색</label></li>
-                    <li><label><input type="checkbox"> 쥐색</label></li>
-                    <li><label><input type="checkbox"> 청색</label></li>
-                    <li><label><input type="checkbox"> 은색</label></li>
+                    <li th:each="item : ${filters.color}">
+                        <label>
+                            <input type="checkbox" name="color" th:value="${item.val}">
+                            <span th:text="${item.val}"></span>
+                            <span class="count" th:text="${item.cnt}"></span>
+                        </label>
+                    </li>
                 </ul>
             </details>
 
             <details class="filter-group">
                 <summary>연료</summary>
                 <ul class="filter-list">
-                    <li><label><input type="checkbox"> 가솔린</label></li>
-                    <li><label><input type="checkbox"> 디젤</label></li>
-                    <li><label><input type="checkbox"> LPG(일반인 구입)</label></li>
-                    <li><label><input type="checkbox"> 전기</label></li>
-                    <li><label><input type="checkbox"> CNG</label></li>
-                    <li><label><input type="checkbox"> 기타</label></li>
+                    <li th:each="item : ${filters.fuelType}">
+                        <label>
+                            <input type="checkbox" name="fuelType" th:value="${item.val}">
+                            <span th:text="${item.val}"></span>
+                            <span class="count" th:text="${item.cnt}"></span>
+                        </label>
+                    </li>
                 </ul>
             </details>
 
@@ -230,10 +268,13 @@
             <details class="filter-group">
                 <summary>변속기</summary>
                 <ul class="filter-list">
-                    <li><label><input type="checkbox"> 오토</label></li>
-                    <li><label><input type="checkbox"> 수동</label></li>
-                    <li><label><input type="checkbox"> 세미오토</label></li>
-                    <li><label><input type="checkbox"> 기타</label></li>
+                    <li th:each="item : ${filters.transmission}">
+                        <label>
+                            <input type="checkbox" name="transmission" th:value="${item.val}">
+                            <span th:text="${item.val}"></span>
+                            <span class="count" th:text="${item.cnt}"></span>
+                        </label>
+                    </li>
                 </ul>
             </details>
 
@@ -266,22 +307,35 @@
             <div class="section-title">사진우대</div>
             <div class="encar-grid">
                 <article class="encar-card"
-                         th:each="card : ${truckCards.size() > 8} ? ${truckCards.subList(0,8)} : ${truckCards}">
-                <img class="encar-img"
-                         th:src="${card.frontViewUrl != null} ? ${card.frontViewUrl} : '@{/img/default.jpg}'"
-                         alt="차량 이미지"/>
+                         th:each="card, stat : ${truckCards}"
+                         th:if="${stat.index} < 8"
+                         th:with="cid=${card.carId}">
+                    <!-- 하트 버튼 추가 -->
+                    <button type="button"
+                            class="wish-btn"
+                            th:data-car-id="${cid}"
+                            th:classappend="${wishSet != null and wishSet.contains(cid)} ? ' on' : ''"
+                            aria-label="찜하기" title="찜하기">
+                        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                            <path d="M12 21c-.3 0-.6-.1-.8-.3C9 19 3 14.6 3 9.4 3 6.5 5.3 4 8.1 4c1.6 0 3.1.8 3.9 2.1C12.8 4.8 14.3 4 15.9 4 18.7 4 21 6.5 21 9.4c0 5.2-6 9.6-8.2 11.3-.2.2-.5.3-.8.3z"
+                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <img class="encar-img"
+                         th:src="${card != null && card.frontViewUrl != null} ? ${card.frontViewUrl} : @{/img/default.jpg}"
+                         alt="차량 이미지">
 
                     <div class="encar-info">
                         <div class="encar-title"
-                             th:text="${card.manufacturer} + ' ' + ${card.modelName}">모델명</div>
+                             th:text="${card.manufacturer} + ' ' + ${card.modelName}"></div>
                         <div class="encar-category"
                              th:text="${card.year} + '년 ' + ${card.month} + '월 | ' + ${#numbers.formatInteger(card.mileage, 1, 'COMMA')} + 'km | ' + ${card.bodyType} + ' | ' + ${card.region}">
                         </div>
                         <div class="encar-price"
-                             th:text="${#numbers.formatInteger(card.price/10000, 1, 'COMMA')} + '만원'">
-                        </div>
+                             th:text="${#numbers.formatInteger(card.price/10000, 1, 'COMMA')} + '만원'"></div>
                     </div>
                 </article>
+
             </div>
             <!-- 우대등록 -->
             <div class="section-title">우대등록</div>
@@ -290,20 +344,33 @@
                 <tr><th>사진</th><th>차량정보</th><th>가격</th></tr>
                 </thead>
                 <tbody>
-                <tr th:each="card : ${truckCards.size() > 8} ? ${truckCards.subList(0,8)} : ${truckCards}">
+                <tr th:each="card, stat : ${truckCards}"
+                    th:if="${stat.index} < 8"
+                    th:with="cid=${card.carId}">
 
-                <td>
+                    <td class="thumb-cell">
+                        <!-- 하트 버튼 -->
+                        <button type="button"
+                                class="wish-btn small"
+                                th:data-car-id="${cid}"
+                                th:classappend="${wishSet != null and wishSet.contains(cid)} ? ' on' : ''">
+                            <svg viewBox="0 0 24 24" width="20" height="20">
+                                <path d="M12 21c-.3 0-.6-.1-.8-.3C9 19 3 14.6 3 9.4
+                                        3 6.5 5.3 4 8.1 4c1.6 0 3.1.8 3.9 2.1C12.8 4.8 14.3 4 15.9 4
+                                        18.7 4 21 6.5 21 9.4c0 5.2-6 9.6-8.2 11.3-.2.2-.5.3-.8.3z"
+                                      fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </button>
+
                         <img class="thumb"
-                             th:src="${card.frontViewUrl != null} ? ${card.frontViewUrl} : '@{/img/default.jpg}'"
-                             th:alt="${card.manufacturer} + ' ' + ${card.modelName}">
+                             th:src="${card.frontViewUrl != null} ? ${card.frontViewUrl} : '@{/img/default_thumb.jpg}'">
                     </td>
                     <td>
                         <div class="encar-title" th:text="${card.manufacturer} + ' ' + ${card.modelName}">차량명</div>
                         <div class="encar-category"
                              th:text="${card.year} + '년 | ' + ${#numbers.formatInteger(card.mileage,1,'COMMA')} + 'km | ' + ${card.region}">
                         </div>
-                        <!-- 트럭에는 ownershipStatus가 없으니 배지는 임시로 숨김 -->
-                        <!-- <span class="tag" th:if="${card.ownershipStatus == '소유중'}">무사고</span> -->
+
                     </td>
                     <td class="encar-price"
                         th:text="${#numbers.formatInteger(card.price/10000,1,'COMMA')} + '만원'">가격</td>
@@ -318,12 +385,26 @@
                 <tr><th>사진</th><th>차량정보</th><th>가격</th></tr>
                 </thead>
                 <tbody>
-                <tr th:each="card : ${truckCards}">
-                    <td>
+                <tr th:each="card : ${truckCards}"
+                    th:with="cid=${card.carId}">
+                    <td class="thumb-cell">
+
+                        <!-- 하트 버튼 -->
+                        <button type="button"
+                                class="wish-btn small"
+                                th:data-car-id="${cid}"
+                                th:classappend="${wishSet != null and wishSet.contains(cid)} ? ' on' : ''">
+                            <svg viewBox="0 0 24 24" width="20" height="20">
+                                <path d="M12 21c-.3 0-.6-.1-.8-.3C9 19 3 14.6 3 9.4
+                                        3 6.5 5.3 4 8.1 4c1.6 0 3.1.8 3.9 2.1C12.8 4.8 14.3 4 15.9 4
+                                        18.7 4 21 6.5 21 9.4c0 5.2-6 9.6-8.2 11.3-.2.2-.5.3-.8.3z"
+                                      fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </button>
+
                         <img class="thumb"
-                             th:src="${card.frontViewUrl != null} ? ${card.frontViewUrl} : '@{/img/default.jpg}'"
-                             th:alt="${card.manufacturer} + ' ' + ${card.modelName}">
-                    </td>
+                             th:src="${card.frontViewUrl != null} ? ${card.frontViewUrl} : '@{/img/default_thumb.jpg}'">
+
                     <td>
                         <div class="encar-title" th:text="${card.manufacturer} + ' ' + ${card.modelName}">차량명</div>
                         <div class="encar-category"
@@ -363,3 +444,47 @@
 </th:block>
 </body>
 </html>
+<script>
+    function loadModels(maker) {
+        fetch(`/truck/filters?maker=` + maker)
+            .then(res => res.json())
+            .then(data => {
+                const box = document.getElementById("model-box");
+                box.innerHTML = "";
+                data.modelName.forEach(item => {
+                    box.innerHTML += `
+                        <li>
+                            <label>
+                                <input type="checkbox"
+                                       onclick="loadCarNames('${item.val}')"
+                                       value="${item.val}">
+                                ${item.val}
+                                <span class="count">${item.cnt}</span>
+                            </label>
+                        </li>
+                    `;
+                });
+            });
+    }
+
+    function loadCarNames(model) {
+        fetch(`/truck/filters?model=` + model)
+            .then(res => res.json())
+            .then(data => {
+                const box = document.getElementById("carname-box");
+                box.innerHTML = "";
+                data.carName.forEach(item => {
+                    box.innerHTML += `
+                        <li>
+                            <label>
+                                <input type="checkbox" value="${item.val}">
+                                ${item.val}
+                                <span class="count">${item.cnt}</span>
+                            </label>
+                        </li>
+                    `;
+                });
+            });
+    }
+
+</script>

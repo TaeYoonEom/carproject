@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -31,25 +32,25 @@ public class TruckSaleService {
         return repo.count();
     }
 
-    /*public Map<String, List<TruckSaleRepository.FacetAgg>> getFacetData() {
+    public Map<String, Object> buildFilters(String maker, String model) {
 
-        Map<String, List<TruckSaleRepository.FacetAgg>> map = new HashMap<>();
-
-        map.put("bodyType", repo.countByBodyType());
-        map.put("manufacturer", repo.countByManufacturer());
+        Map<String, Object> map = new HashMap<>();
+        // 단독 필터
+        map.put("bodyTypes", repo.countByBodyType());
+        map.put("loadCapacityTon", repo.countByLoadCapacityTon());
         map.put("axleConfig", repo.countByAxleConfig());
         map.put("region", repo.countByRegion());
-        map.put("performance", repo.countByPerformance());
+        map.put("performanceOpen", repo.countByPerformance());
         map.put("sellerType", repo.countBySellerType());
         map.put("usageType", repo.countByUsageType());
         map.put("color", repo.countByColor());
         map.put("fuelType", repo.countByFuelType());
         map.put("transmission", repo.countByTransmission());
 
+        //  제조사 / 모델
+        map.put("manufacturer", repo.countByManufacturer());
+        map.put("modelName", repo.findModelsByMaker(maker));
+
         return map;
     }
-
-    public List<CargoSpecialSale> filter(FiltersRequest req) {
-        return repo.findAll(CargoSpec.build(req));
-    }*/
 }
