@@ -191,6 +191,14 @@ public class MypageController {
                         r.getPrice()
                 ))
                 .toList();
+        // ✔ 트럭용 이름으로도 내려주기
+        model.addAttribute("truckOnCards", sellOnCargoCards);   // 판매중/완료/삭제 공통 리스트
+        model.addAttribute("truckCards", List.of());            // 트럭-판매대기용 (지금은 비워둠)
+
+        model.addAttribute("truckOn", sellOnCargoCards.size());
+        model.addAttribute("truckWaiting", 0);   // 추후 대기 로직 만들면 수정
+        model.addAttribute("truckDone", 0);
+        model.addAttribute("truckDeleted", 0);
 
         model.addAttribute("sellOnCargoCards", sellOnCargoCards);
         model.addAttribute("saleOnCargo", sellOnCargoCards.size());

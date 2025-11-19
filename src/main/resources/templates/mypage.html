@@ -703,7 +703,7 @@
             <!-- 판매차량 관리 콘텐츠 -->
             <div id="sell-car-section"
                  th:classappend="${currentSection}=='sell-car-section' ? '' : 'hidden'">
-            <h3>판매차량 관리</h3>
+                <h3>판매차량 관리</h3>
                 <p class="info-gray">차량의 광고 상태(판매중, 판매대기, 판매완료, 삭제 등)에 따라 차량을 <strong style="color: red;">편리하게</strong> 관리할 수 있습니다.</p>
 
                 <!-- 이용중인 서비스 (그대로) -->
@@ -737,168 +737,190 @@
                 <div class="tab-buttons-wrapper">
                     <!-- 상위 탭 (국산/수입차 vs 화물/버스) -->
                     <div class="tab-buttons top-tab-buttons sell-tabs">
-                        <button class="tab-btn sell-tab-btn active" data-target="car-tab"
-                                    th:text="|국산/수입차 (총 ${totalSellCars != null ? totalSellCars : #lists.size(sellDrafts)}대)|">
-                                국산/수입차 (총 0대)
-                        </button>
-                        <button class="tab-btn sell-tab-btn" data-target="truck-tab">화물•특장•버스</button>
+
+                        <!-- 국산/수입차 -->
+                        <a th:href="@{/mypage(section='sell-car-section', tab='판매중')}"
+                           class="tab-btn sell-tab-btn"
+                           data-target="car-tab"
+                           th:classappend="${!#strings.startsWith(currentTab, '트럭-')} ? 'active' : ''"
+                           th:text="|국산/수입차 (총 ${totalSellCars != null ? totalSellCars : #lists.size(sellDrafts)}대)|">
+                            국산/수입차 (총 0대)
+                        </a>
+
+                        <!-- 화물·특장·버스 -->
+                        <a th:href="@{/mypage(section='sell-car-section', tab='트럭-판매중')}"
+                           class="tab-btn sell-tab-btn"
+                           data-target="truck-tab"
+                           th:classappend="${#strings.startsWith(currentTab, '트럭-')} ? 'active' : ''">
+                            화물•특장•버스
+                        </a>
+
                         <button class="btn-gray-small float-right">업데이트시간 보관함</button>
                     </div>
 
-                    <!-- 하위 탭 (판매중, 대기 등) -->
-                    <div class="tab-buttons sub-tab-buttons">
-                        <a th:href="@{/mypage(section='sell-car-section', tab='판매중')}"
-                           class="tab-btn"
-                           th:classappend="${currentTab == '판매중'} ? 'active' : ''">
-                            판매중 (<span th:text="${saleOn}">0</span>대)
-                        </a>
+                    <div id="sell-car-normal"
+                         th:classappend="${#strings.startsWith(currentTab, '트럭-')} ? 'hidden' : ''">
+                        <!-- 하위 탭 (판매중, 대기 등) -->
+                        <div class="tab-buttons sub-tab-buttons">
+                            <a th:href="@{/mypage(section='sell-car-section', tab='판매중')}"
+                               class="tab-btn"
+                               th:classappend="${currentTab == '판매중'} ? 'active' : ''">
+                                판매중 (<span th:text="${saleOn}">0</span>대)
+                            </a>
 
-                        <a th:href="@{/mypage(section='sell-car-section', tab='판매대기')}"
-                           class="tab-btn"
-                           th:classappend="${currentTab == '판매대기'} ? 'active' : ''">판매대기 (<span th:text="${saleWaiting}">0</span>대)</a>
+                            <a th:href="@{/mypage(section='sell-car-section', tab='판매대기')}"
+                               class="tab-btn"
+                               th:classappend="${currentTab == '판매대기'} ? 'active' : ''">판매대기 (<span th:text="${saleWaiting}">0</span>대)</a>
 
-                        <a th:href="@{/mypage(section='sell-car-section', tab='판매완료')}"
-                           class="tab-btn"
-                           th:classappend="${currentTab == '판매완료'} ? 'active' : ''">판매완료 (<span th:text="${saleDone}">0</span>대)</a>
+                            <a th:href="@{/mypage(section='sell-car-section', tab='판매완료')}"
+                               class="tab-btn"
+                               th:classappend="${currentTab == '판매완료'} ? 'active' : ''">판매완료 (<span th:text="${saleDone}">0</span>대)</a>
 
-                        <a th:href="@{/mypage(section='sell-car-section', tab='삭제')}"
-                           class="tab-btn"
-                           th:classappend="${currentTab == '삭제'} ? 'active' : ''">삭제 (<span th:text="${saleDeleted}">0</span>대)</a>
+                            <a th:href="@{/mypage(section='sell-car-section', tab='삭제')}"
+                               class="tab-btn"
+                               th:classappend="${currentTab == '삭제'} ? 'active' : ''">삭제 (<span th:text="${saleDeleted}">0</span>대)</a>
 
-                        <!-- 오타 수정: 허위매물신L신고 -> 허위매물신고 -->
-                        <a th:href="@{/mypage(section='sell-car-section', tab='허위매물신고')}"
-                           class="tab-btn"
-                           th:classappend="${currentTab == '허위매물신고'} ? 'active' : ''">허위매물신고 (0대)</a>
-                    </div>
+                            <!-- 오타 수정: 허위매물신L신고 -> 허위매물신고 -->
+                            <a th:href="@{/mypage(section='sell-car-section', tab='허위매물신고')}"
+                               class="tab-btn"
+                               th:classappend="${currentTab == '허위매물신고'} ? 'active' : ''">허위매물신고 (0대)</a>
+                        </div>
 
-                    <!-- 테이블 -->
-                    <table class="simple-table">
-                        <thead>
-                        <tr>
-                            <th>차량정보</th>
-                            <th>상태</th>
-                            <th>가격</th>
-                            <th>관리</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <th:block th:if="${currentTab == '판매대기'}">
-                            <tr th:if="${#lists.isEmpty(sellCards)}">
-                                <td colspan="4" style="text-align: center;">판매대기 차량이 없습니다.</td>
+                        <!-- 테이블 -->
+                        <table class="simple-table">
+                            <thead>
+                            <tr>
+                                <th>차량정보</th>
+                                <th>상태</th>
+                                <th>가격</th>
+                                <th>관리</th>
                             </tr>
-                            <tr th:each="s : ${sellCards}">
-                                <td>
-                                    <a th:href="${s.carId} != null ? @{/cars/{id}(id=${s.carId})}
-                                   : @{|/sell/detail/view?carNumber=${s.carNumber}|}"
-                                       style="display:flex; gap:10px; align-items:center; text-decoration:none; color:inherit;">
-                                        <img th:src="${s.frontViewUrl} ?: '/img/common/noimage.png'"
-                                             alt="" style="width:100px; height:70px; object-fit:cover; border-radius:6px;">
-                                        <div>
-                                            <div style="font-weight:600;" th:text="${s.modelName}">모델명</div>
-                                            <small>
-                                                <span th:text="${s.carNumber}">12가1234</span> ·
-                                                <span th:text="${#temporals.format(s.manufactureDate,'yyyy-MM')}">2022-05</span> ·
-                                                <span th:text="${s.mileage} + ' km'">0 km</span> ·
-                                                <span th:text="${s.region}">지역</span>
-                                            </small>
-                                        </div>
-                                    </a>
-                                </td>
-                                <td th:text="${s.carId != null} ? '판매대기' : '등록중'">판매대기</td>
-                                <td>-</td>
-                                <td style="text-align:center; white-space: nowrap;">
-                                    <!-- 보기 버튼 -->
-                                    <a th:href="${s.carId} != null ? @{/cars/{id}(id=${s.carId})}
-                                                : @{|/sell/detail/view?carNumber=${s.carNumber}|}"
-                                       class="btn-view">
-                                        상세보기
-                                    </a>
-                                    <!-- 사진수정 버튼 -->
-                                    <a th:href="@{|/sell/detail/photo?carId=${s.draftId}|}"
-                                       class="btn-edit-photo">
-                                        사진수정
-                                    </a>
-                                </td>
-                            </tr>
-                        </th:block>
+                            </thead>
+                            <tbody>
+                            <th:block th:if="${currentTab == '판매대기'}">
+                                <tr th:if="${#lists.isEmpty(sellCards)}">
+                                    <td colspan="4" style="text-align: center;">판매대기 차량이 없습니다.</td>
+                                </tr>
+                                <tr th:each="s : ${sellCards}">
+                                    <td>
+                                        <a th:href="${s.carId} != null ? @{/cars/{id}(id=${s.carId})}
+                                       : @{|/sell/detail/view?carNumber=${s.carNumber}|}"
+                                           style="display:flex; gap:10px; align-items:center; text-decoration:none; color:inherit;">
+                                            <img th:src="${s.frontViewUrl} ?: '/img/common/noimage.png'"
+                                                 alt="" style="width:100px; height:70px; object-fit:cover; border-radius:6px;">
+                                            <div>
+                                                <div style="font-weight:600;" th:text="${s.modelName}">모델명</div>
+                                                <small>
+                                                    <span th:text="${s.carNumber}">12가1234</span> ·
+                                                    <span th:text="${#temporals.format(s.manufactureDate,'yyyy-MM')}">2022-05</span> ·
+                                                    <span th:text="${s.mileage} + ' km'">0 km</span> ·
+                                                    <span th:text="${s.region}">지역</span>
+                                                </small>
+                                            </div>
+                                        </a>
+                                    </td>
+                                    <td th:text="${s.carId != null} ? '판매대기' : '등록중'">판매대기</td>
+                                    <td>-</td>
+                                    <td style="text-align:center; white-space: nowrap;">
+                                        <!-- 보기 버튼 -->
+                                        <a th:href="${s.carId} != null ? @{/cars/{id}(id=${s.carId})}
+                                                    : @{|/sell/detail/view?carNumber=${s.carNumber}|}"
+                                           class="btn-view">
+                                            상세보기
+                                        </a>
+                                        <!-- 사진수정 버튼 -->
+                                        <a th:href="@{|/sell/detail/photo?carId=${s.draftId}|}"
+                                           class="btn-edit-photo">
+                                            사진수정
+                                        </a>
+                                    </td>
+                                </tr>
+                            </th:block>
 
-                        <th:block th:if="${currentTab != '판매대기'}">
-                            <tr th:if="${#lists.isEmpty(sellOnCards)}">
-                                <td colspan="4" style="text-align: center;" th:text="|${currentTab} 차량이 없습니다.|">판매중 차량이 없습니다.</td>
-                            </tr>
-                            <tr th:each="s : ${sellOnCards}">
-                                <td>
-                                    <a th:href="@{/cars/{id}(id=${s.carId})}"
-                                       style="display:flex; gap:10px; align-items:center; text-decoration:none; color:inherit;">
-                                        <img th:src="${s.frontViewUrl} ?: '/img/common/noimage.png'"
-                                             alt="" style="width:100px; height:70px; object-fit:cover; border-radius:6px;">
-                                        <div>
-                                            <div style="font-weight:600;" th:text="${s.modelName}">모델명</div>
-                                            <small>
-                                                <span th:text="${s.carNumber}">12가1234</span> ·
-                                                <span th:text="${s.manufactureDate != null ? #temporals.format(s.manufactureDate,'yyyy-MM') : '연식미상'}">2022-05</span> ·
-                                                <span th:text="${s.mileage} + ' km'">0 km</span> ·
-                                                <span th:text="${s.region}">지역</span>
-                                            </small>
-                                        </div>
-                                    </a>
-                                </td>
-                                <td th:text="${currentTab}">판매중</td>
-                                <td th:text="${s.price != null ? #numbers.formatInteger(s.price/10000, 1, 'COMMA') + '만원' : '-'}">-</td>
-                                <td>
-                                    <a th:href="@{/cars/{id}(id=${s.carId})}" class="btn-view">보기</a>
-                                </td>
-                            </tr>
-                        </th:block>
-                        </tbody>
-                    </table>
+                            <th:block th:if="${currentTab != '판매대기'}">
+                                <tr th:if="${#lists.isEmpty(sellOnCards)}">
+                                    <td colspan="4" style="text-align: center;" th:text="|${currentTab} 차량이 없습니다.|">판매중 차량이 없습니다.</td>
+                                </tr>
+                                <tr th:each="s : ${sellOnCards}">
+                                    <td>
+                                        <a th:href="@{/cars/{id}(id=${s.carId})}"
+                                           style="display:flex; gap:10px; align-items:center; text-decoration:none; color:inherit;">
+                                            <img th:src="${s.frontViewUrl} ?: '/img/common/noimage.png'"
+                                                 alt="" style="width:100px; height:70px; object-fit:cover; border-radius:6px;">
+                                            <div>
+                                                <div style="font-weight:600;" th:text="${s.modelName}">모델명</div>
+                                                <small>
+                                                    <span th:text="${s.carNumber}">12가1234</span> ·
+                                                    <span th:text="${s.manufactureDate != null ? #temporals.format(s.manufactureDate,'yyyy-MM') : '연식미상'}">2022-05</span> ·
+                                                    <span th:text="${s.mileage} + ' km'">0 km</span> ·
+                                                    <span th:text="${s.region}">지역</span>
+                                                </small>
+                                            </div>
+                                        </a>
+                                    </td>
+                                    <td th:text="${currentTab}">판매중</td>
+                                    <td th:text="${s.price != null ? #numbers.formatInteger(s.price/10000, 1, 'COMMA') + '만원' : '-'}">-</td>
+                                    <td>
+                                        <a th:href="@{/cars/{id}(id=${s.carId})}" class="btn-view">보기</a>
+                                    </td>
+                                </tr>
+                            </th:block>
+                            </tbody>
+                        </table>
 
-                    <!-- 안내문구 -->
-                    <div class="service-note" style="margin-top: 15px;">
-                        * 직거래 간편등록을 통해 판매하실 차량을 등록해 주세요.
-                        <button class="btn-gray-small">직거래간편등록</button>
-                    </div>
+                        <!-- 안내문구 -->
+                        <div class="service-note" style="margin-top: 15px;">
+                            * 직거래 간편등록을 통해 판매하실 차량을 등록해 주세요.
+                            <button class="btn-gray-small">직거래간편등록</button>
+                        </div>
 
-                    <div class="service-note" style="margin-top: 8px; background-color: #f9f9f9; padding: 10px; border: 1px solid #ddd;">
-                        <strong>※ 꼭 알아두세요!</strong><br>
-                        - 판매완료된 차량이 광고되는 것을 방지하기 위해 2개월마다 판매기간 연장이 필요하며, 연장되지 않은 차량은 자동으로 종료됩니다.<br>
-                        - 판매대기 차량은 승인일 기준 5일 전부터 타매입이 가능<br>
-                        - 입력횟수: 전화 10회, 사고이력/등록증 6회, 파워팩 15회<br>
-                        - 자동업데이트 항목은 제외됩니다.
+                        <div class="service-note" style="margin-top: 8px; background-color: #f9f9f9; padding: 10px; border: 1px solid #ddd;">
+                            <strong>※ 꼭 알아두세요!</strong><br>
+                            - 판매완료된 차량이 광고되는 것을 방지하기 위해 2개월마다 판매기간 연장이 필요하며, 연장되지 않은 차량은 자동으로 종료됩니다.<br>
+                            - 판매대기 차량은 승인일 기준 5일 전부터 타매입이 가능<br>
+                            - 입력횟수: 전화 10회, 사고이력/등록증 6회, 파워팩 15회<br>
+                            - 자동업데이트 항목은 제외됩니다.
+                        </div>
                     </div>
                 </div>
 
                 <!-- ================================
                       🔥 화물·특장·버스 TAB (truck-tab)
                 ================================ -->
-                <div class="tab-content" id="truck-tab" style="display:none;">
+                <div id="sell-car-truck"
+                     th:classappend="${!#strings.startsWith(currentTab, '트럭-')} ? 'hidden' : ''">
 
                     <!-- 하위 탭 (판매중, 대기 등) -->
                     <div class="tab-buttons sub-tab-buttons">
+                        <!-- 판매중 -->
                         <a th:href="@{/mypage(section='sell-car-section', tab='트럭-판매중')}"
                            class="tab-btn"
                            th:classappend="${currentTab == '트럭-판매중'} ? 'active' : ''">
                             판매중 (<span th:text="${truckOn}">0</span>대)
                         </a>
 
+                        <!-- 판매대기 -->
                         <a th:href="@{/mypage(section='sell-car-section', tab='트럭-판매대기')}"
                            class="tab-btn"
                            th:classappend="${currentTab == '트럭-판매대기'} ? 'active' : ''">
                             판매대기 (<span th:text="${truckWaiting}">0</span>대)
                         </a>
 
+                        <!-- 판매완료 -->
                         <a th:href="@{/mypage(section='sell-car-section', tab='트럭-판매완료')}"
                            class="tab-btn"
                            th:classappend="${currentTab == '트럭-판매완료'} ? 'active' : ''">
                             판매완료 (<span th:text="${truckDone}">0</span>대)
                         </a>
 
+                        <!-- 삭제 -->
                         <a th:href="@{/mypage(section='sell-car-section', tab='트럭-삭제')}"
                            class="tab-btn"
                            th:classappend="${currentTab == '트럭-삭제'} ? 'active' : ''">
                             삭제 (<span th:text="${truckDeleted}">0</span>대)
                         </a>
 
+                        <!-- 허위매물신고 -->
                         <a th:href="@{/mypage(section='sell-car-section', tab='트럭-허위매물신고')}"
                            class="tab-btn"
                            th:classappend="${currentTab == '트럭-허위매물신고'} ? 'active' : ''">
@@ -1883,6 +1905,93 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
 
+            const topTabs   = document.querySelectorAll(".sell-tab-btn");
+            const normalBox = document.getElementById("sell-car-normal");
+            const truckBox  = document.getElementById("sell-car-truck");
+
+            const subTabs = document.querySelectorAll(".sub-tab-buttons .tab-btn");
+            // (판매중 / 판매대기 / 판매완료 / 삭제 등 하위 탭 버튼들)
+
+            if (!topTabs.length || !normalBox || !truckBox) return;
+
+            /* ===============================
+               🔥 하위 탭을 '판매중'으로 강제 지정
+               =============================== */
+            function setSubTabToDefault() {
+                subTabs.forEach(b => b.classList.remove("active"));
+
+                // HTML이 data-tab="판매중" 형태일 때 자동으로 잡힘
+                const defaultTab =
+                    document.querySelector(".sub-tab-buttons .tab-btn[data-tab='판매중']")
+                    || [...subTabs].find(btn => btn.textContent.trim() === "판매중");
+
+                if (defaultTab) defaultTab.classList.add("active");
+            }
+
+
+            /* ===============================
+               🔥 상단 탭(국산/수입 - 트럭) 전환
+               =============================== */
+            function switchSellTopTab(target) {
+
+                // 👉 상단 탭 active 처리
+                topTabs.forEach(b => b.classList.remove("active"));
+                document.querySelector(`.sell-tab-btn[data-target="${target}"]`)
+                    ?.classList.add("active");
+
+                // 👉 콘텐츠 토글
+                if (target === "car-tab") {
+                    normalBox.classList.remove("hidden");
+                    truckBox.classList.add("hidden");
+                } else {
+                    normalBox.classList.add("hidden");
+                    truckBox.classList.remove("hidden");
+                }
+
+                // 👉 하위 탭 ‘판매중’으로 고정
+                setSubTabToDefault();
+
+                // 👉 주소창 쿼리 업데이트 (SPA)
+                try {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set("section", "sell-car-section");
+                    url.searchParams.set("tab", target === "car-tab" ? "판매중" : "트럭-판매중");
+                    history.replaceState({}, "", url.toString());
+                } catch (e) {}
+            }
+
+            /* ===============================
+               🔥 클릭 이벤트
+               =============================== */
+            topTabs.forEach(btn => {
+                btn.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const target = this.dataset.target;
+                    switchSellTopTab(target);
+                });
+            });
+
+            /* ===============================
+               🔥 초기 로딩 시 URL 기반 상태 보정
+               =============================== */
+            try {
+                const url = new URL(window.location.href);
+                const currentTab = url.searchParams.get("tab") || "판매중";
+
+                if (currentTab.startsWith("트럭-")) {
+                    switchSellTopTab("truck-tab");
+                } else {
+                    switchSellTopTab("car-tab");
+                }
+            } catch (e) {}
+        });
+    </script>
+
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
             /* ============================================================
                1) 마이페이지 홈 탭 (국산/수입차 ↔ 화물특장버스)
                ============================================================ */
@@ -1911,67 +2020,6 @@
                     });
                 });
             })();
-
-
-
-            /* ============================================================
-           2) 판매차량 상단 탭 (국산/수입차 ↔ 화물·특장·버스) - SPA 전환
-           ============================================================ */
-            (function () {
-                const sellTabs = document.querySelectorAll(".sell-tabs .sell-tab-btn");
-                const sellSection = document.getElementById("sell-car-section");
-
-                if (!sellTabs.length || !sellSection) return;
-
-                sellTabs.forEach(btn => {
-                    btn.addEventListener("click", function () {
-
-                        // active 처리
-                        sellTabs.forEach(b => b.classList.remove("active"));
-                        this.classList.add("active");
-
-                        const target = this.dataset.target;
-
-                        // 1) 국산/수입차 목록 로드
-                        if (target === "car-tab") {
-                            swapSellCategory("/mypage?section=sell-car-section&tab=판매중");
-                            return;
-                        }
-
-                        // 2) 화물/버스 목록 로드
-                        if (target === "truck-tab") {
-                            swapSellCategory("/mypage?section=sell-car-section&tab=트럭-판매중");
-                            return;
-                        }
-                    });
-                });
-
-                // 카테고리 전환 함수
-                async function swapSellCategory(url) {
-                    try {
-                        const res = await fetch(url, { headers: { "X-Requested-With": "fetch" } });
-                        const html = await res.text();
-                        const doc = new DOMParser().parseFromString(html, "text/html");
-
-                        // 하위 탭 교체
-                        const newTabs = doc.querySelector(".sub-tab-buttons");
-                        const oldTabs = sellSection.querySelector(".sub-tab-buttons");
-                        if (newTabs && oldTabs) oldTabs.replaceWith(newTabs);
-
-                        // 테이블 교체
-                        const newTbody = doc.querySelector(".simple-table tbody");
-                        const curTbody = sellSection.querySelector(".simple-table tbody");
-                        if (newTbody && curTbody) curTbody.replaceWith(newTbody);
-
-                        // 하위 탭 이벤트 다시 바인딩
-                        rebindSubTabEvents();
-                    } catch (err) {
-                        console.log(err);
-                    }
-                }
-
-            })();
-
 
             /* ============================================================
                3) 관심차량 탭 (찜/최근)
@@ -2070,10 +2118,17 @@
           // ===============================
           mypageButtons.forEach(btn => {
             btn.addEventListener("click", function (e) {
+
+              // 🚫 실제 클릭된 요소가 '판매차량 상단 탭(.sell-tab-btn)' 영역 안이라면
+              //    이 핸들러는 아예 동작하지 않게 건너뛴다.
+              if (e.target.closest(".sell-tab-btn")) {
+                return;
+              }
+
               const text = this.textContent.trim();
               const href = this.getAttribute("href") || "#";
 
-              // ✅ '마이페이지 홈' 버튼: 항상 완전한 /mypage 로 이동(쿼리스트링 초기화)
+              // ✅ '마이페이지 홈' 버튼만 진짜 홈으로 이동
               if (text.includes("마이페이지 홈") || href === "/mypage") {
                 e.preventDefault();
                 window.location.href = "/mypage";
@@ -2087,7 +2142,7 @@
                 return;
               }
 
-              // ✅ 나머지는 SPA 전환 처리
+              // ✅ 나머지는 SPA 전환 처리 (기존 코드 그대로 유지)
               e.preventDefault();
 
               // active 처리
@@ -2115,6 +2170,7 @@
               document.querySelector(`.sidebar-link[data-target="${targetId}"]`)?.classList.add("active");
             });
           });
+
 
           // ===============================
           // 4) 사이드바 클릭 (SPA 전환)
@@ -2451,6 +2507,10 @@
                         if (pushState) history.pushState({ __sellTabSwap: true }, "", url);
 
                         rebindSubTabEvents();
+
+                        /** 🔥🔥🔥 여기 추가! AJAX로 교체 후 active 복구 */
+                        setSubTabToDefault();
+
                     } catch (e) {
                         alert("목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
                         window.location.href = url;
@@ -2458,6 +2518,7 @@
                         hideLoading();
                     }
                 }
+
 
                 function handleSubTabClick(e) {
                     const a = e.target.closest("a");
@@ -2620,25 +2681,7 @@
         });
     </script>
 
-    <!-- ⭐ 여기 추가하면 됨 -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
 
-            const allTabGroups = document.querySelectorAll(".vehicle-tabs");
-
-            allTabGroups.forEach(group => {
-                const buttons = group.querySelectorAll(".tab-btn");
-
-                buttons.forEach(btn => {
-                    btn.addEventListener("click", function () {
-                        buttons.forEach(b => b.classList.remove("active"));
-                        this.classList.add("active");
-                    });
-                });
-            });
-
-        });
-    </script>
 
 
 </th:block>
