@@ -1948,17 +1948,21 @@
                     truckBox.classList.remove("hidden");
                 }
 
-                // 👉 하위 탭 ‘판매중’으로 고정
-                setSubTabToDefault();
+                // ❗ tab 파라미터가 없을 때만 하위 탭 초기화
+                const urlObj = new URL(window.location.href);
+                if (!urlObj.searchParams.get("tab")) {
+                    setSubTabToDefault();
+                }
 
-                // 👉 주소창 쿼리 업데이트 (SPA)
+                // 👉 주소창 section만 업데이트( tab 은 건드리지 않기!)
                 try {
-                    const url = new URL(window.location.href);
-                    url.searchParams.set("section", "sell-car-section");
-                    url.searchParams.set("tab", target === "car-tab" ? "판매중" : "트럭-판매중");
-                    history.replaceState({}, "", url.toString());
+                    const newUrl = new URL(window.location.href);
+                    newUrl.searchParams.set("section", "sell-car-section");
+                    // ❌ newUrl.searchParams.set("tab", ...) 제거
+                    history.replaceState({}, "", newUrl.toString());
                 } catch (e) {}
             }
+
 
             /* ===============================
                🔥 클릭 이벤트
@@ -2507,10 +2511,6 @@
                         if (pushState) history.pushState({ __sellTabSwap: true }, "", url);
 
                         rebindSubTabEvents();
-
-                        /** 🔥🔥🔥 여기 추가! AJAX로 교체 후 active 복구 */
-                        setSubTabToDefault();
-
                     } catch (e) {
                         alert("목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
                         window.location.href = url;

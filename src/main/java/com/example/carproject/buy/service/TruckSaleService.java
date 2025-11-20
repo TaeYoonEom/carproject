@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,8 @@ public class TruckSaleService {
         //  제조사 / 모델
         map.put("manufacturer", repo.countByManufacturer());
         map.put("modelName", repo.findModelsByMaker(maker));
+
+        map.put("carName", repo.findCarNamesByModel(model));
 
         return map;
     }
@@ -151,4 +154,39 @@ public class TruckSaleService {
     private Specification<CargoSpecialSale> inSpec(String field, List<String> values) {
         return (root, query, cb) -> root.get(field).in(values);
     }
+
+    public List<TruckCardDto> filterByQuickSearch(String bodyType, String modelName, Integer capacity) {
+
+        return repo.findAll().stream()
+                .filter(t -> bodyType == null || bodyType.isBlank() || bodyType.equals(t.getBodyType()))
+                .filter(t -> modelName == null || modelName.isBlank() ||
+                        t.getModelName().startsWith(modelName))
+
+                // 🔥 핵심 수정 부분
+                .filter(t -> capacity == null ||
+                        (t.getLoadCapacityTon() != null &&
+                                t.getLoadCapacityTon().compareTo(BigDecimal.valueOf(capacity)) == 0)
+                )
+                .map(TruckCardDto::new)
+                .toList();
+    }
+
+    public Map<String, Object> getFilters() {
+        return buildFilters(null, null);
+    }
+
+    public List<String> getQuickBodyTypes() {
+        return repo.findBodyTypesQuick();
+    }
+
+    public List<String> getQuickModels(String bodyType) {
+        return repo.findModelNamesQuick(bodyType);
+    }
+
+    public List<Integer> getQuickCapacities(String modelName) {
+        return repo.findCapacitiesQuick(modelName);
+    }
+
+
+
 }

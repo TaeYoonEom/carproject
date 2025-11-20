@@ -19,14 +19,25 @@ public class TruckController {
     private final TruckSaleService truckSaleService;
 
     @GetMapping("/truck")
-    public String showTruckPage(Model model) {
-        var cards = truckSaleService.getTruckCards(); // List<TruckCardDto>
-        model.addAttribute("truckCards", truckSaleService.getTruckCards());
-        model.addAttribute("totalCount", truckSaleService.getTruckCount());
-        Map<String, Object> filters = truckSaleService.buildFilters(null, null);
+    public String showTruckPage(
+            @RequestParam(required = false) String bodyType,
+            @RequestParam(required = false) String modelName,
+            @RequestParam(required = false) Integer capacity,
+            Model model
+    ) {
+        // 🔥 조건이 있으면 필터링된 리스트 반환
+        List<TruckCardDto> cards = truckSaleService.filterByQuickSearch(bodyType, modelName, capacity);
+
+        model.addAttribute("truckCards", cards);
+        model.addAttribute("totalCount", cards.size());
+
+        // 필터 옵션
+        Map<String, Object> filters = truckSaleService.getFilters();
         model.addAttribute("filters", filters);
-        return "buy/truck_page"; // ✅ templates/buy/truck_page.html
+
+        return "buy/truck_page";
     }
+
 
     @GetMapping("/truck/filters")
     @ResponseBody
@@ -47,5 +58,24 @@ public class TruckController {
 
         return result;
     }
+
+    @GetMapping("/api/truck/body-types")
+    @ResponseBody
+    public List<String> getBodyTypes() {
+        return truckSaleService.getQuickBodyTypes();
+    }
+
+    @GetMapping("/api/truck/models")
+    @ResponseBody
+    public List<String> getModels(@RequestParam String bodyType) {
+        return truckSaleService.getQuickModels(bodyType);
+    }
+
+    @GetMapping("/api/truck/capacity")
+    @ResponseBody
+    public List<Integer> getCapacity(@RequestParam String modelName) {
+        return truckSaleService.getQuickCapacities(modelName);
+    }
+
 
 }

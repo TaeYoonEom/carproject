@@ -66,5 +66,38 @@ public interface TruckSaleRepository extends JpaRepository<CargoSpecialSale, Int
 
     @Query("SELECT c.transmission AS val, COUNT(c) AS cnt FROM CargoSpecialSale c GROUP BY c.transmission")
     List<FacetAgg> countByTransmission();
+
+    @Query("""
+    SELECT c.modelName AS val, COUNT(c) AS cnt
+    FROM CargoSpecialSale c
+    WHERE (:model IS NULL OR c.modelName = :model)
+      AND c.modelName IS NOT NULL
+    GROUP BY c.modelName
+""")
+    List<FacetAgg> findCarNamesByModel(@Param("model") String model);
+
+    @Query("SELECT DISTINCT c.bodyType FROM CargoSpecialSale c WHERE c.bodyType IS NOT NULL ORDER BY c.bodyType")
+    List<String> findBodyTypesQuick();
+
+    @Query("""
+    SELECT DISTINCT SUBSTRING_INDEX(c.modelName, ' ', 1)
+    FROM CargoSpecialSale c
+    WHERE c.bodyType = :bodyType
+    ORDER BY 1
+    """)
+    List<String> findModelNamesQuick(@Param("bodyType") String bodyType);
+
+
+    @Query("""
+SELECT DISTINCT c.loadCapacityTon
+FROM CargoSpecialSale c
+WHERE c.modelName LIKE CONCAT(:modelName, '%')
+ORDER BY c.loadCapacityTon
+""")
+    List<Integer> findCapacitiesQuick(@Param("modelName") String modelName);
+
+
+
+
 }
 

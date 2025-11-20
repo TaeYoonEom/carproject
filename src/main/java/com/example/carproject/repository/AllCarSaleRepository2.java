@@ -120,4 +120,108 @@ public interface AllCarSaleRepository2 extends JpaRepository<AllCarSale, Integer
     List<SellOnMini> findCargoSellOn(@Param("memberId") Integer memberId,
                                      @Param("status") String status);
 
+    // 🔹 국산+수입차 제조사 목록 (화물 제외)
+    @Query(value = """
+    (
+        SELECT DISTINCT d.manufacturer
+        FROM all_car_sale s
+        JOIN car_sale d ON d.car_id = s.car_id
+        WHERE s.is_cargo = 0
+    )
+    UNION
+    (
+        SELECT DISTINCT i.manufacturer
+        FROM all_car_sale s
+        JOIN import_car_sale i ON i.car_id = s.car_id
+        WHERE s.is_cargo = 0
+    )
+    ORDER BY 1
+""", nativeQuery = true)
+    List<String> findAllManufacturers();
+
+
+    // 🔹 특정 제조사의 모델 목록
+    @Query(value = """
+    (
+        SELECT DISTINCT d.model_name
+        FROM all_car_sale s
+        JOIN car_sale d ON d.car_id = s.car_id
+        WHERE s.is_cargo = 0
+          AND d.manufacturer = :manufacturer
+    )
+    UNION
+    (
+        SELECT DISTINCT i.model_name
+        FROM all_car_sale s
+        JOIN import_car_sale i ON i.car_id = s.car_id
+        WHERE s.is_cargo = 0
+          AND i.manufacturer = :manufacturer
+    )
+    ORDER BY 1
+""", nativeQuery = true)
+    List<String> findModelsByManufacturer(@Param("manufacturer") String manufacturer);
+
+
+    // 🔹 제조사 + 모델에 해당하는 세부모델(car_name) 목록
+    @Query(value = """
+    (
+        SELECT DISTINCT d.car_name
+        FROM all_car_sale s
+        JOIN car_sale d ON d.car_id = s.car_id
+        WHERE s.is_cargo = 0
+          AND d.manufacturer = :manufacturer
+          AND d.model_name = :modelName
+    )
+    UNION
+    (
+        SELECT DISTINCT i.car_name
+        FROM all_car_sale s
+        JOIN import_car_sale i ON i.car_id = s.car_id
+        WHERE s.is_cargo = 0
+          AND i.manufacturer = :manufacturer
+          AND i.model_name = :modelName
+    )
+    ORDER BY 1
+""", nativeQuery = true)
+    List<String> findCarNames(
+            @Param("manufacturer") String manufacturer,
+            @Param("modelName") String modelName
+    );
+
+
+    // 🔹 제조사 + 모델 + 세부모델에 해당하는 car_id 한 개 (최근 차량 1대)
+    @Query(value = """
+    (
+        SELECT s.car_id
+        FROM all_car_sale s
+        JOIN car_sale d ON d.car_id = s.car_id
+        WHERE s.is_cargo = 0
+          AND d.manufacturer = :manufacturer
+          AND d.model_name = :modelName
+          AND d.car_name = :carName
+        ORDER BY s.car_id DESC
+        LIMIT 1
+    )
+    UNION
+    (
+        SELECT s.car_id
+        FROM all_car_sale s
+        JOIN import_car_sale i ON i.car_id = s.car_id
+        WHERE s.is_cargo = 0
+          AND i.manufacturer = :manufacturer
+          AND i.model_name = :modelName
+          AND i.car_name = :carName
+        ORDER BY s.car_id DESC
+        LIMIT 1
+    )
+    LIMIT 1
+""", nativeQuery = true)
+    Optional<Integer> findCarIdForQuickSearch(
+            @Param("manufacturer") String manufacturer,
+            @Param("modelName") String modelName,
+            @Param("carName") String carName
+    );
+
+
+
 }
