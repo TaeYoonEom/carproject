@@ -66,7 +66,8 @@ public interface TruckSaleRepository extends JpaRepository<CargoSpecialSale, Int
 
     @Query("SELECT c.transmission AS val, COUNT(c) AS cnt FROM CargoSpecialSale c GROUP BY c.transmission")
     List<FacetAgg> countByTransmission();
-
+    
+    // 엔카에서 내 차 찾기
     @Query("""
     SELECT c.modelName AS val, COUNT(c) AS cnt
     FROM CargoSpecialSale c

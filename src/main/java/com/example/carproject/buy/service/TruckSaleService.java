@@ -155,6 +155,7 @@ public class TruckSaleService {
         return (root, query, cb) -> root.get(field).in(values);
     }
 
+    // 엔카에서 내 차 찾기
     public List<TruckCardDto> filterByQuickSearch(String bodyType, String modelName, Integer capacity) {
 
         return repo.findAll().stream()
