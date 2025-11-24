@@ -5,6 +5,10 @@ import com.example.carproject.buy.domain.ImportCarSale;
 import com.example.carproject.buy.dto.ImportFilterRequest;
 import com.example.carproject.buy.repository.ImportCarSaleRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
@@ -15,13 +19,10 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class ImportCarSaleService {
 
     private final ImportCarSaleRepository repo;
-
-    public ImportCarSaleService(ImportCarSaleRepository repo) {
-        this.repo = repo;
-    }
 
     //이미지 Dto 변환
     public List<ImportCarCardDto> getCardDtos() {
@@ -196,10 +197,11 @@ public class ImportCarSaleService {
             return cb.or(predicates.toArray(new jakarta.persistence.criteria.Predicate[0]));
         };
     }
-
-    public List<ImportCarCardDto> filterCars(ImportFilterRequest req) {
+    private Specification<ImportCarSale> buildSpec(ImportFilterRequest req) {
 
         Specification<ImportCarSale> spec = Specification.where(null);
+
+        if (req == null) return spec;
 
         if (req.getCarType() != null && !req.getCarType().isEmpty()) {
             spec = spec.and((root, q, cb) -> root.get("carType").in(req.getCarType()));
@@ -210,7 +212,6 @@ public class ImportCarSaleService {
         if (req.getModelName() != null && !req.getModelName().isEmpty()) {
             spec = spec.and((root, q, cb) -> root.get("modelName").in(req.getModelName()));
         }
-
         if (req.getFuelType() != null && !req.getFuelType().isEmpty()) {
             spec = spec.and((root, q, cb) -> root.get("fuelType").in(req.getFuelType()));
         }
@@ -242,6 +243,7 @@ public class ImportCarSaleService {
             spec = spec.and(getCapacitySpec(req.getCapacity()));
         }
 
+        // 가격
         if (req.getPriceMin() != null) {
             spec = spec.and((root, q, cb) ->
                     cb.greaterThanOrEqualTo(root.get("price"), req.getPriceMin() * 10000)
@@ -253,7 +255,7 @@ public class ImportCarSaleService {
             );
         }
 
-        //  연식 (year + month)
+        // 연식 (year + month)
         if (req.getYearFrom() != null && req.getMonthFrom() != null) {
             spec = spec.and((root, q, cb) -> cb.or(
                     cb.greaterThan(root.get("year"), req.getYearFrom()),
@@ -274,7 +276,7 @@ public class ImportCarSaleService {
             ));
         }
 
-        // 주행거리(mileage)
+        // 주행거리
         if (req.getMileageMin() != null) {
             spec = spec.and((root, q, cb) ->
                     cb.greaterThanOrEqualTo(root.get("mileage"), req.getMileageMin())
@@ -286,14 +288,33 @@ public class ImportCarSaleService {
             );
         }
 
+        return spec;
+    }
 
-        // 필요하면 더 추가
+    // ===========================
+    // 5) 페이지+정렬까지 포함된 신규 메서드
+    // ===========================
+    public Page<ImportCarCardDto> searchWithFilters(
+            ImportFilterRequest req,
+            String sort,
+            int page,
+            int size
+    ) {
+        Specification<ImportCarSale> spec = buildSpec(req);
 
-        List<ImportCarSale> result = repo.findAll(spec);
+        Sort sortOption = switch (sort) {
+            case "priceAsc"    -> Sort.by("price").ascending();
+            case "priceDesc"   -> Sort.by("price").descending();
+            case "mileageAsc"  -> Sort.by("mileage").ascending();
+            case "mileageDesc" -> Sort.by("mileage").descending();
+            case "yearDesc"    -> Sort.by("year").descending().and(Sort.by("month").descending());
+            default            -> Sort.by("createdAt").descending();
+        };
 
-        return result.stream()
-                .map(ImportCarCardDto::new)
-                .toList();
+        Pageable pageable = PageRequest.of(page, size, sortOption);
+
+        return repo.findAll(spec, pageable)
+                .map(ImportCarCardDto::new);
     }
 
 }
