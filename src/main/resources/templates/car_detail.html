@@ -102,7 +102,28 @@
     <div class="tab-panels">
       <!-- 기본정보 -->
       <div id="tab-basic" class="tab-panel">
-        <table class="kv">
+
+        <!-- 🔥 화물차 전용 정보 -->
+        <div th:if="${car.cargo}">
+          <h3 class="section-title">화물차 기본정보</h3>
+          <table class="kv">
+            <tr><th>제조사</th><td th:text="${car.manufacturer}">현대</td></tr>
+            <tr><th>모델명</th><td th:text="${car.modelName}">마이티</td></tr>
+            <tr><th>연식</th><td th:text="${car.year} + '년 ' + ${car.month} + '월'">2021년 05월</td></tr>
+            <tr><th>주행거리</th><td th:text="${#numbers.formatInteger(car.mileage,1,'COMMA')} + ' km'"></td></tr>
+            <tr><th>차체형식</th><td th:text="${car.bodyType}"></td></tr>
+            <tr><th>적재톤수</th><td th:text="${car.loadCapacityTon} + ' 톤'"></td></tr>
+            <tr><th>축 구성</th><td th:text="${car.axleConfig}"></td></tr>
+            <tr><th>용도</th><td th:text="${car.usageType}"></td></tr>
+            <tr><th>색상</th><td th:text="${car.cargoColor}"></td></tr>
+            <tr><th>지역</th><td th:text="${car.saleLocation}"></td></tr>
+            <tr><th>엔카진단</th><td th:text="${car.encarDiagnosis}"></td></tr>
+            <tr><th>필수 공개</th><td th:text="${car.performanceOpen}"></td></tr>
+          </table>
+        </div>
+
+        <!-- 🚗 승용차/국산/수입차 정보 (화물차가 아닐 때만 표시) -->
+        <table class="kv" th:if="${!car.cargo}">
           <tr><th>차명</th><td th:text="${car.carName}">차명</td></tr>
           <tr><th>연식</th><td th:text="${car.year} + '년'">연식</td></tr>
           <tr><th>주행거리</th><td th:text="${#numbers.formatInteger(car.mileage,1,'COMMA')} + ' km'">주행</td></tr>
@@ -113,6 +134,7 @@
           <tr><th>판매 방식</th><td th:text="${car.saleType}">일반</td></tr>
           <tr><th>판매 지역</th><td th:text="${car.saleLocation}">지역</td></tr>
         </table>
+
       </div>
 
       <!-- 옵션 (옵션 탭에서만 보임) -->
@@ -121,18 +143,18 @@
         <!-- 주요옵션: 상위 9개만 -->
         <section id="mainOptions"
                  class="main-options"
-                 th:if="${options != null and !#lists.isEmpty(options)}">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                 th:if="${(options != null and !#lists.isEmpty(options))
+                 or (car.cargo and cargoOptions != null and !#lists.isEmpty(cargoOptions))}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
             <h3 style="margin:0;">주요옵션</h3>
             <a href="#tab-option" style="color:#4b4bff;text-decoration:underline;">옵션 설명 보기</a>
           </div>
 
           <ul style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;list-style:none;padding-left:0;">
-            <li th:each="opt,iter : ${options}"
+            <li th:each="opt,iter : ${car.cargo ? cargoOptions : options}"
                 th:if="${iter.index < 9}"
                 th:text="${opt}"
                 style="display:flex;align-items:center;gap:8px;border:1px solid #eee;border-radius:10px;padding:10px;background:#fff;">
-              옵션
             </li>
           </ul>
 
@@ -141,16 +163,16 @@
                   id="btnShowAllOptions"
                   class="btn outline"
                   style="margin-top:14px;"
-                  th:if="${#lists.size(options) > 9}"
-                  th:text="${#lists.size(options)} + '개 옵션 모두보기'">
-            옵션 모두보기
+                  th:if="${car.cargo ? #lists.size(cargoOptions) > 9 : #lists.size(options) > 9}"
+                  th:text="${car.cargo ? #lists.size(cargoOptions) : #lists.size(options)} + '개 옵션 모두보기'">
           </button>
         </section>
 
         <!-- 전체 옵션 목록 + 접기 버튼: 처음엔 숨김 -->
-        <div id="allOptionsWrap" class="hidden" th:if="${options != null}">
+        <div id="allOptionsWrap" class="hidden" th:if="${car.cargo ? cargoOptions != null : options != null}">
           <ul class="option-grid">
-            <li th:each="opt : ${options}" th:text="${opt}">옵션</li>
+            <li th:each="opt : ${car.cargo ? cargoOptions : options}"
+                th:text="${opt}">옵션</li>
           </ul>
           <button type="button" id="btnHideAllOptions" class="btn outline" style="margin-top:14px;">
             옵션 접기
@@ -158,7 +180,9 @@
         </div>
 
         <!-- 옵션이 아예 없을 때 -->
-        <div th:if="${options == null or #lists.isEmpty(options)}" class="muted">
+        <div th:if="${(car.cargo and (cargoOptions == null or #lists.isEmpty(cargoOptions)))
+          or (!car.cargo and (options == null or #lists.isEmpty(options)))}"
+             class="muted">
           등록된 옵션 정보가 없습니다.
         </div>
       </div>

@@ -25,6 +25,7 @@ public interface AllCarSaleRepository2 extends JpaRepository<AllCarSale, Integer
     boolean existsByCarEntryDraftId(Integer draftId);
 
     // 찜 미니리스트 (국산/수입 + 화물까지 통합)
+    // 국산 + 수입만 (홈용)
     @Query(value = """
     SELECT 
       s.car_id AS id,
@@ -36,12 +37,13 @@ public interface AllCarSaleRepository2 extends JpaRepository<AllCarSale, Integer
     LEFT JOIN car_sale d ON d.car_id = s.car_id
     LEFT JOIN import_car_sale i ON i.car_id = s.car_id
     LEFT JOIN car_image img ON img.car_id = s.car_id
-         AND (img.is_representative = 1 OR img.is_representative = TRUE)
+         AND img.is_representative = 1
     WHERE w.member_id = :memberId
-      AND s.is_cargo = 0         -- 🔥 cargo 제외
-    ORDER BY w.created_at DESC, s.car_id DESC
+      AND s.is_cargo = 0
+    ORDER BY w.created_at DESC
 """, nativeQuery = true)
-    List<WishMini> findWishAll(@Param("memberId") Integer memberId);
+    List<WishMini> findPassengerWish(@Param("memberId") Integer memberId);
+
 
 
 

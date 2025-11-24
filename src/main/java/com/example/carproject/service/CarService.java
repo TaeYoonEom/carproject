@@ -12,6 +12,7 @@ public interface CarService {
 
     CarDto getCarDetail(Long carId);
     CarDto getImportCarDetail(Long carId);
+    CarDto getTruckCarDetail(Long carId);
 
     String getMainImage(Long carId);
     List<String> getAllImages(Long carId);

@@ -92,14 +92,25 @@ public class MypageController {
         /* ============================================================
            🔹 1) 찜한 차량
            ============================================================ */
-        List<WishMini> wishMini = allCarSaleRepository2.findWishAll(memberId);
-        List<WishCarDto> wishlistCars = wishlistService.myWishlistCars(memberId);
-        int wishCount = wishlistService.count(memberId);
+        // 전체 찜 (국산 + 수입 + 화물)
+        // ⭐ 국산 + 수입 찜만 (홈용)
+        List<WishMini> passengerWish = allCarSaleRepository2.findPassengerWish(memberId);
 
-        // 🔥 화물·특장·버스 찜 목록
+// ⭐ 트럭 찜
         List<WishMini> truckWishMini = allCarSaleRepository2.findTruckWish(memberId);
-        model.addAttribute("truckWishMini", truckWishMini);
+
+// ⭐ 홈에서는 국산 + 수입 ONLY (subtract 절대 X)
+        int wishCountHome = passengerWish.size();
+
+// 기존 wishlistCars는 그대로 유지
+        List<WishCarDto> wishlistCars = wishlistService.myWishlistCars(memberId);
+
+// 🔥 모델 등록
+        model.addAttribute("wishCount", wishCountHome);       // ✔ 14로 정확하게 출력됨
+        model.addAttribute("wishMini", passengerWish);        // ✔ 홈 리스트도 국산+수입만
+        model.addAttribute("truckWishMini", truckWishMini);   // ✔ 트럭 찜은 따로
         model.addAttribute("truckWishCount", truckWishMini.size());
+
 
         /* ============================================================
    🔥 최근 본 차량
@@ -257,8 +268,6 @@ public class MypageController {
            🔹 공통 모델
            ============================================================ */
         model.addAttribute("member", member);
-        model.addAttribute("wishCount", wishCount);
-        model.addAttribute("wishMini", wishMini);
         model.addAttribute("wishlistCars", wishlistCars);
 
         model.addAttribute("saleOn", saleOn);

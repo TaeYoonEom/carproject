@@ -7,6 +7,7 @@ import com.example.carproject.dto.InsuranceDto;
 import com.example.carproject.dto.SellerDto;
 import com.example.carproject.repository.AllCarSaleRepository2;
 import com.example.carproject.repository.CarEntryDraftRepository;
+import com.example.carproject.repository.CargoSpecialSaleRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import com.example.carproject.repository.ImportCarSaleRepository2;
@@ -20,17 +21,20 @@ public class CarServiceImpl implements CarService {
     private final ImportCarSaleRepository2 importCarSaleRepository;
     private final AllCarSaleRepository2 allCarSaleRepository;
     private final CarEntryDraftRepository carEntryDraftRepository;
+    private final CargoSpecialSaleRepository cargoSpecialSaleRepository;
 
     public CarServiceImpl(
             JdbcTemplate jdbc,
             ImportCarSaleRepository2 importCarSaleRepository,
             AllCarSaleRepository2 allCarSaleRepository,
-            CarEntryDraftRepository carEntryDraftRepository
+            CarEntryDraftRepository carEntryDraftRepository,
+            CargoSpecialSaleRepository cargoSpecialSaleRepository
     ) {
         this.jdbc = jdbc;
         this.importCarSaleRepository = importCarSaleRepository;
         this.allCarSaleRepository = allCarSaleRepository;
         this.carEntryDraftRepository = carEntryDraftRepository;
+        this.cargoSpecialSaleRepository = cargoSpecialSaleRepository;
     }
 
     private enum Category {
@@ -398,4 +402,48 @@ public class CarServiceImpl implements CarService {
         return list.isEmpty() ? null : list.get(0);
     }
 
+    public CarDto getTruckCarDetail(Long carId) {
+        var cargo = cargoSpecialSaleRepository.findById(carId.intValue())
+                .orElseThrow(() -> new IllegalArgumentException("화물 차량 없음: " + carId));
+
+        CarDto dto = new CarDto();
+        dto.setCarId(cargo.getCarId().longValue());
+        dto.setCargo(true);
+
+        dto.setCarName(cargo.getManufacturer() + " " + cargo.getModelName());
+        dto.setManufacturer(cargo.getManufacturer());
+        dto.setModelName(cargo.getModelName());
+        dto.setBodyType(cargo.getBodyType());
+        dto.setLoadCapacityTon(cargo.getLoadCapacityTon());
+        dto.setAxleConfig(cargo.getAxleConfig());
+        dto.setYear(cargo.getYear());
+        dto.setMonth(cargo.getMonth());
+        dto.setMileage(cargo.getMileage());
+        dto.setPrice(cargo.getPrice());
+        dto.setUsageType(cargo.getUsageType());
+        dto.setCargoColor(cargo.getColor());
+        dto.setFuelType(cargo.getFuelType());
+        dto.setTransmission(cargo.getTransmission());
+        dto.setSaleLocation(cargo.getRegion());
+        dto.setSellerType(cargo.getSellerType());
+        dto.setCreatedAt(cargo.getCreatedAt());
+
+        dto.setEncarDiagnosis(cargo.getEncarDiagnosis());
+        dto.setPerformanceOpen(cargo.getPerformanceOpen());
+
+        // 옵션 TEXT → 리스트 변환
+        if (cargo.getOptions() != null) {
+            dto.setCargoOptions(
+                    Arrays.stream(cargo.getOptions().split(","))
+                            .map(String::trim)
+                            .filter(s -> !s.isBlank())
+                            .toList()
+            );
+        }
+
+        dto.setCategoryName("화물/특장");
+        dto.setCategoryPath("/truck");
+
+        return dto;
+    }
 }

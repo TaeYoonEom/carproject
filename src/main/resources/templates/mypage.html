@@ -1949,10 +1949,14 @@
                 }
 
                 // ❗ tab 파라미터가 없을 때만 하위 탭 초기화
-                const urlObj = new URL(window.location.href);
                 if (!urlObj.searchParams.get("tab")) {
-                    setSubTabToDefault();
+                    // 판매중 하위 탭 강제 active
+                    const sellDefault = document.querySelector(
+                        "#sell-car-section .sub-tab-buttons .tab-btn:nth-child(1)"
+                    );
+                    if (sellDefault) sellDefault.classList.add("active");
                 }
+
 
                 // 👉 주소창 section만 업데이트( tab 은 건드리지 않기!)
                 try {
@@ -1988,6 +1992,22 @@
                 } else {
                     switchSellTopTab("car-tab");
                 }
+
+                // URL에 tab이 없을 때 → 판매중 활성화
+                if (!url.searchParams.get("tab")) {
+
+                    // 1) 기존 active 전부 제거
+                    document
+                        .querySelectorAll("#sell-car-section .sub-tab-buttons .tab-btn")
+                        .forEach(btn => btn.classList.remove("active"));
+
+                    // 2) 첫 번째(판매중) 강제 active
+                    const sellDefault = document.querySelector(
+                        "#sell-car-section .sub-tab-buttons .tab-btn:nth-child(1)"
+                    );
+                    sellDefault?.classList.add("active");
+                }
+
             } catch (e) {}
         });
     </script>
