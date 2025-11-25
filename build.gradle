@@ -32,6 +32,8 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-mail' // 이메일
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client' //카카오톡 로그인
+
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 	// ✅ Lombok 추가
 	// ✅ Lombok
 	compileOnly 'org.projectlombok:lombok'

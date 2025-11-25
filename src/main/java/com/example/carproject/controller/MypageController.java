@@ -217,11 +217,21 @@ public class MypageController {
         /* ============================================================
            🔹 3) 판매중 / 완료 / 삭제 차량
            ============================================================ */
-        List<SellOnMini> soldRows = List.of();  // 기본값
+        List<SellOnMini> soldRows;
 
-        if (!tab.startsWith("트럭-")) {
-            soldRows = allCarSaleRepository2.findCarsByMemberAndStatus(memberId, tab);
+        if (section.equals("home")) {
+            // 홈 화면은 판매중만 보여준다
+            soldRows = allCarSaleRepository2.findCarsByMemberAndStatus(memberId, "판매중");
         }
+        else {
+            // 판매차량관리 탭에서는 tab 값 그대로 사용
+            if (!tab.startsWith("트럭-")) {
+                soldRows = allCarSaleRepository2.findCarsByMemberAndStatus(memberId, tab);
+            } else {
+                soldRows = List.of(); // 트럭은 다른 곳에서 처리됨
+            }
+        }
+
 
         List<SellDraftCardVm> sellOnCards = soldRows.stream()
                 .map(r -> new SellDraftCardVm(
@@ -256,12 +266,20 @@ public class MypageController {
         /* ============================================================
            🔹 탭 분기
            ============================================================ */
-        if (tab.equals("판매대기")) {
-            model.addAttribute("sellCards", sellCards);
-            model.addAttribute("sellOnCards", List.of());
-        } else {
-            model.addAttribute("sellOnCards", sellOnCards);
+        // 🟢 홈이면 무조건 판매중만 보여주고, 아래 로직 실행 금지
+        if (section.equals("home")) {
+            model.addAttribute("sellOnCards", sellOnCards); // 이미 판매중으로 세팅됨
             model.addAttribute("sellCards", List.of());
+        }
+        else {
+            // 기존 탭 처리
+            if (tab.equals("판매대기")) {
+                model.addAttribute("sellCards", sellCards);
+                model.addAttribute("sellOnCards", List.of());
+            } else {
+                model.addAttribute("sellOnCards", sellOnCards);
+                model.addAttribute("sellCards", List.of());
+            }
         }
 
         /* ============================================================
@@ -400,6 +418,36 @@ public class MypageController {
         userConsultationService.delete(id);
         return "OK";
     }
+
+    @PostMapping("/mypage/sell/complete")
+    @ResponseBody
+    public String markAsCompleted(
+            @RequestParam Integer carId,
+            Authentication authentication) {
+
+        if (authentication == null) return "ERROR";
+
+        Member member = resolveMember(authentication);
+        carSoldService.setStatus(member.getMemberId(), carId, CarSold.Status.판매완료);
+
+        return "OK";
+    }
+
+    @PostMapping("/mypage/sell/cancel")
+    @ResponseBody
+    public String cancelSale(
+            @RequestParam Integer carId,
+            Authentication authentication) {
+
+        if (authentication == null) return "ERROR";
+
+        Member member = resolveMember(authentication);
+
+        carSoldService.setStatus(member.getMemberId(), carId, CarSold.Status.판매중);
+
+        return "OK";
+    }
+
 
 
 }

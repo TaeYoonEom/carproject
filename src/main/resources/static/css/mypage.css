@@ -776,6 +776,9 @@ a.sidebar-category:hover {
   cursor: pointer;
   width: 100%;
 }
+.btn-red:hover {
+    background-color: #b71c1c;
+}
 
 .btn-gray-small {
     background: #f4f4f4;
