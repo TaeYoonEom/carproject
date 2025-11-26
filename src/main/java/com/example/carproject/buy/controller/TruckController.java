@@ -1,9 +1,11 @@
 package com.example.carproject.buy.controller;
 
+import com.example.carproject.buy.dto.ImportCarCardDto;
 import com.example.carproject.buy.dto.TruckCardDto;
 import com.example.carproject.buy.dto.TruckFilterRequest;
 import com.example.carproject.buy.service.TruckSaleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,64 +20,42 @@ public class TruckController {
 
     private final TruckSaleService truckSaleService;
 
-    @GetMapping("/truck")
+    /*@GetMapping("/truck")
     public String showTruckPage(
-            @RequestParam(required = false) String bodyType,
-            @RequestParam(required = false) String modelName,
-            @RequestParam(required = false) Integer capacity,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "recent") String sort,
+            @ModelAttribute TruckFilterRequest filters,
             Model model
     ) {
-        // 🔥 조건이 있으면 필터링된 리스트 반환
-        List<TruckCardDto> cards = truckSaleService.filterByQuickSearch(bodyType, modelName, capacity);
+        // 1) 필터 + 정렬 + 페이지네이션 적용된 "일반등록" 리스트
+        Page<TruckCardDto> normalPage =
+                truckSaleService.searchWithFilters(filters, sort, page, size);
 
-        model.addAttribute("truckCards", cards);
-        model.addAttribute("totalCount", cards.size());
+        // 2) 사진우대/우대등록용 리스트 (필터는 동일, 상위 8개만)
+        List<TruckCardDto> allFiltered =
+                truckSaleService.searchWithFilters(filters, sort, 0, 1000).getContent();
 
-        // 필터 옵션
-        Map<String, Object> filters = truckSaleService.getFilters();
-        model.addAttribute("filters", filters);
+        List<TruckCardDto> photoList   = allFiltered.stream().limit(8).toList();
+        List<TruckCardDto> premiumList = allFiltered.stream().limit(8).toList();
+
+        // 필터 박스에 뿌릴 count 정보 (엔카식 facet)
+        model.addAttribute("filterCounts", truckSaleService.getFilterCounts());
+
+        // 화면에 뿌릴 데이터들
+        model.addAttribute("filters", filters);                 // 선택값 유지용
+        model.addAttribute("photoList", photoList);             // 사진우대
+        model.addAttribute("premiumList", premiumList);         // 우대등록
+        model.addAttribute("carList", normalPage.getContent()); // 일반등록
+
+        model.addAttribute("page", normalPage);
+        model.addAttribute("sort", sort);
+        model.addAttribute("size", size);
+        model.addAttribute("totalCount", normalPage.getTotalElements());
 
         return "buy/truck_page";
-    }
+    }*/
 
-
-    @GetMapping("/truck/filters")
-    @ResponseBody
-    public Map<String, Object> loadFilters(
-            @RequestParam(required = false) String maker,
-            @RequestParam(required = false) String model
-    ) {
-        return truckSaleService.buildFilters(maker, model);
-    }
-    @PostMapping("/truck/filter")
-    @ResponseBody
-    public Map<String, Object> filterTrucks(@RequestBody TruckFilterRequest req) {
-
-        List<TruckCardDto> cards = truckSaleService.filterTrucks(req);
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("cards", cards);
-
-        return result;
-    }
-
-    @GetMapping("/api/truck/body-types")
-    @ResponseBody
-    public List<String> getBodyTypes() {
-        return truckSaleService.getQuickBodyTypes();
-    }
-
-    @GetMapping("/api/truck/models")
-    @ResponseBody
-    public List<String> getModels(@RequestParam String bodyType) {
-        return truckSaleService.getQuickModels(bodyType);
-    }
-
-    @GetMapping("/api/truck/capacity")
-    @ResponseBody
-    public List<Integer> getCapacity(@RequestParam String modelName) {
-        return truckSaleService.getQuickCapacities(modelName);
-    }
 
 
 }

@@ -90,11 +90,11 @@ public interface TruckSaleRepository extends JpaRepository<CargoSpecialSale, Int
 
 
     @Query("""
-SELECT DISTINCT c.loadCapacityTon
-FROM CargoSpecialSale c
-WHERE c.modelName LIKE CONCAT(:modelName, '%')
-ORDER BY c.loadCapacityTon
-""")
+    SELECT DISTINCT c.loadCapacityTon
+    FROM CargoSpecialSale c
+    WHERE c.modelName LIKE CONCAT(:modelName, '%')
+    ORDER BY c.loadCapacityTon
+    """)
     List<Integer> findCapacitiesQuick(@Param("modelName") String modelName);
 
 

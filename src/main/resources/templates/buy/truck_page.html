@@ -12,9 +12,8 @@
 
 <body>
 <div layout:fragment="content">
-
-    <!-- === 기본 HTML 골격 === -->
     <div class="page-wrapper">
+        <!--<form id="TrucktFilterForm" method="get" th:action="@{/truck}">-->
         <!-- 좌측 필터 영역 -->
         <aside class="sidebar-left encar-filters">
             <div class="filter-header">
@@ -393,19 +392,20 @@
             <div class="section-title">일반등록
                 <div class="list-header">
                     <div class="sort-options">
-                        <a th:href="@{/cars(sort='recent')}"      th:classappend="${sort == 'recent'} ? 'active' : ''">최근 등록일순</a>
-                        <a th:href="@{/cars(sort='priceAsc')}"    th:classappend="${sort == 'priceAsc'} ? 'active' : ''">낮은 가격순</a>
-                        <a th:href="@{/cars(sort='priceDesc')}"   th:classappend="${sort == 'priceDesc'} ? 'active' : ''">높은 가격순</a>
-                        <a th:href="@{/cars(sort='mileageAsc')}"  th:classappend="${sort == 'mileageAsc'} ? 'active' : ''">낮은 주행거리순</a>
-                        <a th:href="@{/cars(sort='mileageDesc')}" th:classappend="${sort == 'mileageDesc'} ? 'active' : ''">높은 주행거리순</a>
-                        <a th:href="@{/cars(sort='yearDesc')}"    th:classappend="${sort == 'yearDesc'} ? 'active' : ''">최근연식순</a>
-                    </div>
+                        <a href="#" data-sort="recent"      th:classappend="${sort}=='recent' ? 'active' : ''">최근 등록일순</a>
+                        <a href="#" data-sort="priceAsc"    th:classappend="${sort}=='priceAsc' ? 'active' : ''">낮은 가격순</a>
+                        <a href="#" data-sort="priceDesc"   th:classappend="${sort}=='priceDesc' ? 'active' : ''">높은 가격순</a>
+                        <a href="#" data-sort="mileageAsc"  th:classappend="${sort}=='mileageAsc' ? 'active' : ''">낮은 주행거리순</a>
+                        <a href="#" data-sort="mileageDesc" th:classappend="${sort}=='mileageDesc' ? 'active' : ''">높은 주행거리순</a>
+                        <a href="#" data-sort="yearDesc"    th:classappend="${sort}=='yearDesc' ? 'active' : ''">최근연식순</a>
 
-                    <div class="page-size">
-                        <select onchange="location.href=this.value">
-                            <option th:value="@{/cars(pageSize=20)}"  th:selected="${pageSize==20}">20개씩 보기</option>
-                            <option th:value="@{/cars(pageSize=50)}"  th:selected="${pageSize==50}">50개씩 보기</option>
-                            <option th:value="@{/cars(pageSize=100)}" th:selected="${pageSize==100}">100개씩 보기</option>
+                        <!-- 오른쪽 select (정렬바 내부에서 오른쪽 끝으로 자동 정렬됨) -->
+                        <select id="pageSizeSelect" name="size" class="page-size-select">
+                            <option value="10" th:selected="${size==10}">10개씩</option>
+                            <option value="20" th:selected="${size==20}">20개씩</option>
+                            <option value="30" th:selected="${size==30}">30개씩</option>
+                            <option value="40" th:selected="${size==40}">40개씩</option>
+                            <option value="50" th:selected="${size==50}">50개씩</option>
                         </select>
                     </div>
                 </div>
@@ -446,6 +446,26 @@
                 </tr>
                 </tbody>
             </table>
+            <div class="pagination">
+                <ul>
+                    <li th:classappend="${page.hasPrevious()} ? '' : 'disabled'">
+                        <a href="#" th:data-page="${page.number - 1}">이전</a>
+                    </li>
+
+                    <li th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                        th:classappend="${i == page.number} ? 'active'">
+                        <a href="#"
+                           th:text="${i + 1}"
+                           th:data-page="${i}">1</a>
+                    </li>
+
+                    <li th:classappend="${page.hasNext()} ? '' : 'disabled'">
+                        <a href="#" th:data-page="${page.number + 1}">다음</a>
+                    </li>
+                </ul>
+            </div>
+            <input type="hidden" name="sort" th:value="${sort}"/>
+            <input type="hidden" name="page" th:value="${page.number}"/>
         </main>
 
         <!-- 📦 우측 배너 영역 -->
@@ -472,7 +492,7 @@
     <script defer src="/js/base.js"></script>
     <script defer src="/js/wishlist.js"></script>
     <script defer src="/js/truck_filter_init.js"></script>
-    <script defer src="/js/truck_filter.js"></script>
+    <!--<script defer src="/js/truck_filter.js"></script>-->
 </th:block>
 </body>
 </html>
