@@ -40,6 +40,10 @@ public class MypageController {
     private final ImportCarSaleRepository2 importCarSaleRepository2;
     private final CarSaleRepository2 carSaleRepository2;
     private final TruckSaleRepository truckSaleRepository;
+    private final AccidentHistoryTicketService accidentHistoryTicketService;
+    private final ExportPriceService exportPriceService;
+
+
 
 
     public MypageController(MemberRepository memberRepository,
@@ -54,7 +58,9 @@ public class MypageController {
                             CarImageRepository carImageRepository,
                             ImportCarSaleRepository2 importCarSaleRepository2,
                             CarSaleRepository2 carSaleRepository2,
-                            TruckSaleRepository truckSaleRepository) {
+                            TruckSaleRepository truckSaleRepository,
+                            AccidentHistoryTicketService accidentHistoryTicketService,
+                            ExportPriceService exportPriceService) {
 
         this.memberRepository = memberRepository;
         this.allCarSaleRepository2 = allCarSaleRepository2;
@@ -68,7 +74,10 @@ public class MypageController {
         this.carImageRepository = carImageRepository;
         this.importCarSaleRepository2 = importCarSaleRepository2;
         this.carSaleRepository2 = carSaleRepository2;
-        this.truckSaleRepository = truckSaleRepository;   // 🔥 이거
+        this.truckSaleRepository = truckSaleRepository;
+        this.accidentHistoryTicketService = accidentHistoryTicketService;
+        this.exportPriceService = exportPriceService;
+
 
     }
 
@@ -96,16 +105,16 @@ public class MypageController {
         // ⭐ 국산 + 수입 찜만 (홈용)
         List<WishMini> passengerWish = allCarSaleRepository2.findPassengerWish(memberId);
 
-// ⭐ 트럭 찜
+        // ⭐ 트럭 찜
         List<WishMini> truckWishMini = allCarSaleRepository2.findTruckWish(memberId);
 
-// ⭐ 홈에서는 국산 + 수입 ONLY (subtract 절대 X)
+        // ⭐ 홈에서는 국산 + 수입 ONLY (subtract 절대 X)
         int wishCountHome = passengerWish.size();
 
-// 기존 wishlistCars는 그대로 유지
+        // 기존 wishlistCars는 그대로 유지
         List<WishCarDto> wishlistCars = wishlistService.myWishlistCars(memberId);
 
-// 🔥 모델 등록
+        // 🔥 모델 등록
         model.addAttribute("wishCount", wishCountHome);       // ✔ 14로 정확하게 출력됨
         model.addAttribute("wishMini", passengerWish);        // ✔ 홈 리스트도 국산+수입만
         model.addAttribute("truckWishMini", truckWishMini);   // ✔ 트럭 찜은 따로
@@ -322,6 +331,22 @@ public class MypageController {
                 inquiryService.getMyInquiries(memberId);
 
         model.addAttribute("myInquiries", myInquiries);
+
+        /* ============================================================
+           🔥 11) 사고이력 조회
+           ============================================================ */
+        List<AccidentHistoryTicketDto> tickets =
+                accidentHistoryTicketService.getTickets(memberId);
+
+        model.addAttribute("tickets", tickets);
+
+        /* ============================================================
+       🔥 12) 내 판매중 차량 → 수출 시세 검색용 myCars
+       ============================================================ */
+        List<MyCarSimpleDto> myCars = exportPriceService.findMySellingCars(memberId);
+        model.addAttribute("myCars", myCars);
+
+
 
         return "mypage";
     }

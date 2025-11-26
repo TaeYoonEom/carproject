@@ -543,28 +543,46 @@
             <!-- 사고이력 조회 콘텐츠 (초기 숨김) -->
             <div id="accident-history-section" class="hidden">
                 <h3>사고이력 조회</h3>
-                <p class="info-gray">고객님이 구입하신 <span style="color: red;">사고이력 조회권의 이용기간</span>, <span style="color: red;">잔여일</span> 등의 정보를 확인하실 수 있습니다.</p>
+                <p class="info-gray">
+                    고객님이 구입하신 <span style="color: red;">사고이력 조회권의 이용기간</span>,
+                    <span style="color: red;">잔여일</span> 등의 정보를 확인하실 수 있습니다.
+                </p>
 
-                <div style="margin-top: 20px;">
-                    <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: center;">
-                        <thead style="background: #f9f9f9; border: 1px solid #ccc;">
+                <div class="acc-table-wrapper">
+                    <table class="acc-table">
+
+                        <thead>
                         <tr>
-                            <th style="padding: 10px; border: 1px solid #ccc;">구입일시</th>
-                            <th style="border: 1px solid #ccc;">이용기간</th>
-                            <th style="border: 1px solid #ccc;">남은건수</th>
-                            <th style="border: 1px solid #ccc;">잔여일</th>
-                            <th style="border: 1px solid #ccc;">조회내역</th>
-                            <th style="border: 1px solid #ccc;">상태</th>
+                            <th>구입일시</th>
+                            <th>이용기간</th>
+                            <th>남은건수</th>
+                            <th>잔여일</th>
+                            <th>조회내역</th>
+                            <th>상태</th>
                         </tr>
                         </thead>
+
                         <tbody>
-                        <tr>
-                            <td colspan="6" style="padding: 20px; color: #888;">구입내역이 없습니다.</td>
+                        <tr th:each="t : ${tickets}">
+                            <td th:text="${#temporals.format(t.purchaseDate, 'yyyy-MM-dd')}"></td>
+                            <td th:text="${t.validDays + '일'}"></td>
+                            <td th:text="${t.remainingCount}"></td>
+
+                            <!-- 잔여일 표시 (만료는 빨강) -->
+                            <td th:if="${t.remainDays > 0}" th:text="${t.remainDays}"></td>
+                            <td class="acc-expired" th:if="${t.remainDays <= 0}">기간 만료</td>
+
+                            <td><a class="acc-link" href="#">조회내역</a></td>
+                            <td th:text="${t.status}"></td>
                         </tr>
                         </tbody>
+
                     </table>
+
                 </div>
+
             </div>
+
 
             <!-- 엔카종합보증 등록/관리 콘텐츠 -->
             <div id="warranty-section" class="hidden">
@@ -1640,71 +1658,82 @@
 
 
             <!-- ######### 수출시세 ######### -->
-            <!-- ✅ 수출시세검색 섹션 -->
             <div id="export-price-section" class="hidden">
                 <h3>수출시세검색</h3>
-                <p class="info-gray">수출시세 검색 서비스를 통해 전국 각지의 중고차 수출 매입 정보를 한눈에 확인하세요!</p>
+                <p class="info-gray">
+                    현재 등록된 내 차량과 유사한 차량의 시세를 간편하게 확인해보세요!
+                </p>
 
-                <!-- 🚗 내 수출 가능한 차량이 없습니다 -->
-                <div class="alert-box red" style="margin-top: 10px;">
+                <!-- 🚗 내 수출 가능 차량 선택 -->
+                <div class="export-search-box" style="margin-top: 15px;">
+                    <div class="search-header">
+                        <span class="icon-search">🚗</span> 내 차량으로 시세 검색
+                    </div>
+
+                    <div class="search-form">
+                        <label style="font-weight:bold;">내 차량 선택:
+                            <select id="my-car-select" onchange="loadExportPrice(this.value)">
+                                <option value="">차량을 선택하세요</option>
+
+                                <!-- model에서 내려준 myCars 리스트 -->
+                                <option th:each="c : ${myCars}"
+                                        th:value="${c.carId}"
+                                        th:text="${c.modelName + ' (' + c.year + ')'}">
+                                </option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 🔽 AJAX 결과 박스 -->
+                <div id="export-price-result-box" style="margin-top: 20px;">
+                    <p style="text-align:center; color:#666;">차량을 선택하면 시세 결과가 표시됩니다.</p>
+                </div>
+
+
+                <!-- 🔽 아래 기존 구조 유지 (원하면 삭제 가능) -->
+                <div class="alert-box red" style="margin-top: 30px;">
                     <span class="icon-alert">🚫</span> 나의 수출 가능 차량이 없습니다.
                 </div>
 
                 <!-- 🔍 수출시세 검색 -->
-                <div class="export-search-box">
+                <div class="export-search-box" style="margin-top: 20px;">
                     <div class="search-header">
                         <span class="icon-search">🔍</span> 수출시세 검색
                     </div>
 
                     <div class="search-form">
-                        <label>차종 및 연식:
-                            <select><option>제조사</option></select>
-                            <select><option>모델</option></select>
-                            <select><option>등급</option></select>
-                            <select><option>연식</option></select>
+                        <label>제조사:
+                            <select id="exp-maker" onchange="loadModels()">
+                                <option value="">제조사 선택</option>
+                                <option th:each="m : ${exportMakers}"
+                                        th:value="${m}"
+                                        th:text="${m}"></option>
+                            </select>
                         </label>
-                        <label>변속기:
-                            <select><option>무관</option></select>
-                            지역:
-                            <select><option>전국</option></select>
+
+                        <label>모델:
+                            <select id="exp-model" onchange="loadYears()">
+                                <option value="">모델 선택</option>
+                            </select>
                         </label>
-                        <button class="btn-gray-small">검색</button>
+
+                        <label>연식:
+                            <select id="exp-year">
+                                <option value="">연식 선택</option>
+                            </select>
+                        </label>
+
+                        <button class="btn-gray-small" onclick="searchExport()">검색</button>
                     </div>
                 </div>
 
-                <!-- 📦 등록업체 수 -->
-                <div class="export-status" style="margin-top: 8px;">
-                    등록업체 수: <span style="color: red;">총 0개</span>
+                <!-- 결과 출력 영역 -->
+                <div id="export-list-result" style="margin-top: 20px;">
+                    <p style="text-align:center; color:#777;">제조사와 모델을 선택 후 검색해보세요.</p>
                 </div>
-
-                <!-- 🔽 제조사 탭 -->
-                <div class="manufacturer-tabs tab-buttons" style="margin-top: 10px; border-bottom: 2px solid #d32f2f;">
-                    <button class="tab-btn active">현대 (0개모델)</button>
-                    <button class="tab-btn">기아 (0개모델)</button>
-                    <button class="tab-btn">GM대우 (0개모델)</button>
-                    <button class="tab-btn">르노삼성 (0개모델)</button>
-                    <button class="tab-btn">쌍용 (0개모델)</button>
-                    <button class="tab-btn">기타 (0개모델)</button>
-                </div>
-
-                <!-- 🚫 등록된 시세 없음 -->
-                <table class="simple-table">
-                    <thead>
-                    <tr>
-                        <th>모델</th>
-                        <th>등급</th>
-                        <th>수출가능 연식</th>
-                        <th>등록업체 수</th>
-                        <th>연식선택</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td colspan="5" style="text-align: center;">해당 제조사에 등록된 시세가 없습니다.</td>
-                    </tr>
-                    </tbody>
-                </table>
             </div>
+
 
             <!-- ✅ 콘텐츠 영역: 회원정보 수정 -->
             <!-- ✅ 콘텐츠 영역: 회원탈퇴 -->
@@ -2780,6 +2809,23 @@
 
 
         });
+    </script>
+
+    <script>
+        function loadExportPrice(carId) {
+            if (!carId) {
+                document.querySelector("#export-price-result-box").innerHTML =
+                    "<p style='text-align:center;color:#666;'>차량을 선택하면 시세 결과가 표시됩니다.</p>";
+                return;
+            }
+
+            fetch(`/export-price/search?carId=${carId}`)
+                .then(res => res.text())
+                .then(html => {
+                    document.querySelector("#export-price-result-box").innerHTML = html;
+                })
+                .catch(err => console.error("시세 조회 오류:", err));
+        }
     </script>
 
 </th:block>

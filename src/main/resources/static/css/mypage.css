@@ -832,3 +832,56 @@ a.sidebar-category:hover {
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0,0,0,0.12);
 }
+
+/* ======================================
+   사고이력 조회 테이블 (가운데 정렬 + 검정 글씨)
+====================================== */
+
+.acc-table-wrapper {
+    margin-top: 20px;
+    width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.acc-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    color: #000; /* 전체 글씨 완전 검정 */
+    text-align: center; /* 모든 텍스트 가운데 정렬 */
+}
+
+/* 헤더 */
+.acc-table th {
+    background: #e9e9e9; /* 살짝 진한 회색 */
+    border: 1px solid #bfbfbf;
+    padding: 12px;
+    font-weight: 700;
+    color: #000; /* 검정 */
+}
+
+/* 셀 스타일 */
+.acc-table td {
+    border: 1px solid #d0d0d0;
+    padding: 10px;
+    color: #000; /* 검정 */
+}
+
+/* 기간 만료 - 붉은색 강조 */
+.acc-expired {
+    color: #d32f2f;
+    font-weight: 700;
+}
+
+/* 조회내역 링크 */
+.acc-link {
+    color: #7b1fa2;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+/* hover 효과 */
+.acc-table tr:hover td {
+    background-color: #f7f7f7;
+}

@@ -1,0 +1,120 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="resultTable"
+     style="font-family: 'Pretendard', sans-serif;">
+
+  <!-- 📊 시세 요약 박스 -->
+  <div style="
+      border: 1px solid #e0e0e0;
+      padding: 22px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      background: #fafafa;
+  ">
+    <h4 style="margin-bottom: 18px; font-size: 20px; font-weight: 700; color:#333;">
+      📊 시세 요약
+    </h4>
+
+    <div style="display: flex; justify-content: space-between; font-size: 16px; color:#444;">
+      <div><strong>등록된 차량 수:</strong>
+        <span style="color:#d32f2f; font-weight:bold;" th:text="${count}"></span>대
+      </div>
+      <div><strong>최저가:</strong>
+        <span style="color:#1976d2; font-weight:600;"
+              th:text="${#numbers.formatInteger(minPrice, 1, 'COMMA')} + '원'"></span>
+      </div>
+      <div><strong>평균가:</strong>
+        <span style="color:#388e3c; font-weight:600;"
+              th:text="${#numbers.formatInteger(avgPrice, 1, 'COMMA')} + '원'"></span>
+      </div>
+      <div><strong>최고가:</strong>
+        <span style="color:#d60000; font-weight:bold;"
+              th:text="${#numbers.formatInteger(maxPrice, 1, 'COMMA')} + '원'"></span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 🚗 차량 리스트 테이블 -->
+  <table style="
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15.5px;
+      text-align: center;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+  ">
+    <thead>
+    <tr style="
+        background:#f2f2f2;
+        border-bottom: 2px solid #dcdcdc;
+        height: 55px;
+        font-size: 16px;
+        font-weight: 600;
+        color:#333;
+    ">
+      <th>제조사</th>
+      <th>모델명</th>
+      <th>연식</th>
+      <th>주행거리</th>
+      <th>지역</th>
+      <th>가격</th>
+      <th style="width: 90px;">조회</th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+    <!-- 데이터 없을 때 -->
+    <tr th:if="${#lists.isEmpty(cars)}">
+      <td colspan="7" style="padding: 25px; color:#888; font-size: 16px;">
+        유사한 차량 시세가 없습니다.
+      </td>
+    </tr>
+
+    <!-- 데이터 있을 때 -->
+    <tr th:each="c : ${cars}"
+        style="
+            border-bottom: 1px solid #eee;
+            height: 55px;
+            transition: background 0.15s;
+        "
+        onmouseover="this.style.background='#fbfbfb'"
+        onmouseout="this.style.background='white'">
+
+      <td th:text="${c.manufacturer}"></td>
+      <td th:text="${c.modelName}" style="font-weight:500;"></td>
+      <td th:text="${c.year}"></td>
+      <td th:text="${#numbers.formatInteger(c.mileage, 1, 'COMMA')} + 'km'"></td>
+      <td th:text="${c.location}"></td>
+
+      <!-- 가격 강조 -->
+      <td th:text="${#numbers.formatInteger(c.price, 1, 'COMMA')} + '원'"
+          style="color:#d60000; font-weight:700; font-size: 17px;">
+      </td>
+
+      <!-- 🔍 조회 버튼 -->
+      <td>
+        <a th:href="@{'/cars/' + ${c.carId}}"
+           style="
+              display: inline-block;
+              padding: 6px 14px;
+              background: #1976d2;
+              color: white;
+              border-radius: 6px;
+              font-size: 14px;
+              font-weight: 600;
+              text-decoration: none;
+              transition: background .15s;
+           "
+           onmouseover="this.style.background='#125ca1'"
+           onmouseout="this.style.background='#1976d2'">
+          조회
+        </a>
+      </td>
+
+    </tr>
+
+    </tbody>
+  </table>
+
+</div>
