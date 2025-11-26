@@ -20,7 +20,7 @@ public class TruckController {
 
     private final TruckSaleService truckSaleService;
 
-    /*@GetMapping("/truck")
+    @GetMapping("/truck")
     public String showTruckPage(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -54,7 +54,7 @@ public class TruckController {
         model.addAttribute("totalCount", normalPage.getTotalElements());
 
         return "buy/truck_page";
-    }*/
+    }
 
 
 

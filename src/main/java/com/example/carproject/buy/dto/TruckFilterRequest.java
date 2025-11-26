@@ -18,10 +18,10 @@ public class TruckFilterRequest {
     private List<String> fuelType;
     private List<String> transmission;
 
-    private String yearFrom;
-    private String yearTo;
-    private String monthFrom;
-    private String monthTo;
+    private Integer yearFrom;
+    private Integer yearTo;
+    private Integer monthFrom;
+    private Integer monthTo;
     private Integer mileageMin;
     private Integer mileageMax;
     private Integer priceMin;
