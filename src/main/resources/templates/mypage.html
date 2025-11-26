@@ -1671,11 +1671,9 @@
                     </div>
 
                     <div class="search-form">
-                        <label style="font-weight:bold;">내 차량 선택:
+                        <label>내 차량 선택:
                             <select id="my-car-select" onchange="loadExportPrice(this.value)">
                                 <option value="">차량을 선택하세요</option>
-
-                                <!-- model에서 내려준 myCars 리스트 -->
                                 <option th:each="c : ${myCars}"
                                         th:value="${c.carId}"
                                         th:text="${c.modelName + ' (' + c.year + ')'}">
@@ -1685,16 +1683,12 @@
                     </div>
                 </div>
 
+
                 <!-- 🔽 AJAX 결과 박스 -->
                 <div id="export-price-result-box" style="margin-top: 20px;">
                     <p style="text-align:center; color:#666;">차량을 선택하면 시세 결과가 표시됩니다.</p>
                 </div>
 
-
-                <!-- 🔽 아래 기존 구조 유지 (원하면 삭제 가능) -->
-                <div class="alert-box red" style="margin-top: 30px;">
-                    <span class="icon-alert">🚫</span> 나의 수출 가능 차량이 없습니다.
-                </div>
 
                 <!-- 🔍 수출시세 검색 -->
                 <div class="export-search-box" style="margin-top: 20px;">
@@ -1703,12 +1697,17 @@
                     </div>
 
                     <div class="search-form">
+
                         <label>제조사:
                             <select id="exp-maker" onchange="loadModels()">
                                 <option value="">제조사 선택</option>
-                                <option th:each="m : ${exportMakers}"
-                                        th:value="${m}"
-                                        th:text="${m}"></option>
+                                <optgroup th:each="entry : ${makerGroups}"
+                                          th:label="${entry.key}">
+                                    <option th:each="m : ${entry.value}"
+                                            th:value="${m}"
+                                            th:text="${m}">
+                                    </option>
+                                </optgroup>
                             </select>
                         </label>
 
@@ -1724,9 +1723,11 @@
                             </select>
                         </label>
 
-                        <button class="btn-gray-small" onclick="searchExport()">검색</button>
+                        <button class="search-btn" onclick="searchExport()">검색</button>
+
                     </div>
                 </div>
+
 
                 <!-- 결과 출력 영역 -->
                 <div id="export-list-result" style="margin-top: 20px;">
@@ -2825,6 +2826,47 @@
                     document.querySelector("#export-price-result-box").innerHTML = html;
                 })
                 .catch(err => console.error("시세 조회 오류:", err));
+        }
+        function loadModels() {
+            const maker = document.getElementById("exp-maker").value;
+
+            if (!maker) {
+                document.getElementById("exp-model").innerHTML = "<option>모델 선택</option>";
+                return;
+            }
+
+            fetch(`/export/filter/models?maker=${maker}`)
+                .then(res => res.json())
+                .then(list => {
+                    let html = "<option value=''>모델 선택</option>";
+                    list.forEach(m => html += `<option value="${m}">${m}</option>`);
+                    document.getElementById("exp-model").innerHTML = html;
+                });
+        }
+
+        function loadYears() {
+            const maker = document.getElementById("exp-maker").value;
+            const model = document.getElementById("exp-model").value;
+
+            fetch(`/export/filter/years?maker=${maker}&model=${model}`)
+                .then(res => res.json())
+                .then(list => {
+                    let html = "<option value=''>연식 선택</option>";
+                    list.forEach(y => html += `<option value="${y}">${y}</option>`);
+                    document.getElementById("exp-year").innerHTML = html;
+                });
+        }
+
+        function searchExport() {
+            const maker = document.getElementById("exp-maker").value;
+            const model = document.getElementById("exp-model").value;
+            const year = document.getElementById("exp-year").value;
+
+            fetch(`/export/filter/search?maker=${maker}&model=${model}&year=${year}`)
+                .then(res => res.text())
+                .then(html => {
+                    document.getElementById("export-list-result").innerHTML = html;
+                });
         }
     </script>
 

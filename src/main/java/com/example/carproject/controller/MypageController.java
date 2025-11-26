@@ -346,6 +346,12 @@ public class MypageController {
         List<MyCarSimpleDto> myCars = exportPriceService.findMySellingCars(memberId);
         model.addAttribute("myCars", myCars);
 
+        /* ============================================================
+       🔥 13) 수출 시세 검색용 제조사 목록
+       ============================================================ */
+        List<String> exportMakers = exportPriceService.findAllManufacturers();
+        model.addAttribute("exportMakers", exportMakers);
+        model.addAttribute("makerGroups", exportPriceService.findManufacturersGrouped());
 
 
         return "mypage";

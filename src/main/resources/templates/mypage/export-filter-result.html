@@ -1,4 +1,4 @@
-<div xmlns:th="http://www.thymeleaf.org" th:fragment="resultTable"
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="result"
      style="font-family: 'Pretendard', sans-serif;">
 
   <!-- 📊 시세 요약 박스 -->
@@ -17,21 +17,23 @@
       <div><strong>등록된 차량 수:</strong>
         <span style="color:#d32f2f; font-weight:bold;" th:text="${count}"></span>대
       </div>
+
       <div><strong>최저가:</strong>
         <span style="color:#1976d2; font-weight:600;"
-              th:text="${#numbers.formatInteger(minPrice, 1, 'COMMA')} + '원'"></span>
+              th:text="${#numbers.formatInteger(minPrice, 1, 'COMMA') + '원'}"></span>
       </div>
+
       <div><strong>평균가:</strong>
         <span style="color:#388e3c; font-weight:600;"
-              th:text="${#numbers.formatInteger(avgPrice, 1, 'COMMA')} + '원'"></span>
+              th:text="${#numbers.formatInteger(avgPrice, 1, 'COMMA') + '원'}"></span>
       </div>
+
       <div><strong>최고가:</strong>
         <span style="color:#d60000; font-weight:bold;"
-              th:text="${#numbers.formatInteger(maxPrice, 1, 'COMMA')} + '원'"></span>
+              th:text="${#numbers.formatInteger(maxPrice, 1, 'COMMA') + '원'}"></span>
       </div>
     </div>
   </div>
-
 
   <!-- 🚗 차량 리스트 테이블 -->
   <table style="
@@ -89,8 +91,7 @@
 
       <!-- 가격 강조 -->
       <td th:text="${#numbers.formatInteger(c.price, 1, 'COMMA') + '원'}"
-          style="color:#d60000; font-weight:700; font-size: 17px;">
-      </td>
+          style="color:#d60000; font-weight:700; font-size: 17px;"></td>
 
       <!-- 🔍 조회 버튼 -->
       <td>
@@ -116,5 +117,4 @@
 
     </tbody>
   </table>
-
 </div>

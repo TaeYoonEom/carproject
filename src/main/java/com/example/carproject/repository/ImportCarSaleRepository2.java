@@ -27,6 +27,23 @@ public interface ImportCarSaleRepository2 extends JpaRepository<ImportCarSale, I
             @Param("manu") String manu,
             @Param("keyword") String keyword);
 
+    @Query("SELECT DISTINCT c.manufacturer FROM ImportCarSale c")
+    List<String> findAllManufacturers();
+
+    @Query("SELECT DISTINCT c.modelName FROM ImportCarSale c WHERE c.manufacturer = :maker")
+    List<String> findModelsByMaker(String maker);
+
+    @Query("SELECT DISTINCT c.year FROM ImportCarSale c WHERE c.manufacturer = :maker AND c.modelName = :model")
+    List<Integer> findYears(String maker, String model);
+
+    @Query("""
+        SELECT c FROM ImportCarSale c
+        WHERE c.manufacturer = :maker
+          AND c.modelName = :model
+          AND (:year IS NULL OR c.year = :year)
+    """)
+    List<ImportCarSale> searchExport(String maker, String model, Integer year);
+
 
 
 }

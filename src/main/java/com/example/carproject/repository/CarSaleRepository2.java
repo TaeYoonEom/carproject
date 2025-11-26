@@ -26,6 +26,27 @@ public interface CarSaleRepository2 extends JpaRepository<CarSale, Integer> {
             @Param("manu") String manu,
             @Param("keyword") String keyword);
 
+    // ▼ 제조사 목록
+    @Query("SELECT DISTINCT c.manufacturer FROM CarSale c")
+    List<String> findAllManufacturers();
+
+    // ▼ 모델 목록
+    @Query("SELECT DISTINCT c.modelName FROM CarSale c WHERE c.manufacturer = :maker")
+    List<String> findModelsByMaker(String maker);
+
+    // ▼ 연식 목록
+    @Query("SELECT DISTINCT c.year FROM CarSale c WHERE c.manufacturer = :maker AND c.modelName = :model")
+    List<Integer> findYears(String maker, String model);
+
+    // ▼ 검색
+    @Query("""
+        SELECT c FROM CarSale c
+        WHERE c.manufacturer = :maker
+          AND c.modelName = :model
+          AND (:year IS NULL OR c.year = :year)
+    """)
+    List<CarSale> searchExport(String maker, String model, Integer year);
+
 
 
 }

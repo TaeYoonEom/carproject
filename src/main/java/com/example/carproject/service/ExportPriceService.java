@@ -15,8 +15,8 @@ import com.example.carproject.repository.ImportCarSaleRepository2;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -133,5 +133,84 @@ public class ExportPriceService {
                 )
         ).toList();
     }
+
+    public List<String> findAllManufacturers() {
+        List<String> a = carSaleRepo.findAllManufacturers();
+        List<String> b = importRepo.findAllManufacturers();
+        List<String> c = cargoRepo.findAllManufacturers();
+
+        return Stream.concat(a.stream(),
+                        Stream.concat(b.stream(), c.stream()))
+                .distinct()
+                .sorted()
+                .toList();
+    }
+
+    public List<String> findModelsByMaker(String maker) {
+        List<String> a = carSaleRepo.findModelsByMaker(maker);
+        List<String> b = importRepo.findModelsByMaker(maker);
+        List<String> c = cargoRepo.findModelsByMaker(maker);
+
+        return Stream.concat(a.stream(),
+                        Stream.concat(b.stream(), c.stream()))
+                .distinct()
+                .sorted()
+                .toList();
+    }
+
+    public List<Integer> findYears(String maker, String model) {
+        List<Integer> a = carSaleRepo.findYears(maker, model);
+        List<Integer> b = importRepo.findYears(maker, model);
+        List<Integer> c = cargoRepo.findYears(maker, model);
+
+        return Stream.concat(a.stream(),
+                        Stream.concat(b.stream(), c.stream()))
+                .distinct()
+                .sorted(Comparator.reverseOrder())
+                .toList();
+    }
+
+    public List<ExportPriceCarDto> findCarsByFilter(String maker, String model, Integer year) {
+
+        List<?> raw1 = carSaleRepo.searchExport(maker, model, year);
+        List<?> raw2 = importRepo.searchExport(maker, model, year);
+        List<?> raw3 = cargoRepo.searchExport(maker, model, year);
+
+        List<Object> raw = Stream.concat(raw1.stream(),
+                        Stream.concat(raw2.stream(), raw3.stream()))
+                .toList();
+
+        return raw.stream().map(o -> {
+            if (o instanceof CarSale c) {
+                return new ExportPriceCarDto(c.getCarId(), c.getManufacturer(), c.getModelName(),
+                        c.getYear(), c.getMileage(), c.getPrice(), c.getSaleLocation());
+            }
+            if (o instanceof ImportCarSale c) {
+                return new ExportPriceCarDto(c.getCarId(), c.getManufacturer(), c.getModelName(),
+                        c.getYear(), c.getMileage(), c.getPrice(), c.getSaleLocation());
+            }
+            if (o instanceof CargoSpecialSale c) {
+                return new ExportPriceCarDto(c.getCarId(), c.getManufacturer(), c.getModelName(),
+                        c.getYear(), c.getMileage(), c.getPrice(), c.getRegion());
+            }
+            return null;
+        }).filter(Objects::nonNull).toList();
+    }
+
+    public Map<String, List<String>> findManufacturersGrouped() {
+
+        List<String> domestic = carSaleRepo.findAllManufacturers();   // 국산
+        List<String> importList = importRepo.findAllManufacturers();  // 수입
+        List<String> cargo = cargoRepo.findAllManufacturers();        // 화물/특장
+
+        Map<String, List<String>> map = new LinkedHashMap<>();
+        map.put("국산차", domestic.stream().sorted().toList());
+        map.put("수입차", importList.stream().sorted().toList());
+        map.put("화물·특장", cargo.stream().sorted().toList());
+
+        return map;
+    }
+
+
 
 }
