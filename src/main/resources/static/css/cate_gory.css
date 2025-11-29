@@ -13,6 +13,7 @@ body {
   display: flex;
   gap: 20px;
   box-sizing: border-box;
+  align-items: flex-start;
 }
 
 /* 좌측 필터 컬럼(폭 고정) */
@@ -442,7 +443,10 @@ details[open] > summary::after{
 .manual-inputs .tilde { color: #9aa1a7; }
 
 /* 가운데 카드 그리드 */
-.content { display: flex; flex-direction: column; padding: 5px; }
+.content {
+    flex: 1;
+    min-width: 0;
+}
 .section-title {
   font-size: 18px; font-weight: bold;
   border-bottom: 2px solid #000;
@@ -660,57 +664,78 @@ a.encar-card-link:focus-visible .encar-title {
 
 
 /* ✅ 페이지네이션 컨테이너 */
-.pagination-container {
+/* ===============================
+   ✅ 엔카 스타일 페이지네이션
+=============================== */
+
+.pagination {
   display: flex;
   justify-content: center;
-  margin: 24px 0;
+  margin: 32px 0;
 }
 
 .encar-pagination {
   list-style: none;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;   /* ✅ 번호 간격 */
   padding: 0;
   margin: 0;
 }
 
-/* ✅ 페이지 링크 */
-.encar-pagination .page-link {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 4px;
-  color: #555;
+/* 기본 버튼 */
+.encar-pagination li a {
+  display: block;
+  min-width: 36px;
+  height: 36px;
+  line-height: 36px;
+  text-align: center;
+
   font-size: 14px;
+  font-weight: 500;
+
+  color: #626262;
+  background: transparent;
+
+  border-radius: 6px;   /* ✅ 엔카 둥근 느낌 */
   text-decoration: none;
-  transition: all 0.2s ease;
+
+  transition: all .15s ease;
 }
 
-/* ✅ hover */
-.encar-pagination .page-link:hover {
-  background-color: #f2f2f2;
+/* hover */
+.encar-pagination li a:hover {
+  background: #f1f1f1;
   color: #000;
 }
 
-/* ✅ active 페이지 */
-.encar-pagination .active .page-link,
-.encar-pagination li.active a.page-link {
-  background-color: #000;
+/* ✅ 활성 페이지 */
+.encar-pagination li.active a {
+  background: #000;
   color: #fff !important;
   font-weight: 700;
 }
 
-/* ✅ prev/next 흐리게 */
-.encar-pagination .page-link.prev,
-.encar-pagination .page-link.next {
-  color: #999;
+/* ✅ 이전/다음 */
+.encar-pagination li:first-child a,
+.encar-pagination li:last-child a {
+  min-width: auto;
+  padding: 0 10px;
+  font-weight: 500;
+  color: #9a9a9a;
 }
 
-.encar-pagination .page-link.prev:hover,
-.encar-pagination .page-link.next:hover {
+/* hover 시 */
+.encar-pagination li:first-child a:hover,
+.encar-pagination li:last-child a:hover {
   color: #000;
 }
 
+/* ✅ 비활성 */
+.encar-pagination li.disabled a {
+  color: #c7c7c7;
+  pointer-events: none;
+}
 
 
 /* 왼쪽 정렬 버튼 그룹 */
@@ -720,7 +745,6 @@ a.encar-card-link:focus-visible .encar-title {
   align-items: center;
 }
 
-/* 정렬 버튼 */
 .sort-options a {
   font-size: 14px;
   color: #777;
@@ -765,6 +789,14 @@ a.encar-card-link:focus-visible .encar-title {
   background: #f1f1f1;
 }
 
+#electricFilterForm,
+#importFilterForm,
+#truckFilterForm {
+    display: flex;              /* ✅ 핵심 */
+    width: 100%;
+    align-items: flex-start;
+    gap: 20px;
+}
 
 
 

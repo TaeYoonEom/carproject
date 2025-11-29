@@ -7,6 +7,7 @@ import java.util.List;
 @Data
 public class ElectricFilterRequest {
     private List<String> carType;
+    private List<String> ecoType;
     private List<String> manufacturer;
     private List<String> modelName;
     private List<String> carName;
@@ -30,3 +31,4 @@ public class ElectricFilterRequest {
     private Integer mileageMin;
     private Integer mileageMax;
 }
+

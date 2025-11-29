@@ -1,6 +1,7 @@
 package com.example.carproject.buy.repository;
 
-import com.example.carproject.buy.projection.ElectricCarRow;
+import com.example.carproject.buy.domain.EcoCar;
+import com.example.carproject.buy.dto.ElectricFilterRequest;
 import com.example.carproject.domain.AllCarSale;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,9 +12,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 @Repository
-public interface ElectricCarRepository extends JpaRepository<AllCarSale, Integer> {
+public interface ElectricCarRepository
+        extends JpaRepository<EcoCar, Integer>,
+        JpaSpecificationExecutor<EcoCar>{
 
-    @Query(value =
+    /*@Query(value =
             " (SELECT cs.car_id AS carId, a.origin AS origin, cs.car_name AS carName, cs.price AS price, " +
                     "         cs.year AS year, cs.mileage AS mileage, cs.drive_type AS driveType, " +
                     "         cs.sale_location AS saleLocation, cs.ownership_status AS ownershipStatus, " +
@@ -44,5 +47,9 @@ public interface ElectricCarRepository extends JpaRepository<AllCarSale, Integer
                             "    WHERE a.is_eco_friendly = 1 " +
                             " ) t ",
             nativeQuery = true)
-    Page<ElectricCarRow> findEcoCars(Pageable pageable);
+    Page<ElectricCarRow> findEcoCars(
+            ElectricFilterRequest filters,
+            Pageable pageable
+    );
+*/
 }
