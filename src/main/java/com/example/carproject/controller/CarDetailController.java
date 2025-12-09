@@ -7,6 +7,7 @@ import com.example.carproject.dto.SellerDto;
 import com.example.carproject.repository.AllCarSaleRepository2;
 import com.example.carproject.security.CustomUserDetails;
 import com.example.carproject.service.CarService;
+import com.example.carproject.service.ExportPriceService;
 import com.example.carproject.service.RecentCarService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,8 @@ public class CarDetailController {
     private final CarService carService;
     private final RecentCarService recentCarService;   // 🔥 추가됨
     private final AllCarSaleRepository2 allCarSaleRepository2;
+    private final ExportPriceService exportPriceService;
+
 
     @GetMapping("/cars/{carId}")
     public String carDetail(@PathVariable Long carId,
@@ -88,6 +91,9 @@ public class CarDetailController {
 
         model.addAttribute("categoryName", carService.getCategoryName(carId));
         model.addAttribute("categoryPath", carService.getCategoryPath(carId));
+        model.addAttribute("exportPrice", exportPriceService.findSimilarCars(carId.intValue()));
+        model.addAttribute("makerGroups", exportPriceService.findManufacturersGrouped());
+
 
         return "car_detail";
     }

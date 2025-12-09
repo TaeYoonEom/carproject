@@ -216,25 +216,21 @@
 
       <!-- 시세/가격비교 -->
       <div id="tab-price" class="tab-panel hidden">
-        <div class="price-chart">
-          <!-- 필요 시 차트 영역(후에 JS로 채움) -->
-          <div class="muted">유사 차량 시세 차트 영역 (추가 예정)</div>
+
+        <!-- 🔥 현재 차량 기반 유사 차량 시세 -->
+        <div class="export-price-box">
+          <h3>유사 차량 수출 시세</h3>
+          <p class="info-gray">현재 보고 있는 차량과 유사한 조건(제조사·모델·연식)의 수출 시세입니다.</p>
+
+          <div id="export-price-result-box"
+               th:data-car-id="${car.carId}">
+            <p style="text-align:center;color:#666;">시세 정보를 불러오는 중입니다...</p>
+          </div>
         </div>
-        <table class="compare-table" th:if="${comparables}">
-          <thead>
-          <tr><th>차량</th><th>연식</th><th>주행</th><th>가격</th><th>지역</th></tr>
-          </thead>
-          <tbody>
-          <tr th:each="c : ${comparables}">
-            <td th:text="${c.carName}">차량</td>
-            <td th:text="${c.year}">연식</td>
-            <td th:text="${#numbers.formatInteger(c.mileage,1,'COMMA')} + ' km'">주행</td>
-            <td th:text="${#numbers.formatInteger(c.price,1,'COMMA')} + ' 원'">가격</td>
-            <td th:text="${c.saleLocation}">지역</td>
-          </tr>
-          </tbody>
-        </table>
+
       </div>
+
+
     </div>
 
     <!-- 우측(고정) 판매자/문의 -->
@@ -450,3 +446,35 @@
     initDetailPage();
   }
 </script>
+
+<script>
+  function autoLoadExportPrice(carId) {
+      if (!carId) return;
+
+      const box = document.getElementById("export-price-result-box");
+      box.innerHTML = `<p style="text-align:center;color:#666;">불러오는 중입니다...</p>`;
+
+      fetch(`/export-price/search?carId=` + carId)
+          .then(res => res.text())
+          .then(html => {
+              box.innerHTML = html;
+          })
+          .catch(err => {
+              console.error("시세 조회 오류:", err);
+              box.innerHTML = `<p style="color:red;text-align:center;">시세 정보를 불러올 수 없습니다.</p>`;
+          });
+  }
+
+  // 🔥 차량 상세 페이지 로딩 시 자동으로 시세 조회 실행
+  document.addEventListener("DOMContentLoaded", function () {
+      const box = document.getElementById("export-price-result-box");
+      if (!box) return;
+
+      const carId = box.dataset.carId;   // ← 여기서 carId 읽어옴 ("123" 같은 문자열)
+      autoLoadExportPrice(carId);
+  });
+</script>
+
+
+
+

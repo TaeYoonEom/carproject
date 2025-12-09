@@ -86,7 +86,7 @@
                 <a href="#" class="sidebar-category" data-target="member-info-section">회원정보 관리</a>
                 <ul class="sidebar-list">
                     <li>
-                        <a href="/mypage/verify" class="sidebar-link">회원정보 수정</a>
+                        <a href="/mypage/verify" class="sidebar-link" data-target="verify-page">회원정보 수정</a>
                     </li>
                     <li><a href="#" class="sidebar-link" data-target="member-delete-section">회원탈퇴</a></li>
                 </ul>
@@ -2269,6 +2269,12 @@
                   return;
                 }
 
+                // 🔥 추가: 회원정보 수정 클릭 시 verify 페이지로 이동
+                if (targetId === "verify-page") {
+                  window.location.href = "/mypage/verify";
+                  return;
+                }
+
                 e.preventDefault();
 
                 // 콘텐츠 전환
@@ -2813,6 +2819,9 @@
     </script>
 
     <script>
+        // ===============================
+        //  수출 시세 검색
+        // ===============================
         function loadExportPrice(carId) {
             if (!carId) {
                 document.querySelector("#export-price-result-box").innerHTML =
