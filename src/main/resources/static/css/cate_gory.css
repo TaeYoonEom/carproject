@@ -11,6 +11,7 @@ body {
   max-width: 100%;
   margin: 30px auto 0;
   display: flex;
+  flex-wrap: nowrap;
   gap: 20px;
   box-sizing: border-box;
   align-items: flex-start;
@@ -444,7 +445,7 @@ details[open] > summary::after{
 
 /* 가운데 카드 그리드 */
 .content {
-    flex: 1;
+    flex: 1 1 auto;
     min-width: 0;
 }
 .section-title {
@@ -495,12 +496,6 @@ details[open] > summary::after{
 }
 
 /* 우측 배너 */
-.sidebar-right {
-  flex: 0 0 130px; display: flex; flex-direction: column; gap: 10px; margin-top: 30px;
-}
-.widget, .ad-box {
-  border: 1px solid #e1e1e1; border-radius: 4px; background: #fff; padding: 10px;
-}
 .service-list {
   list-style: none;
   margin: 0;
@@ -519,25 +514,68 @@ details[open] > summary::after{
 .service-list li:last-child {
   border-bottom: none;
 }
+/* 우측 배너 */
+.sidebar-right {
+  flex: 0 0 130px;          /* 폭을 조금 넓혀서 글자가 한 줄에 들어가게 */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 30px;
+}
 
-.icon {
+.widget,
+.ad-box {
+  border: 1px solid #e1e1e1;
+  border-radius: 4px;
+  background: #fff;
+  padding: 5px;
+}
+
+/* 보험/대출 리스트 공통 */
+.sidebar-right .service-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-right .service-list li {
+  padding: 8px 10px;
+  font-size: 13px;
+}
+
+.sidebar-right .service-list li + li {
+  border-top: 1px solid #eee;
+}
+
+/* 아이콘 + 텍스트 한 줄 정렬 */
+.sidebar-right .service-list li a {
+  display: flex;          /* 가로 정렬 */
+  align-items: center;    /* 세로 가운데 정렬 */
+  gap: 6px;               /* 아이콘–텍스트 간격 */
+  white-space: nowrap;    /* 줄바꿈 금지 */
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 동그란 아이콘 */
+.sidebar-right .service-list .icon {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  width: 20px;
-  height: 20px;
-  margin-right: 10px;
-  font-size: 14px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
+  font-size: 12px;
   color: #fff;
 }
 
-.icon.blue {
-  background-color: #4285f4; /* 파란색 */
+/* 색상만 별도 */
+.sidebar-right .service-list .icon.blue {
+  background-color: #4285f4;   /* 파란색 */
 }
 
-.icon.gold {
-  background-color: #f4b400; /* 금색 */
+.sidebar-right .service-list .icon.gold {
+  background-color: #f4b400;   /* 금색 */
 }
 
 /* 반응형 */
@@ -798,5 +836,54 @@ a.encar-card-link:focus-visible .encar-title {
     gap: 20px;
 }
 
+/* ===========================
+   제조사/모델 팝업 헤더 스타일
+   =========================== */
+.maker-facet .facet-maker-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px solid #eee;
+}
+
+/* "제네시스", "현대" 이런 글자 */
+.maker-facet .maker-name {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* 오른쪽 X 버튼을 동그랗게 (두 번째 이미지 스타일) */
+.maker-facet .btn-clear-maker {
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    margin-left: 8px;
+
+    border: none;
+    border-radius: 50%;
+    background: #111;
+    color: #fff;
+
+    font-size: 11px;
+    line-height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.maker-facet .btn-clear-maker:hover {
+    background: #333;
+}
+
+/* 제조사/모델/등급 – 내부 섹션 제목(인기모델, 선택된 모델명) */
+.maker-facet .facet-section .facet-title {
+    display: block;
+    font-weight: 600;      /* summary랑 동일한 굵기 */
+    color: #111;           /* summary랑 동일한 색 */
+    font-size: 12px;       /* summary보다 살짝 작게 */
+    margin: 8px 0 4px;
+}
 
 

@@ -50,7 +50,7 @@ public class ImportCarSaleService {
     }
 
     //필터용
-    public Map<String, Object> getFilterCounts() {
+    public Map<String, Object> getFilterCounts(ImportFilterRequest filters) {
         Map<String, Object> map = new HashMap<>();
 
         // 차종 원본 데이터
@@ -144,6 +144,30 @@ public class ImportCarSaleService {
         map.put("regionTop", top5);
         map.put("regionOthers", others);
 
+        // ✅ 1) 선택된 제조사
+        String selectedMaker = null;
+        if (filters.getManufacturer() != null && !filters.getManufacturer().isEmpty()) {
+            selectedMaker = filters.getManufacturer().get(0); // 첫 번째만 사용 (엔카 스타일)
+        }
+        map.put("selectedMaker", selectedMaker);
+
+        // ✅ 2) 해당 제조사의 모델 리스트
+        if (selectedMaker != null) {
+            map.put("modelsForMaker", repo.countModelsByMaker(selectedMaker));
+        }
+
+        // ✅ 3) 선택된 모델
+        String selectedModel = null;
+        if (filters.getModelName() != null && !filters.getModelName().isEmpty()) {
+            selectedModel = filters.getModelName().get(0);
+        }
+        map.put("selectedModel", selectedModel);
+
+        // ✅ 4) 선택된 모델의 등급(차명) 리스트
+        if (selectedMaker != null && selectedModel != null) {
+            map.put("carNamesForModel", repo.countCarNamesByMakerAndModel(selectedMaker, selectedModel));
+            // ↑ repo 쿼리는 이미 만들어뒀던 `countCarNamesByMaker(...)` 를 응용하면 됨
+        }
 
         // 최종 지역 맵 저장
         map.put("regionGroups", locMap);
@@ -256,24 +280,42 @@ public class ImportCarSaleService {
         }
 
         // 연식 (year + month)
-        if (req.getYearFrom() != null && req.getMonthFrom() != null) {
-            spec = spec.and((root, q, cb) -> cb.or(
-                    cb.greaterThan(root.get("year"), req.getYearFrom()),
-                    cb.and(
-                            cb.equal(root.get("year"), req.getYearFrom()),
-                            cb.greaterThanOrEqualTo(root.get("month"), req.getMonthFrom())
-                    )
-            ));
+        if (req.getYearFrom() != null) {
+
+            // 월까지 선택된 경우 (정밀 검색)
+            if (req.getMonthFrom() != null) {
+                spec = spec.and((root, q, cb) -> cb.or(
+                        cb.greaterThan(root.get("year"), req.getYearFrom()),
+                        cb.and(
+                                cb.equal(root.get("year"), req.getYearFrom()),
+                                cb.greaterThanOrEqualTo(root.get("month"), req.getMonthFrom())
+                        )
+                ));
+            }
+            // ★ 월 선택 안 한 경우: 해당 연도 전체
+            else {
+                spec = spec.and((root, q, cb) ->
+                        cb.greaterThanOrEqualTo(root.get("year"), req.getYearFrom())
+                );
+            }
         }
 
-        if (req.getYearTo() != null && req.getMonthTo() != null) {
-            spec = spec.and((root, q, cb) -> cb.or(
-                    cb.lessThan(root.get("year"), req.getYearTo()),
-                    cb.and(
-                            cb.equal(root.get("year"), req.getYearTo()),
-                            cb.lessThanOrEqualTo(root.get("month"), req.getMonthTo())
-                    )
-            ));
+        if (req.getYearTo() != null) {
+
+            if (req.getMonthTo() != null) {
+                spec = spec.and((root, q, cb) -> cb.or(
+                        cb.lessThan(root.get("year"), req.getYearTo()),
+                        cb.and(
+                                cb.equal(root.get("year"), req.getYearTo()),
+                                cb.lessThanOrEqualTo(root.get("month"), req.getMonthTo())
+                        )
+                ));
+            }
+            else {
+                spec = spec.and((root, q, cb) ->
+                        cb.lessThanOrEqualTo(root.get("year"), req.getYearTo())
+                );
+            }
         }
 
         // 주행거리

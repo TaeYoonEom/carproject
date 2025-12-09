@@ -24,13 +24,17 @@ public interface ImportCarSaleRepository extends JpaRepository<ImportCarSale, In
     """)
     List<FacetAgg> countModelsByMaker(@Param("maker") String maker);
 
+    // ❷ 추가: 제조사 + 모델명별 차명(등급)
     @Query("""
       select c.carName as val, count(c) as cnt
       from ImportCarSale c
-      where c.manufacturer = :maker and c.carName is not null
+      where c.manufacturer = :maker
+        and c.modelName = :model
+        and c.carName is not null
       group by c.carName
     """)
-    List<FacetAgg> countCarNamesByMaker(@Param("maker") String maker);
+    List<FacetAgg> countCarNamesByMakerAndModel(@Param("maker") String maker,
+                                                @Param("model") String model);
     @Query("select distinct c.manufacturer from ImportCarSale c where c.manufacturer is not null")
     List<String> distinctManufacturers();
 

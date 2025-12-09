@@ -168,8 +168,20 @@ public class TruckSaleService {
     /* ===================================================================================
        5) Facet Filter(Count) 데이터 (엔카식 사이드바)
     =================================================================================== */
-    public Map<String, Object> getFilterCounts() {
+    public Map<String, Object> getFilterCounts(TruckFilterRequest filters) {
         Map<String, Object> map = new HashMap<>();
+
+        String selectedMaker = null;
+        if (filters != null && filters.getManufacturer() != null && !filters.getManufacturer().isEmpty()) {
+            selectedMaker = filters.getManufacturer().get(0);
+        }
+        map.put("selectedMaker", selectedMaker);
+
+        String selectedModel = null;
+        if (filters != null && filters.getModelName() != null && !filters.getModelName().isEmpty()) {
+            selectedModel = filters.getModelName().get(0);
+        }
+        map.put("selectedModel", selectedModel);
 
         map.put("bodyTypes", repo.countByBodyType());
         map.put("loadCapacityTon", repo.countByLoadCapacityTon());
@@ -182,253 +194,19 @@ public class TruckSaleService {
         map.put("fuelType", repo.countByFuelType());
         map.put("transmission", repo.countByTransmission());
 
+        // ✅ 2) 제조사 전체 목록
         map.put("manufacturer", repo.countByManufacturer());
-        map.put("modelName", repo.findModelsByMaker(null));
-        map.put("carName", repo.findCarNamesByModel(null));
+
+        // ✅ 3) 선택된 제조사의 모델 리스트
+        if (selectedMaker != null) {
+            map.put("modelsForMaker", repo.findModelsByMaker(selectedMaker));  // FacetAgg 리스트
+        }
+
+        // ✅ 4) 선택된 모델의 세부모델(등급) 리스트
+        if (selectedModel != null) {
+            map.put("carNamesForModel", repo.findCarNamesByModel(selectedModel)); // FacetAgg 리스트
+        }
 
         return map;
     }
 }
-    /*public Map<String, Object> buildFilters(String maker, String model) {
-
-        Map<String, Object> map = new HashMap<>();
-        // 단독 필터
-        map.put("bodyTypes", repo.countByBodyType());
-        map.put("loadCapacityTon", repo.countByLoadCapacityTon());
-        map.put("axleConfig", repo.countByAxleConfig());
-        map.put("region", repo.countByRegion());
-        map.put("performanceOpen", repo.countByPerformance());
-        map.put("sellerType", repo.countBySellerType());
-        map.put("usageType", repo.countByUsageType());
-        map.put("color", repo.countByColor());
-        map.put("fuelType", repo.countByFuelType());
-        map.put("transmission", repo.countByTransmission());
-
-        //  제조사 / 모델
-        map.put("manufacturer", repo.countByManufacturer());
-        map.put("modelName", repo.findModelsByMaker(maker));
-
-        map.put("carName", repo.findCarNamesByModel(model));
-
-        return map;
-    }
-    public Page<TruckCardDto> searchWithFilters(
-            TruckFilterRequest req,
-            String sortKey,
-            int page,
-            int size
-    ) {
-        Specification<CargoSpecialSale> spec = Specification.where(null);
-
-        // 체크박스 필터들
-        if (req.getBodyType() != null && !req.getBodyType().isEmpty())
-            spec = spec.and(inSpec("bodyType", req.getBodyType()));
-        if (req.getManufacturer() != null && !req.getManufacturer().isEmpty())
-            spec = spec.and(inSpec("manufacturer", req.getManufacturer()));
-        if (req.getModelName() != null && !req.getModelName().isEmpty())
-            spec = spec.and(inSpec("modelName", req.getModelName()));
-        if (req.getAxleConfig() != null && !req.getAxleConfig().isEmpty())
-            spec = spec.and(inSpec("axleConfig", req.getAxleConfig()));
-        if (req.getRegion() != null && !req.getRegion().isEmpty())
-            spec = spec.and(inSpec("region", req.getRegion()));
-        if (req.getPerformanceOpen() != null && !req.getPerformanceOpen().isEmpty())
-            spec = spec.and(inSpec("performanceOpen", req.getPerformanceOpen()));
-        if (req.getSellerType() != null && !req.getSellerType().isEmpty())
-            spec = spec.and(inSpec("sellerType", req.getSellerType()));
-        if (req.getUsageType() != null && !req.getUsageType().isEmpty())
-            spec = spec.and(inSpec("usageType", req.getUsageType()));
-        if (req.getColor() != null && !req.getColor().isEmpty())
-            spec = spec.and(inSpec("color", req.getColor()));
-        if (req.getFuelType() != null && !req.getFuelType().isEmpty())
-            spec = spec.and(inSpec("fuelType", req.getFuelType()));
-        if (req.getTransmission() != null && !req.getTransmission().isEmpty())
-            spec = spec.and(inSpec("transmission", req.getTransmission()));
-
-        // 연식
-        if (req.getYearFrom() != null && req.getMonthFrom() != null) {
-            spec = spec.and((root, q, cb) ->
-                    cb.or(
-                            cb.greaterThan(root.get("year"), req.getYearFrom()),
-                            cb.and(
-                                    cb.equal(root.get("year"), req.getYearFrom()),
-                                    cb.greaterThanOrEqualTo(root.get("month"), req.getMonthFrom())
-                            )
-                    ));
-        }
-
-        if (req.getYearTo() != null && req.getMonthTo() != null) {
-            spec = spec.and((root, q, cb) ->
-                    cb.or(
-                            cb.lessThan(root.get("year"), req.getYearTo()),
-                            cb.and(
-                                    cb.equal(root.get("year"), req.getYearTo()),
-                                    cb.lessThanOrEqualTo(root.get("month"), req.getMonthTo())
-                            )
-                    ));
-        }
-
-        // 주행거리
-        if (req.getMileageMin() != null)
-            spec = spec.and((root, q, cb) ->
-                    cb.greaterThanOrEqualTo(root.get("mileage"), req.getMileageMin()));
-
-        if (req.getMileageMax() != null)
-            spec = spec.and((root, q, cb) ->
-                    cb.lessThanOrEqualTo(root.get("mileage"), req.getMileageMax()));
-
-        // 가격
-        if (req.getPriceMin() != null)
-            spec = spec.and((root, q, cb) ->
-                    cb.greaterThanOrEqualTo(root.get("price"), req.getPriceMin() * 10000));
-
-        if (req.getPriceMax() != null)
-            spec = spec.and((root, q, cb) ->
-                    cb.lessThanOrEqualTo(root.get("price"), req.getPriceMax() * 10000));
-
-        // 정렬
-        Sort sort = switch (sortKey) {
-            case "priceAsc"    -> Sort.by("price").ascending();
-            case "priceDesc"   -> Sort.by("price").descending();
-            case "mileageAsc"  -> Sort.by("mileage").ascending();
-            case "mileageDesc" -> Sort.by("mileage").descending();
-            case "yearDesc"    -> Sort.by("year").descending();
-            default            -> Sort.by("createdAt").descending();
-        };
-
-        PageRequest pageable = PageRequest.of(page, size, sort);
-
-        Page<CargoSpecialSale> result = repo.findAll(spec, pageable);
-
-        return result.map(TruckCardDto::new);
-    }*/
-    /*public List<TruckCardDto> filterTrucks(TruckFilterRequest req) {
-
-        Specification<CargoSpecialSale> spec = Specification.where(null);
-
-        // ===== 체크박스들 =====
-        if (req.getBodyType() != null && !req.getBodyType().isEmpty())
-            spec = spec.and(inSpec("bodyType", req.getBodyType()));
-
-        if (req.getManufacturer() != null && !req.getManufacturer().isEmpty())
-            spec = spec.and(inSpec("manufacturer", req.getManufacturer()));
-
-        if (req.getModelName() != null && !req.getModelName().isEmpty())
-            spec = spec.and(inSpec("modelName", req.getModelName()));
-
-        if (req.getAxleConfig() != null && !req.getAxleConfig().isEmpty())
-            spec = spec.and(inSpec("axleConfig", req.getAxleConfig()));
-
-        if (req.getRegion() != null && !req.getRegion().isEmpty())
-            spec = spec.and(inSpec("region", req.getRegion()));
-
-        if (req.getPerformanceOpen() != null && !req.getPerformanceOpen().isEmpty())
-            spec = spec.and(inSpec("performanceOpen", req.getPerformanceOpen()));
-
-        if (req.getSellerType() != null && !req.getSellerType().isEmpty())
-            spec = spec.and(inSpec("sellerType", req.getSellerType()));
-
-        if (req.getUsageType() != null && !req.getUsageType().isEmpty())
-            spec = spec.and(inSpec("usageType", req.getUsageType()));
-
-        if (req.getColor() != null && !req.getColor().isEmpty())
-            spec = spec.and(inSpec("color", req.getColor()));
-
-        if (req.getFuelType() != null && !req.getFuelType().isEmpty())
-            spec = spec.and(inSpec("fuelType", req.getFuelType()));
-
-        if (req.getTransmission() != null && !req.getTransmission().isEmpty())
-            spec = spec.and(inSpec("transmission", req.getTransmission()));
-
-
-        // ===== 연식 =====
-        if (req.getYearFrom() != null && req.getMonthFrom() != null) {
-            spec = spec.and((root, q, cb) -> cb.or(
-                    cb.greaterThan(root.get("year"), req.getYearFrom()),
-                    cb.and(
-                            cb.equal(root.get("year"), req.getYearFrom()),
-                            cb.greaterThanOrEqualTo(root.get("month"), req.getMonthFrom())
-                    )
-            ));
-        }
-
-        if (req.getYearTo() != null && req.getMonthTo() != null) {
-            spec = spec.and((root, q, cb) -> cb.or(
-                    cb.lessThan(root.get("year"), req.getYearTo()),
-                    cb.and(
-                            cb.equal(root.get("year"), req.getYearTo()),
-                            cb.lessThanOrEqualTo(root.get("month"), req.getMonthTo())
-                    )
-            ));
-        }
-
-        // ===== 주행거리 =====
-        if (req.getMileageMin() != null) {
-            spec = spec.and((root, q, cb) ->
-                    cb.greaterThanOrEqualTo(root.get("mileage"), req.getMileageMin())
-            );
-        }
-        if (req.getMileageMax() != null) {
-            spec = spec.and((root, q, cb) ->
-                    cb.lessThanOrEqualTo(root.get("mileage"), req.getMileageMax())
-            );
-        }
-
-        // ===== 가격 =====
-        if (req.getPriceMin() != null) {
-            spec = spec.and((root, q, cb) ->
-                    cb.greaterThanOrEqualTo(root.get("price"), req.getPriceMin() * 10000)
-            );
-        }
-        if (req.getPriceMax() != null) {
-            spec = spec.and((root, q, cb) ->
-                    cb.lessThanOrEqualTo(root.get("price"), req.getPriceMax() * 10000)
-            );
-        }
-
-        List<CargoSpecialSale> rows = repo.findAll(spec);
-
-        return rows.stream()
-                .map(TruckCardDto::new)
-                .toList();
-    }
-
-    // 공통 Specification
-    private Specification<CargoSpecialSale> inSpec(String field, List<String> values) {
-        return (root, query, cb) -> root.get(field).in(values);
-    }
-
-    // 엔카에서 내 차 찾기
-    public List<TruckCardDto> filterByQuickSearch(String bodyType, String modelName, Integer capacity) {
-
-        return repo.findAll().stream()
-                .filter(t -> bodyType == null || bodyType.isBlank() || bodyType.equals(t.getBodyType()))
-                .filter(t -> modelName == null || modelName.isBlank() ||
-                        t.getModelName().startsWith(modelName))
-
-                // 🔥 핵심 수정 부분
-                .filter(t -> capacity == null ||
-                        (t.getLoadCapacityTon() != null &&
-                                t.getLoadCapacityTon().compareTo(BigDecimal.valueOf(capacity)) == 0)
-                )
-                .map(TruckCardDto::new)
-                .toList();
-    }
-
-    public Map<String, Object> getFilters() {
-        return buildFilters(null, null);
-    }
-
-    public List<String> getQuickBodyTypes() {
-        return repo.findBodyTypesQuick();
-    }
-
-    public List<String> getQuickModels(String bodyType) {
-        return repo.findModelNamesQuick(bodyType);
-    }
-
-    public List<Integer> getQuickCapacities(String modelName) {
-        return repo.findCapacitiesQuick(modelName);
-    }
-}
-
-*/

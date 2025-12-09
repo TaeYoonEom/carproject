@@ -38,7 +38,7 @@ public class ImportController {
         List<ImportCarCardDto> premiumList = allFiltered.stream().limit(8).toList();
 
         // 필터 박스에 뿌릴 count 정보 (엔카식 facet)
-        model.addAttribute("filterCounts", importCarSaleService.getFilterCounts());
+        model.addAttribute("filterCounts", importCarSaleService.getFilterCounts(filters));
 
         // 화면에 뿌릴 데이터들
         model.addAttribute("filters", filters);                 // 선택값 유지용

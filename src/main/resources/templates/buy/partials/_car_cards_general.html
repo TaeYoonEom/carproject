@@ -7,48 +7,50 @@
 
         <!-- ✅ 한 줄 정렬용 flex -->
         <div class="list-controls d-flex align-items-center justify-content-between mb-3">
+            <div class="list-controls">
+                <!-- 왼쪽 정렬 버튼 영역 -->
+                <div class="sort-btns">
+                    <button class="sort-btn"
+                            th:classappend="${currentSort}=='recent' ? ' active' : ''"
+                            data-sort="recent">최근 등록일순</button>
+                    <span class="divider">|</span>
 
-            <!-- 왼쪽 정렬 버튼 영역 -->
-            <div class="sort-btns">
-                <button class="sort-btn"
-                        th:classappend="${currentSort}=='recent' ? ' active' : ''"
-                        data-sort="recent">최근 등록일순</button>
-                <span class="divider">|</span>
+                    <button class="sort-btn"
+                            th:classappend="${currentSort}=='priceAsc' ? ' active' : ''"
+                            data-sort="priceAsc">낮은 가격순</button>
+                    <span class="divider">|</span>
 
-                <button class="sort-btn"
-                        th:classappend="${currentSort}=='priceAsc' ? ' active' : ''"
-                        data-sort="priceAsc">낮은 가격순</button>
-                <span class="divider">|</span>
+                    <button class="sort-btn"
+                            th:classappend="${currentSort}=='priceDesc' ? ' active' : ''"
+                            data-sort="priceDesc">높은 가격순</button>
+                    <span class="divider">|</span>
 
-                <button class="sort-btn"
-                        th:classappend="${currentSort}=='priceDesc' ? ' active' : ''"
-                        data-sort="priceDesc">높은 가격순</button>
-                <span class="divider">|</span>
+                    <button class="sort-btn"
+                            th:classappend="${currentSort}=='mileageAsc' ? ' active' : ''"
+                            data-sort="mileageAsc">낮은 주행거리순</button>
+                    <span class="divider">|</span>
 
-                <button class="sort-btn"
-                        th:classappend="${currentSort}=='mileageAsc' ? ' active' : ''"
-                        data-sort="mileageAsc">낮은 주행거리순</button>
-                <span class="divider">|</span>
+                    <button class="sort-btn"
+                            th:classappend="${currentSort}=='mileageDesc' ? ' active' : ''"
+                            data-sort="mileageDesc">높은 주행거리순</button>
+                    <span class="divider">|</span>
 
-                <button class="sort-btn"
-                        th:classappend="${currentSort}=='mileageDesc' ? ' active' : ''"
-                        data-sort="mileageDesc">높은 주행거리순</button>
-                <span class="divider">|</span>
-
-                <button class="sort-btn"
-                        th:classappend="${currentSort}=='yearDesc' ? ' active' : ''"
-                        data-sort="yearDesc">최신 연식순</button>
-            </div>
+                    <button class="sort-btn"
+                            th:classappend="${currentSort}=='yearDesc' ? ' active' : ''"
+                            data-sort="yearDesc">최신 연식순</button>
+                </div>
 
 
-            <!-- 오른쪽 select 영역 -->
-            <div class="view-options">
-                <select id="viewCountSelect" class="view-select">
-                    <option value="20" th:selected="${currentSize == 20}">20개씩</option>
-                    <option value="30" th:selected="${currentSize == 30}">30개씩</option>
-                    <option value="40" th:selected="${currentSize == 40}">40개씩</option>
-                    <option value="50" th:selected="${currentSize == 50}">50개씩</option>
-                </select>
+                <!-- 오른쪽 select 영역 -->
+                <div class="view-options">
+                    <select id="viewCountSelect" class="view-select">
+                        <option value="10" th:selected="${currentSize == 10}">10개씩</option>
+                        <option value="20" th:selected="${currentSize == 20}">20개씩</option>
+                        <option value="30" th:selected="${currentSize == 30}">30개씩</option>
+                        <option value="40" th:selected="${currentSize == 40}">40개씩</option>
+                        <option value="50" th:selected="${currentSize == 50}">50개씩</option>
+                    </select>
+                </div>
             </div>
         </div>
     </div>
@@ -80,17 +82,17 @@
         </table>
 
         <!-- 페이지네이션 -->
-        <div class="pagination-container" th:if="${page != null and page.totalPages > 1}">
+        <div class="pagination" th:if="${page != null and page.totalPages > 1}">
             <ul class="encar-pagination">
                 <li th:if="${page.hasPrevious()}">
-                    <a href="#" class="page-link prev" th:data-page="${page.number}">이전</a>
+                    <a href="#" class="page-link prev" th:data-page="${page.number-1}">이전</a>
                 </li>
                 <li th:each="p : ${#numbers.sequence(1, page.totalPages)}"
                     th:classappend="${p == page.number + 1} ? 'active'">
                     <a href="#" class="page-link" th:data-page="${p}" th:text="${p}"></a>
                 </li>
                 <li th:if="${page.hasNext()}">
-                    <a href="#" class="page-link next" th:data-page="${page.number + 2}">다음</a>
+                    <a href="#" class="page-link next" th:data-page="${page.number + 1}">다음</a>
                 </li>
             </ul>
         </div>

@@ -1,0 +1,53 @@
+<!-- buy/partials/_maker_models.html -->
+<div th:fragment="models" class="maker-facet" xmlns:th="http://www.w3.org/1999/xhtml">
+
+    <!-- 1) 상단: 선택된 제조사(✕ 버튼 포함) -->
+    <div class="facet-maker-header">
+        <span class="maker-name" th:text="${facet.maker}">현대</span>
+        <button type="button" class="btn-clear-maker">✕</button>
+
+        <!-- 실제 필터용 체크박스는 숨겨둠 (이미 선택된 제조사 유지) -->
+        <input type="checkbox"
+               name="manufacturers"
+               th:value="${facet.maker}"
+               checked
+               hidden />
+        <div class="filter-divider"></div>
+    </div>
+
+    <!-- 2) 모델 섹션 -->
+    <div class="facet-section">
+        <div class="facet-title">모델</div>
+        <ul class="filter-list with-count">
+            <li th:each="m : ${facet.popularModels}">
+                <label>
+                    <input type="checkbox"
+                           name="modelNames"
+                           th:value="${m.label}"
+                           th:checked="${m.label == facet.selectedModel}" />
+                    <span th:text="${m.label}">그랜저</span>
+                    <span class="count"
+                          th:text="${#numbers.formatInteger(m.count,1,'COMMA')}">0</span>
+                </label>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 3) 차량명(등급) 섹션 : 선택된 모델 있을 때만 -->
+    <div class="facet-section" th:if="${facet.selectedModel != null}">
+        <div class="facet-title" th:text="${facet.selectedModel}">그랜저</div>
+
+        <ul class="filter-list with-count">
+            <li th:each="g : ${facet.carNames}">
+                <label>
+                    <input type="checkbox"
+                           name="carNames"
+                           th:value="${g.label}" />
+                    <span th:text="${g.label}">더 뉴 그랜저 IG</span>
+                    <span class="count"
+                          th:text="${#numbers.formatInteger(g.count,1,'COMMA')}">0</span>
+                </label>
+            </li>
+        </ul>
+    </div>
+</div>

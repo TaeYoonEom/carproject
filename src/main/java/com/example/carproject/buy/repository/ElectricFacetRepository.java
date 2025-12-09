@@ -140,4 +140,57 @@ public class ElectricFacetRepository {
                 "ge10", cap(">= 10")
         );
     }
+
+    public List<Map<String, Object>> countModelsByMaker(String maker) {
+
+        String sql = """
+            SELECT model_name AS val, COUNT(*) AS cnt
+            FROM eco_car_flat
+            WHERE manufacturer = :maker
+              AND model_name IS NOT NULL
+            GROUP BY model_name
+            ORDER BY cnt DESC
+        """;
+
+        List<Object[]> rows = em.createNativeQuery(sql)
+                .setParameter("maker", maker)
+                .getResultList();
+
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (Object[] r : rows) {
+            Map<String, Object> m = new HashMap<>();
+            m.put("val", r[0] != null ? r[0].toString() : "기타");
+            m.put("cnt", ((Number) r[1]).longValue());
+            list.add(m);
+        }
+        return list;
+    }
+
+    // ✅ 선택된 제조사 + 모델 기준 차량명 리스트
+    public List<Map<String, Object>> countCarNamesByMakerAndModel(String maker, String modelName) {
+
+        String sql = """
+            SELECT car_name AS val, COUNT(*) AS cnt
+            FROM eco_car_flat
+            WHERE manufacturer = :maker
+              AND model_name   = :modelName
+              AND car_name IS NOT NULL
+            GROUP BY car_name
+            ORDER BY cnt DESC
+        """;
+
+        List<Object[]> rows = em.createNativeQuery(sql)
+                .setParameter("maker", maker)
+                .setParameter("modelName", modelName)
+                .getResultList();
+
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (Object[] r : rows) {
+            Map<String, Object> m = new HashMap<>();
+            m.put("val", r[0] != null ? r[0].toString() : "기타");
+            m.put("cnt", ((Number) r[1]).longValue());
+            list.add(m);
+        }
+        return list;
+    }
 }

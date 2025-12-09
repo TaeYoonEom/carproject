@@ -44,7 +44,10 @@ public class KoreanController {
     @GetMapping("/korean")
     public String showKoreanCars(Model model,
                                  @AuthenticationPrincipal CustomUserDetails principal,
-                                 HttpSession session) {
+                                 HttpSession session,
+                                 @RequestParam(value = "page", defaultValue = "1") int page,
+                                 @RequestParam(value = "size", defaultValue = "10") int size,
+                                 @RequestParam(value = "sort", defaultValue = "recent") String sort) {
 
         List<CarCardDto> carCardDtoList = carSaleService.getCarCardDtos();
         long totalCount = carSaleService.getAllCount();
@@ -65,6 +68,9 @@ public class KoreanController {
             else if (mid instanceof Long l) memberId = l.intValue();
         }
 
+        FilterRequest emptyReq = new FilterRequest();   // 필터 필드는 전부 null/빈 리스트로
+        var carPage = carSaleService.searchWithFilter(emptyReq, page, size, sort);
+
         // 내가 찜한 carId 집합 (없으면 빈 Set)
         Set<Integer> wishSet = (memberId != null)
                 ? wishlistService.myWishCarIds(memberId)
@@ -73,9 +79,13 @@ public class KoreanController {
         Map<String, List<?>> filterOptions = filterService.loadFilterOptions();
 
 
-        model.addAttribute("carList", carCardDtoList);
-        model.addAttribute("totalCount", totalCount);
+        model.addAttribute("carList", carPage.getContent());          // 🔥 10개만
+        model.addAttribute("page", carPage);                          // 페이지 정보
+        model.addAttribute("totalCount", carPage.getTotalElements());
         model.addAttribute("wishSet", wishSet);
+        model.addAttribute("page", carPage);
+        model.addAttribute("currentSort", sort);
+        model.addAttribute("currentSize", size);
 
         // GET /korean 내부
         model.addAttribute("carTypeCounts", facetViewService.carTypeCountsZero());
@@ -101,16 +111,19 @@ public class KoreanController {
 
     @GetMapping(value="/korean/facet/models", produces="text/html; charset=UTF-8")
     public String loadModelsFacet(@RequestParam("maker") String maker,
+                                  @RequestParam(value = "modelName", required = false) String modelName,
                                   @RequestParam(value="top", defaultValue="6") int top,
                                   Model model) {
-        var facet = facetViewService.buildMakerFacet(maker, top);
+
+        FacetViewService.MakerFacet facet = facetViewService.buildMakerFacet(maker, modelName, top);
         model.addAttribute("facet", facet);
         return "buy/partials/_maker_models :: models";
     }
+
     @PostMapping(value="/korean/filter", produces="text/html; charset=UTF-8")
     public String applyFilter(@RequestBody FilterRequest req,
                               @RequestParam(value = "page", defaultValue = "1") int page,
-                              @RequestParam(value = "size", defaultValue = "20") int size,
+                              @RequestParam(value = "size", defaultValue = "10") int size,
                               @RequestParam(value = "sort", defaultValue = "recent") String sort,
                               @RequestParam(value = "mode", defaultValue = "all") String mode,
                               Model model,

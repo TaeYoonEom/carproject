@@ -16,24 +16,26 @@ public interface CarSaleRepository extends JpaRepository<CarSale, Integer>, JpaS
         String getVal();
         long getCnt();
     }
-    // 제조사별 model_name 카운트 (인기모델)
     @Query("""
-      select c.modelName as val, count(c) as cnt
-      from CarSale c
-      where c.manufacturer = :maker and c.modelName is not null
-      group by c.modelName
-    """)
+           select c.modelName as val, count(c) as cnt
+           from CarSale c
+           where c.manufacturer = :maker
+           group by c.modelName
+           order by cnt desc
+           """)
     List<FacetAgg> countModelsByMaker(@Param("maker") String maker);
 
-    // 제조사별 car_name 카운트 (이름순 섹션에 표시할 개수)
+    // ✅ 제조사 + 모델별 carName 집계
     @Query("""
-      select c.carName as val, count(c) as cnt
-      from CarSale c
-      where c.manufacturer = :maker and c.carName is not null
-      group by c.carName
-    """)
-    List<FacetAgg> countCarNamesByMaker(@Param("maker") String maker);
-
+           select c.carName as val, count(c) as cnt
+           from CarSale c
+           where c.manufacturer = :maker
+             and c.modelName    = :modelName
+           group by c.carName
+           order by cnt desc
+           """)
+    List<FacetAgg> countCarNamesByMakerAndModel(@Param("maker") String maker,
+                                                @Param("modelName") String modelName);
     // 이름순 목록(알파벳/가나다 정렬용)
     @Query("""
       select distinct c.carName

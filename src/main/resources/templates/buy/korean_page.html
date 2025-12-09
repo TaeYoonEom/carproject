@@ -160,7 +160,7 @@
             </details>
 
             <!-- 지역 -->
-            <details class="filter-group" open>
+            <details class="filter-group">
                 <summary>지역</summary>
                 <ul class="filter-list with-count">
                     <li th:each="e : ${saleLocationCounts}">
@@ -177,7 +177,7 @@
             </details>
 
             <!-- 인승 -->
-            <details class="filter-group" open>
+            <details class="filter-group">
                 <summary>인승</summary>
                 <ul class="filter-list with-count">
                     <li th:each="e : ${capacityBucketCounts}">
@@ -193,7 +193,7 @@
 
 
             <!-- 성능 / 보험 공개 -->
-            <details class="filter-group" open>
+            <details class="filter-group">
                 <summary>성능/보험공개</summary>
                 <ul class="filter-list with-count">
                     <li th:each="e : ${performanceOpenCounts}">
@@ -208,7 +208,7 @@
 
 
             <!-- 판매자 구분 -->
-            <details class="filter-group" open>
+            <details class="filter-group">
                 <summary>판매자구분</summary>
                 <ul class="filter-list with-count">
                     <li th:each="e : ${sellerTypeCounts}">
@@ -222,7 +222,7 @@
             </details>
 
             <!-- 판매 방식 -->
-            <details class="filter-group" open>
+            <details class="filter-group">
                 <summary>판매방식</summary>
                 <ul class="filter-list with-count">
                     <li th:each="e : ${saleMethodCounts}">
@@ -237,7 +237,7 @@
 
 
             <!-- 외부 색상 -->
-            <details class="filter-group" open>
+            <details class="filter-group">
                 <summary>외부색상</summary>
                 <ul class="filter-list with-count">
                     <li th:each="e : ${exteriorColorCounts}">
@@ -251,7 +251,7 @@
             </details>
 
             <!-- 내부 색상 -->
-            <details class="filter-group" open>
+            <details class="filter-group">
                 <summary>내부색상</summary>
                 <ul class="filter-list with-count">
                     <li th:each="e : ${interiorColorCounts}">
@@ -267,7 +267,7 @@
             </details>
 
             <!-- 연료 -->
-            <details class="filter-group" open>
+            <details class="filter-group">
                 <summary>연료</summary>
                 <ul class="filter-list with-count">
                     <li th:each="e : ${fuelTypeCounts}">
@@ -282,7 +282,7 @@
             </details>
 
             <!-- 변속기 -->
-            <details class="filter-group" open>
+            <details class="filter-group">
                 <summary>변속기</summary>
                 <ul class="filter-list with-count">
                     <li th:each="e : ${transmissionCounts}">
@@ -293,21 +293,6 @@
                             <span class="count" th:text="${#numbers.formatInteger(e.value,1,'COMMA')}">0</span>
                         </label>
                     </li>
-                </ul>
-            </details>
-
-            <!-- 옵션 -->
-            <details class="filter-group">
-                <summary>옵션</summary>
-                <ul class="filter-list">
-                    <li><label><input type="checkbox"> 선푸르</label></li>
-                    <li><label><input type="checkbox"> 내비게이션</label></li>
-                    <li><label><input type="checkbox"> 스마트키</label></li>
-                    <li><label><input type="checkbox"> 헤드램프(HID)</label></li>
-                    <li><label><input type="checkbox"> 후방 카메라</label></li>
-                    <li><label><input type="checkbox"> 가죽시트</label></li>
-                    <li><label><input type="checkbox"> 에어백(동승석)</label></li>
-                    <li><label><input type="checkbox"> 에어백(사이드)</label></li>
                 </ul>
             </details>
 
@@ -327,17 +312,23 @@
             </div>
         </main>
 
+
         <!-- 📦 우측 배너 영역 -->
         <aside class="sidebar-right">
             <div class="widget">
                 <ul class="service-list">
                     <li>
-                        <span class="icon blue">₩</span>
-                        보험료 조회
+                        <a href="https://www.directdb.co.kr" target="_blank" style="text-decoration: none; color: inherit;">
+                            <span class="icon blue">₩</span>
+                            보험료 조회
+                        </a>
                     </li>
+
                     <li>
-                        <span class="icon gold">₩</span>
-                        대출한도 조회
+                        <a href="https://www.hyundaicapital.com" target="_blank" style="text-decoration: none; color: inherit;">
+                            <span class="icon gold">₩</span>
+                            대출한도 조회
+                        </a>
                     </li>
                 </ul>
             </div>

@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const mode = extra.mode || 'all';
       const sort = extra.sort || document.querySelector('.sort-btn.active')?.dataset.sort || 'recent';
       const page = Number(extra.page || 1);
-      const size = document.getElementById('viewCountSelect')?.value || 20;
+      const size = document.getElementById('viewCountSelect')?.value || 10;
 
       // === 입력값 수집 ===
       const yFrom = document.getElementById('yearFrom')?.value || '';
@@ -147,14 +147,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!btn) return;
     document.querySelectorAll(".sort-btn").forEach((b) => b.classList.remove("active"));
     btn.classList.add("active");
-    window.applyFilter({ mode: "general", page: 1, sort: btn.dataset.sort });
+    let size = Number(document.getElementById("viewCountSelect")?.value);
+    if (!size || size < 1) size = 10;
+
+    window.applyFilter({ mode: "general", page: 1, sort: btn.dataset.sort, size: size });
   });
 
   // 3) 페이지네이션
   document.addEventListener("click", (e) => {
     if (!e.target.classList.contains("page-link")) return;
     e.preventDefault();
-    window.applyFilter({ mode: "general", page: e.target.dataset.page });
+    let size = Number(document.getElementById("viewCountSelect")?.value);
+    if (!size || size < 1) size = 10;
+
+    window.applyFilter({ mode: "general", page: Number(e.target.dataset.page), size: size });
   });
 
   // ✅ 교체 후 컨트롤 재바인딩
@@ -200,13 +206,19 @@ document.addEventListener('DOMContentLoaded', () => {
       const html = await res.text();
 
       makersUL.hidden  = true;
+      makersUL.style.display = 'none';
       modelsBox.hidden = false;
+      modelsBox.style.display = 'block';
       modelsBox.innerHTML = html;
       bindModelFacetEvents();
     } else {
+      // 선택 해제 → 다시 제조사 리스트 보이기
       modelsBox.hidden = true;
-      modelsBox.innerHTML = "";
+      modelsBox.style.display = 'none';
+      modelsBox.innerHTML = '';
+
       makersUL.hidden = false;
+      makersUL.style.display = 'block';
     }
 
     window.applyFilter({ mode: "all", page: 1 });
@@ -219,13 +231,51 @@ document.addEventListener('DOMContentLoaded', () => {
     modelsBox.querySelector('.btn-clear-maker')?.addEventListener('click', () => {
       document.querySelectorAll('input[name="manufacturers"]:checked').forEach(el => el.checked = false);
       modelsBox.hidden = true;
+       modelsBox.style.display = 'none';
       modelsBox.innerHTML = '';
       makersUL.hidden = false;
+      makersUL.style.display = 'block';
       window.applyFilter({ mode: "all", page: 1 });
     });
+    const maker = modelsBox.querySelector('.selected-maker-name')?.textContent.trim();
 
-    modelsBox.querySelectorAll('input[name="modelNames"], input[name="carNames"]').forEach(el => {
-      el.addEventListener('change', () => window.applyFilter({ mode: 'all', page: 1 }));
+    modelsBox.querySelectorAll('input[name="modelNames"]').forEach(el => {
+    el.addEventListener('change', async () => {
+      // 단일 선택으로 만들고 싶으면 나머지 체크 해제
+      modelsBox.querySelectorAll('input[name="modelNames"]').forEach(x => {
+        if (x !== el) x.checked = false;
+      });
+
+      const modelName = el.checked ? el.value : "";
+
+      if (maker && modelName) {
+        const params = new URLSearchParams({
+          maker: maker,
+          modelName: modelName,
+          top: "6"
+        });
+        const res = await fetch(`/korean/facet/models?` + params.toString());
+        if (res.ok) {
+          const html = await res.text();
+          modelsBox.innerHTML = html;
+          bindModelFacetEvents(); // 새 DOM 다시 바인딩
+        }
+      }
+
+      window.applyFilter({ mode: "all", page: 1 });
     });
+    // 모델/등급 체크 시 필터 적용
+    modelsBox.querySelectorAll('input[name="modelNames"], input[name="carNames"]')
+      .forEach(el => {
+        el.addEventListener('change', () => window.applyFilter({ mode: 'all', page: 1 }));
+      });
+  });
+
+  modelsBox.querySelectorAll('input[name="carNames"]').forEach(el => {
+      el.addEventListener('change', () => {
+        window.applyFilter({ mode: "all", page: 1 });
+      });
+  });
+
   }
 });

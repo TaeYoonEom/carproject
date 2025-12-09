@@ -26,7 +26,7 @@ public class ElectricController {
     @GetMapping("/electric")
     public String showElectricCars(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "24") int size,
+            @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "recent") String sort, // 기본 최근등록순
             @ModelAttribute ElectricFilterRequest filters,
             Model model) {
@@ -43,7 +43,7 @@ public class ElectricController {
         List<ElectricCarCardDto> premiumList = allFiltered.stream().limit(8).toList();
 
         // 필터 박스에 뿌릴 count 정보 (엔카식 facet)
-        model.addAttribute("filterCounts", electricCarService.getFilterCounts());
+        model.addAttribute("filterCounts", electricCarService.getFilterCounts(filters));
 
         // 화면에 뿌릴 데이터들
         model.addAttribute("filters", filters);                 // 선택값 유지용

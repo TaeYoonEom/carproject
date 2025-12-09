@@ -57,6 +57,7 @@
                         <li th:each="item : ${filterCounts.bodyTypes['승용']}">
                             <label>
                                 <input type="checkbox" name="carType" th:value="${item.val}"
+                                       th:checked="${filters.carType != null and filters.carType.contains(item.val)}"
                                        onchange="document.getElementById('electricFilterForm').submit()">
                                 [[${item.val}]]
                                 <span class="count">[[${item.cnt}]]</span>
@@ -71,6 +72,7 @@
                         <li th:each="item : ${filterCounts.bodyTypes['SUV/RV']}">
                             <label>
                                 <input type="checkbox" name="carType" th:value="${item.val}"
+                                       th:checked="${filters.carType != null and filters.carType.contains(item.val)}"
                                        onchange="document.getElementById('electricFilterForm').submit()">
                                 [[${item.val}]]
                                 <span class="count">[[${item.cnt}]]</span>
@@ -85,6 +87,7 @@
                         <li th:each="item : ${filterCounts.bodyTypes['승합/화물']}">
                             <label>
                                 <input type="checkbox" name="carType" th:value="${item.val}"
+                                       th:checked="${filters.carType != null and filters.carType.contains(item.val)}"
                                        onchange="document.getElementById('electricFilterForm').submit()">
                                 [[${item.val}]]
                                 <span class="count">[[${item.cnt}]]</span>
@@ -97,6 +100,7 @@
                         <li th:each="item : ${filterCounts.bodyTypes['기타']}">
                             <label>
                                 <input type="checkbox" name="carType" th:value="${item.val}"
+                                       th:checked="${filters.carType != null and filters.carType.contains(item.val)}"
                                        onchange="document.getElementById('electricFilterForm').submit()">
                                 기타
                                 <span class="count">[[${item.cnt}]]</span>
@@ -107,10 +111,11 @@
 
                 <details class="filter-group" open>
                     <summary>전기·친환경차 종류</summary>
-                    <ul class="filter-list">
+                    <ul class="filter-list with-count">
                         <li th:each="item : ${filterCounts.ecoTypes}">
                             <label>
                                 <input type="checkbox" name="ecoType" th:value="${item.val}"
+                                       th:checked="${filters.ecoType != null and filters.ecoType.contains(item.val)}"
                                        onchange="document.getElementById('electricFilterForm').submit()">
                                 [[${item.val}]]
                                 <span class="count">[[${item.cnt}]]</span>
@@ -122,13 +127,14 @@
                 <!-- 연료 -->
                 <details class="filter-group">
                     <summary>연료</summary>
-                    <ul class="filter-list">
-                        <li th:each="f : ${filterCounts.fuelTypes}">
+                    <ul class="filter-list with-count">
+                        <li th:each="item : ${filterCounts.fuelTypes}">
                             <label>
-                                <input type="checkbox" name="fuelType" th:value="${f.val}"
+                                <input type="checkbox" name="fuelType" th:value="${item.val}"
+                                       th:checked="${filters.fuelType != null and filters.fuelType.contains(item.val)}"
                                        onchange="document.getElementById('electricFilterForm').submit()">
-                                [[${f.val}]]
-                                <span class="count">[[${f.cnt}]]</span>
+                                [[${item.val}]]
+                                <span class="count">[[${item.cnt}]]</span>
                             </label>
                         </li>
                     </ul>
@@ -136,39 +142,108 @@
 
                 <!-- 제조사 / 모델 / 등급 -->
                 <details class="filter-group">
-                    <summary>제조사</summary>
-                    <ul class="filter-list">
-                        <li th:each="f : ${filterCounts['manufacturer']}">
-                            <label>
-                                <input type="checkbox" name="manufacturer" th:value="${f.val}"
+                    <summary>제조사/모델/등급</summary>
+
+                    <!-- ① 제조사 리스트 : 아무 제조사도 선택 안 됐을 때만 보이게 -->
+                    <ul class="filter-list with-count maker-list"
+                        th:if="${filterCounts['selectedMaker']} == null">
+                        <li th:each="m : ${filterCounts.manufacturer}">
+                            <label class="maker-label">
+                                <input type="checkbox" name="manufacturer"
+                                       th:value="${m.val}"
+                                       th:checked="${filters.manufacturer != null and filters.manufacturer.contains(m.val)}"
+                                       th:disabled="${m.cnt == 0}"
                                        onchange="document.getElementById('electricFilterForm').submit()">
-                                [[${f.val}]]
-                                <span class="count">[[${f.cnt}]]</span>
+                                <span class="text">[[${m.val}]]</span>
+                                <span class="count">[[${#numbers.formatInteger(m.cnt,1,'COMMA')}]]</span>
                             </label>
                         </li>
                     </ul>
-                    <summary>모델</summary>
-                    <ul class="filter-list with-count">
-                        <li th:each="item : ${filterCounts['modelName']}">
-                            <label>
-                                <input type="checkbox" name="modelName" th:value="${item.val}"
-                                       onchange="document.getElementById('electricFilterForm').submit()">
-                                [[${item.val}]]
-                                <span class="count">[[${item.cnt}]]</span>
-                            </label>
-                        </li>
-                    </ul>
-                    <summary>차량명</summary>
-                    <ul class="filter-list with-count">
-                        <li th:each="item : ${filterCounts['carName']}">
-                            <label>
-                                <input type="checkbox" name="carName" th:value="${item.val}"
-                                       onchange="document.getElementById('electricFilterForm').submit()">
-                                [[${item.val}]]
-                                <span class="count">[[${item.cnt}]]</span>
-                            </label>
-                        </li>
-                    </ul>
+
+                    <!-- ─────────────────────────────
+                         ② 선택된 제조사 → 모델 리스트
+                       ───────────────────────────── -->
+                    <div class="filter-divider"
+                         th:if="${filterCounts['selectedMaker']} != null"></div>
+
+                    <div class="maker-facet"
+                         th:if="${filterCounts['selectedMaker']} != null">
+                        <div class="facet-section">
+
+                            <!-- 상단 헤더 : Tesla  [x]  -->
+                            <div class="facet-maker-header">
+                <span class="facet-title">
+                    <span class="maker-name"
+                          th:text="${filterCounts['selectedMaker']}">Tesla</span>
+                </span>
+
+                                <!-- 제조사 전체 해제 -->
+                                <button type="button"
+                                        class="btn-clear-maker"
+                                        data-level="maker"
+                                        aria-label="제조사 선택 해제">
+                                    ×
+                                </button>
+                            </div>
+
+                            <!-- 해당 제조사의 모델 리스트 -->
+                            <ul class="filter-list with-count">
+                                <li th:each="item : ${filterCounts.modelsForMaker}">
+                                    <label>
+                                        <input type="checkbox" name="modelName"
+                                               th:value="${item.val}"
+                                               th:checked="${filters.modelName != null and filters.modelName.contains(item.val)}"
+                                               th:disabled="${item.cnt == 0}"
+                                               onchange="document.getElementById('electricFilterForm').submit()">
+                                        [[${item.val}]]
+                                        <span class="count">[[${#numbers.formatInteger(item.cnt,1,'COMMA')}]]</span>
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- ─────────────────────────────
+                         ③ 선택된 모델 → 차량명(등급) 리스트
+                       ───────────────────────────── -->
+                    <div class="filter-divider"
+                         th:if="${filterCounts['selectedMaker']} != null
+                and ${filterCounts['selectedModel']} != null"></div>
+
+                    <div class="maker-facet"
+                         th:if="${filterCounts['selectedMaker']} != null
+                and ${filterCounts['selectedModel']} != null">
+                        <div class="facet-section">
+                            <div class="facet-maker-header">
+                <span class="facet-title">
+                    <span class="maker-name"
+                          th:text="${filterCounts['selectedModel']}">모델명</span>
+                </span>
+
+                                <!-- 모델만 해제 (제조사는 유지) -->
+                                <button type="button"
+                                        class="btn-clear-maker"
+                                        data-level="model"
+                                        aria-label="모델 선택 해제">
+                                    ×
+                                </button>
+                            </div>
+
+                            <ul class="filter-list with-count">
+                                <li th:each="g : ${filterCounts.carNamesForModel}">
+                                    <label>
+                                        <input type="checkbox" name="carName"
+                                               th:value="${g.val}"
+                                               th:checked="${filters.carName != null and filters.carName.contains(g.val)}"
+                                               th:disabled="${g.cnt == 0}"
+                                               onchange="document.getElementById('electricFilterForm').submit()">
+                                        [[${g.val}]]
+                                        <span class="count">[[${#numbers.formatInteger(g.cnt,1,'COMMA')}]]</span>
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </details>
 
                 <!-- 연식 -->
@@ -269,6 +344,7 @@
                             <label>
                                 <input type="checkbox" name="saleLocation"
                                        th:value="${item.key}"
+                                       th:checked="${filters.saleLocation != null and filters.saleLocation.contains(item.val)}"
                                        onchange="document.getElementById('electricFilterForm').submit()">
                                 [[${item.key}]]
                                 <span class="count">[[${#numbers.formatInteger(item.value, 1, 'COMMA')}]]</span>
@@ -286,6 +362,7 @@
                             <label>
                                 <input type="checkbox" name="saleLocation"
                                        th:value="${item.key}"
+                                       th:checked="${filters.saleLocation != null and filters.saleLocation.contains(item.val)}"
                                        onchange="document.getElementById('electricFilterForm').submit()">
                                 [[${item.key}]]
                                 <span class="count">[[${#numbers.formatInteger(item.value, 1, 'COMMA')}]]</span>
@@ -299,24 +376,33 @@
                 <!-- 인승 -->
                 <details class="filter-group">
                     <summary>인승</summary>
-                    <ul class="filter-list">
+                    <ul class="filter-list with-count">
                         <li><label><input type="checkbox" name="capacity" value="2"
+                                          th:checked="${filters.capacity != null and filters.capacity.contains('2')}"
                                           onchange="document.getElementById('electricFilterForm').submit()">2인승 이하 <span class="count">[[${filterCounts.capacity.le2}]]</span></label></li>
                         <li><label><input type="checkbox" name="capacity" value="3"
+                                          th:checked="${filters.capacity != null and filters.capacity.contains('3')}"
                                           onchange="document.getElementById('electricFilterForm').submit()">3인승 <span class="count">[[${filterCounts.capacity.eq3}]]</span></label></li>
                         <li><label><input type="checkbox" name="capacity" value="4"
+                                          th:checked="${filters.capacity != null and filters.capacity.contains('4')}"
                                           onchange="document.getElementById('electricFilterForm').submit()">4인승 <span class="count">[[${filterCounts.capacity.eq4}]]</span></label></li>
                         <li><label><input type="checkbox" name="capacity" value="5"
+                                          th:checked="${filters.capacity != null and filters.capacity.contains('5')}"
                                           onchange="document.getElementById('electricFilterForm').submit()">5인승 <span class="count">[[${filterCounts.capacity.eq5}]]</span></label></li>
                         <li><label><input type="checkbox" name="capacity" value="6"
+                                          th:checked="${filters.capacity != null and filters.capacity.contains('6')}"
                                           onchange="document.getElementById('electricFilterForm').submit()">6인승 <span class="count">[[${filterCounts.capacity.eq6}]]</span></label></li>
                         <li><label><input type="checkbox" name="capacity" value="7"
+                                          th:checked="${filters.capacity != null and filters.capacity.contains('7')}"
                                           onchange="document.getElementById('electricFilterForm').submit()">7인승 <span class="count">[[${filterCounts.capacity.eq7}]]</span></label></li>
                         <li><label><input type="checkbox" name="capacity" value="8"
+                                          th:checked="${filters.capacity != null and filters.capacity.contains('8')}"
                                           onchange="document.getElementById('electricFilterForm').submit()">8인승 <span class="count">[[${filterCounts.capacity.eq8}]]</span></label></li>
                         <li><label><input type="checkbox" name="capacity" value="9"
+                                          th:checked="${filters.capacity != null and filters.capacity.contains('9')}"
                                           onchange="document.getElementById('electricFilterForm').submit()">9인승 <span class="count">[[${filterCounts.capacity.eq9}]]</span></label></li>
                         <li><label><input type="checkbox" name="capacity" value="10"
+                                          th:checked="${filters.capacity != null and filters.capacity.contains('10')}"
                                           onchange="document.getElementById('electricFilterForm').submit()">10인승 이상 <span class="count">[[${filterCounts.capacity.ge10}]]</span></label></li>
                     </ul>
                 </details>
@@ -324,10 +410,11 @@
                 <!-- 성능 / 보험 공개 -->
                 <details class="filter-group">
                     <summary>성능 / 보험 공개</summary>
-                    <ul class="filter-list">
+                    <ul class="filter-list with-count">
                         <li th:each="item : ${filterCounts['performance']}">
                             <label>
                                 <input type="checkbox" name="performanceOpen" th:value="${item.val}"
+                                       th:checked="${filters.performanceOpen != null and filters.performanceOpen.contains(item.val)}"
                                        onchange="document.getElementById('electricFilterForm').submit()">
                                 [[${item.val}]]
                                 <span class="count">[[${item.cnt}]]</span>
@@ -339,10 +426,11 @@
                 <!-- 판매자 구분 -->
                 <details class="filter-group">
                     <summary>판매자 구분</summary>
-                    <ul class="filter-list">
+                    <ul class="filter-list with-count">
                         <li th:each="item : ${filterCounts['sellerType']}">
                             <label>
                                 <input type="checkbox" name="sellerType" th:value="${item.val}"
+                                       th:checked="${filters.sellerType != null and filters.sellerType.contains(item.val)}"
                                        onchange="document.getElementById('electricFilterForm').submit()">
                                 [[${item.val}]]
                                 <span class="count">[[${item.cnt}]]</span>
@@ -354,10 +442,11 @@
                 <!-- 판매 방식 -->
                 <details class="filter-group">
                     <summary>판매 방식</summary>
-                    <ul class="filter-list">
+                    <ul class="filter-list with-count">
                         <li th:each="item : ${filterCounts['saleMethod']}">
                             <label>
                                 <input type="checkbox" name="saleMethod" th:value="${item.val}"
+                                       th:checked="${filters.saleMethod != null and filters.saleMethod.contains(item.val)}"
                                        onchange="document.getElementById('electricFilterForm').submit()">
                                 [[${item.val}]]
                                 <span class="count">[[${item.cnt}]]</span>
@@ -369,10 +458,11 @@
                 <!-- 외부 색상 -->
                 <details class="filter-group">
                     <summary>외부 색상</summary>
-                    <ul class="filter-list">
+                    <ul class="filter-list with-count">
                         <li th:each="item : ${filterCounts['exteriorColor']}">
                             <label>
                                 <input type="checkbox" name="exteriorColor" th:value="${item.val}"
+                                       th:checked="${filters.exteriorColor != null and filters.exteriorColor.contains(item.val)}"
                                        onchange="document.getElementById('electricFilterForm').submit()">
                                 [[${item.val}]]
                                 <span class="count">[[${item.cnt}]]</span>
@@ -384,10 +474,11 @@
                 <!-- 내부 색상 -->
                 <details class="filter-group">
                     <summary>내부 색상</summary>
-                    <ul class="filter-list">
+                    <ul class="filter-list with-count">
                         <li th:each="item : ${filterCounts['interiorColor']}">
                             <label>
                                 <input type="checkbox" name="interiorColor" th:value="${item.val}"
+                                       th:checked="${filters.interiorColor != null and filters.interiorColor.contains(item.val)}"
                                        onchange="document.getElementById('electricFilterForm').submit()">
                                 [[${item.val}]]
                                 <span class="count">[[${item.cnt}]]</span>
@@ -398,10 +489,11 @@
                 <!-- 변속기 -->
                 <details class="filter-group">
                     <summary>변속기</summary>
-                    <ul class="filter-list">
+                    <ul class="filter-list with-count">
                         <li th:each="item : ${filterCounts['transmission']}">
                             <label>
                                 <input type="checkbox" name="transmission" th:value="${item.val}"
+                                       th:checked="${filters.transmission != null and filters.transmission.contains(item.val)}"
                                        onchange="document.getElementById('electricFilterForm').submit()">
                                 [[${item.val}]]
                                 <span class="count">[[${item.cnt}]]</span>
@@ -413,7 +505,7 @@
                 <!-- 차량번호 / 판매자 이름 -->
                 <details class="filter-group">
                     <summary>차량번호 / 판매자 이름</summary>
-                    <ul class="filter-list">
+                    <ul class="filter-list with-count">
                         <input type="text" placeholder="차량번호 또는 이름 입력">
                     </ul>
                 </details>
@@ -584,12 +676,17 @@
                 <div class="widget">
                     <ul class="service-list">
                         <li>
-                            <span class="icon blue">₩</span>
-                            보험료 조회
+                            <a href="https://www.directdb.co.kr" target="_blank" style="text-decoration: none; color: inherit;">
+                                <span class="icon blue">₩</span>
+                                보험료 조회
+                            </a>
                         </li>
+
                         <li>
-                            <span class="icon gold">₩</span>
-                            대출한도 조회
+                            <a href="https://www.hyundaicapital.com" target="_blank" style="text-decoration: none; color: inherit;">
+                                <span class="icon gold">₩</span>
+                                대출한도 조회
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -603,7 +700,7 @@
 <th:block layout:fragment="script">
     <script defer src="/js/wishlist.js"></script>
     <script defer src="/js/base.js"></script>
-    <script defer src="/js/electric_filter_init.js"></script>
+    <script defer src="/js/filter_init.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
 
@@ -659,8 +756,35 @@
               form.submit();
             });
           }
+          // ✅ 제조사/모델 X 버튼 (수입차와 동일 로직)
+          document.querySelectorAll(".btn-clear-maker").forEach(btn => {
+            btn.addEventListener("click", function () {
+                const level = this.dataset.level;
+
+                if (level === "maker") {
+                  // 제조사 + 모델 + 차량명 전부 해제
+                  document.querySelectorAll("input[name='manufacturer']").forEach(el => el.checked = false);
+                  document.querySelectorAll("input[name='modelName']").forEach(el => el.checked = false);
+                  document.querySelectorAll("input[name='carName']").forEach(el => el.checked = false);
+                } else if (level === "model") {
+                  // 모델 + 차량명만 해제 (제조사는 유지)
+                  document.querySelectorAll("input[name='modelName']").forEach(el => el.checked = false);
+                  document.querySelectorAll("input[name='carName']").forEach(el => el.checked = false);
+                }
+
+                const form = document.getElementById("electricFilterForm");
+                const pageInput = form.querySelector("input[name='page']");
+                pageInput.value = 0;
+                form.submit();
+            });
+          });
 
         });
+        // 🔽 “다른 지역 더보기” 토글
+        function toggleRegion() {
+            const box = document.getElementById("regionMoreBox");
+            box.classList.toggle("hidden");
+        }
     </script>
 
 </th:block>
@@ -668,11 +792,3 @@
 
 </body>
 </html>
-
-<script>
-    // 🔽 “다른 지역 더보기” 토글
-    function toggleRegion() {
-        const box = document.getElementById("regionMoreBox");
-        box.classList.toggle("hidden");
-    }
-</script>

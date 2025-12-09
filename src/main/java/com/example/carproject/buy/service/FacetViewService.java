@@ -86,32 +86,29 @@ public class FacetViewService {
     public static class MakerFacet {      // 제조사 선택 시 내려줄 데이터
         private String maker;
         private List<FacetItem> popularModels; // == modelName Top N
-        private List<FacetItem> alphaCarNames; // == carName 이름순(나머지 포함)
+        private List<FacetItem> carNames; // == carName 이름순(나머지 포함)
+        private String selectedModel;
     }
 
-    public MakerFacet buildMakerFacet(String maker, int topN) {
-        // 1) 인기모델 (modelName) Top N
-        var byModelCnt = repo.countModelsByMaker(maker);
-        byModelCnt.sort((a,b) -> Long.compare(b.getCnt(), a.getCnt()));
-        List<FacetItem> popular = new ArrayList<>();
-        int i=0;
-        for (var r : byModelCnt) {
-            if (r.getVal()==null) continue;
-            if (i++ < topN) popular.add(new FacetItem(r.getVal(), r.getCnt()));
-        }
+    public MakerFacet buildMakerFacet(String maker, String modelName, int top) {
 
-        // 2) 이름순 (carName) 전체: 이름순 정렬 + 카운트 매핑
-        var carNameCntList = repo.countCarNamesByMaker(maker);
-        Map<String, Long> carNameCntMap = new HashMap<>();
-        for (var r : carNameCntList) carNameCntMap.put(r.getVal(), r.getCnt());
-
-        List<String> alphaNames = repo.distinctCarNamesByMaker(maker); // 정렬된 이름 목록
-        List<FacetItem> alpha = alphaNames.stream()
-                .map(n -> new FacetItem(n, carNameCntMap.getOrDefault(n, 0L)))
+        // 1) 제조사 기준 인기 모델 top N
+        List<FacetItem> popularModels = repo.countModelsByMaker(maker).stream()
+                .map(r -> new FacetItem(r.getVal(), r.getCnt()))
+                .limit(top)
                 .toList();
 
-        return new MakerFacet(maker, popular, alpha);
+        // 2) 선택된 모델이 있으면 그 모델의 차량명(등급) 목록
+        List<FacetItem> carNames = List.of();
+        if (modelName != null && !modelName.isBlank()) {
+            carNames = repo.countCarNamesByMakerAndModel(maker, modelName).stream()
+                    .map(r -> new FacetItem(r.getVal(), r.getCnt()))
+                    .toList();
+        }
+
+        return new MakerFacet(maker, popularModels, carNames, modelName);
     }
+
 
     /** 지역: 상위 N만 보여주고 나머지는 "더보기"로 처리해도 되고, 일단 전체 */
     public LinkedHashMap<String, Long> saleLocationCounts() {
