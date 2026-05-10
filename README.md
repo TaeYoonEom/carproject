@@ -129,7 +129,7 @@ application.yml 또는 application.properties 수정
 
 ---
 
-## 📸 메인 화면 
+## 📸 실행 화면(메인 화면)
 
 <img width="844" height="1023" alt="image" src="https://github.com/user-attachments/assets/9678703d-5fea-4e64-bf1c-1e6048c33026" />
 
